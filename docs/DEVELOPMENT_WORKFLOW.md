@@ -90,7 +90,7 @@ Every project repository must maintain docs/PROJECT_MEMORY.md, initialized from 
 When progress depends on a user test, decision, account permission, external action, or real-world verification, do not leave the request buried in chat.
 
 - Offer two practical paths: work through the action together one step at a time, or defer it.
-- When deferred, record it in `docs/PENDING_ACTIONS.md` (initialized from `PENDING_ACTIONS_TEMPLATE.md`) or the project's existing canonical tracker.
+- When deferred or still outstanding beyond the current guided interaction, record it in `docs/PENDING_ACTIONS.md` (initialized from `PENDING_ACTIONS_TEMPLATE.md`) or the project's existing canonical tracker.
 - Record the exact action, reason, affected work, priority, owner, status, evidence, due/revisit trigger, and when it was last surfaced.
 - Mark safety, privacy, security, legal, data-loss, and irreversible-risk checks as critical blockers. Pause the affected operation until verified.
 - For ordinary blockers, pause only dependent work and continue unrelated implementation, research, and documentation.
