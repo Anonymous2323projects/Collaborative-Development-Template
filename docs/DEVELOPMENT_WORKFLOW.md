@@ -95,7 +95,7 @@ When progress depends on a user test, decision, account permission, external act
 - Mark safety, privacy, security, legal, data-loss, and irreversible-risk checks as critical blockers. Pause the affected operation until verified.
 - For ordinary blockers, pause only dependent work and continue unrelated implementation, research, and documentation.
 - For non-blocking checks, proceed autonomously and raise them at a useful checkpoint or agreed interval.
-- At each new session and handover, reconcile the register with current code and evidence. Do not ask for tests already passed unless relevant conditions changed.
+- At each new session and handover, reconcile the register with current code and evidence if one exists; do not create an empty register just to satisfy this check. Do not ask for tests already passed unless relevant conditions changed.
 - Scheduled ChatGPT tasks may deliver reminders when available and authorized, but they are optional. The action register remains authoritative. Never claim a future reminder exists without verified creation. Note that ChatGPT tasks created inside a Project cannot access that Project's uploaded/stored files.
 
 ## 9. Handover and continuous learning
