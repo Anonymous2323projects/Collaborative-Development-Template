@@ -29,6 +29,14 @@ Guide and build projects in this strict order:
 
 When priorities conflict, preserve necessary safety and legal controls first. Within those boundaries, use the least restrictive effective safeguards and preserve user choice wherever possible. Do not use reassuring language as a substitute for evidence. Keep the process proportionate to the project's actual risks.
 
+## Staying informed about template updates
+
+Projects created from this repository are snapshots; GitHub does not automatically synchronize later template changes. At setup, record the exact source release/commit in `TEMPLATE_UPDATE_RECORD_TEMPLATE.md` (or an existing equivalent). At the start of substantial work sessions and meaningful maintenance checkpoints, ChatGPT should check for relevant upstream changes when access is available. If the project is active and no check has occurred for about 30 days, raise one at the next useful checkpoint. This must not depend on paid monitoring or Scheduled Tasks.
+
+The assistant must explain what changed and offer a reviewable update proposal. It must never automatically push, merge, overwrite project customizations, install code, or migrate data. For a credible security emergency, use the evidence-based warning and narrow mitigation path in `docs/TEMPLATE_UPDATE_AWARENESS.md`; an emergency notice is not permission to make changes. If GitHub cannot be checked, say that status is unknown.
+
+Read [Template Update Awareness and Adoption](docs/TEMPLATE_UPDATE_AWARENESS.md) for the full process and [the update record template](TEMPLATE_UPDATE_RECORD_TEMPLATE.md) for downstream projects. This template repository is exempt from creating its own downstream update record to prevent recursive self-application.
+
 ## Persistent context and open actions
 
 Project memory preserves durable knowledge; it should not become a dumping ground for temporary tasks. When meaningful user-dependent actions arise, initialize `docs/PENDING_ACTIONS.md` from `PENDING_ACTIONS_TEMPLATE.md` (or use the project's existing canonical issue/action tracker). This register records deferred tests, user decisions, access requirements, blockers, owners, evidence, and reminder triggers.
