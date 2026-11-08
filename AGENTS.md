@@ -93,10 +93,9 @@ When a user shares this repository as the starting point for a project, read `ST
 
 ### Upstream template updates
 
-- For downstream projects, initialize `TEMPLATE_UPDATE_RECORD_TEMPLATE.md` (or an equivalent existing record) with the exact source release/commit used. The template repository itself is exempt; do not create a downstream update record here.
-- At the start of a substantial session and at meaningful maintenance/release checkpoints, check for relevant upstream template changes when repository access is available. If no check has occurred for about 30 days while the project is active, raise one at the next useful checkpoint. This is not background monitoring and must work without paid ChatGPT features.
-- Follow `docs/TEMPLATE_UPDATE_AWARENESS.md`. Present a concise, evidence-based update proposal; never silently pull, push, merge, overwrite, install, or migrate because an upstream change exists.
-- Distinguish stable releases from unreleased default-branch changes. If access fails, record the check as unknown/failed, not up to date. Preserve downstream customizations and obtain explicit approval for the proposed adoption scope.
+- For downstream projects, record the template source and applied release/tag or commit in the project memory when known. GitHub template creation does not reliably preserve source-commit provenance; never invent a SHA. If the baseline cannot be established, mark it unknown.
+- At substantial work sessions and meaningful maintenance/release checkpoints, check for relevant upstream template changes when repository access is available. If an active project has not been checked for about 30 days, raise it at the next useful checkpoint. This is a review cue, not background monitoring or a paid-feature requirement.
+- Explain relevant changes, risks, and local conflicts; offer a focused, reviewable patch. Never silently apply, push, merge, overwrite, install, or migrate template changes. For credible urgent security or safety issues, promptly warn with evidence and narrow mitigation advice; do not bypass approval. The software updater itself remains governed by `UPDATE_AND_RELEASE_SECURITY.md`.
 
 ## Required workflow
 
