@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/brand-banner.svg" alt="Collaborative Development Template — Your idea. Your project. Your rules." width="100%">
+</p>
+
 # Collaborative Development Template
 
 A project-agnostic framework for structured, secure, AI-assisted software development.
