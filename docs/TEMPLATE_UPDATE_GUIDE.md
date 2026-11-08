@@ -82,3 +82,17 @@ The person maintaining the project may be new to software development. A technic
 - Avoid unexplained specialist vocabulary, unexplained acronyms, and long raw logs in the main report. Put deeper evidence after the plain-language explanation.
 - Do not remove risks, limitations, uncertainty, or technical precision in the name of simplicity. Be respectful, not patronizing.
 
+## Avoid repeating work during an update
+
+Keep the update review thorough but do not make the owner repeat checks that are still valid.
+
+- Reuse the previous verified template SHA and downstream version record; do not rediscover the same history from scratch.
+- Read each relevant downstream document once and build one change/impact list. Do not create multiple overlapping checklists.
+- If a GitHub setting or permission was recently verified and no relevant change occurred, carry that evidence forward instead of asking the owner to revisit the same page.
+- Run checks for the files and behavior affected by this update. Reuse successful results for the exact unchanged commit; after a new commit, rerun only the checks needed for that commit and affected scope. Run broader tests at integration/release checkpoints or when risk justifies them.
+- Batch compatible edits and checks, then provide one consolidated report. Keep manual interface guidance one step at a time, but never repeat a completed step.
+- Reuse an approval for the same clearly described scope. Ask again only if the scope or consequences materially change. A merge, publication, permission change, or other consequential action still needs its own explicit authorization when not already granted.
+- Record what was checked, when, against which commit/settings, and what would make the result stale. Explain any requested repeat check in plain language.
+
+Efficiency does not override privacy, security, legal, data-loss, or irreversible-action safeguards. It removes duplicate work, not meaningful protection.
+
