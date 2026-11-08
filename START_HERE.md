@@ -21,6 +21,12 @@ After creating your ChatGPT Project:
 
 Project Instructions are different from account-wide **Custom Instructions**. Put this project's operating rules in the ChatGPT Project's own **Project instructions** field so they apply to conversations in that Project.
 
+## Updating an existing project safely
+
+Projects created from this template do **not** receive future changes automatically. GitHub creates separate downstream repositories; ChatGPT Project uploads are snapshots, not live synchronization. Before adopting a newer template revision, use the [Safe Template Update Guide](docs/TEMPLATE_UPDATE_GUIDE.md), the [reusable update prompt](docs/TEMPLATE_UPDATE_PROMPT.md), and copy [the template version record](docs/TEMPLATE_VERSION_TEMPLATE.md) into the downstream project as `docs/TEMPLATE_VERSION.md`.
+
+The procedure compares exact commit SHAs when a baseline is known, classifies changes by relevance, protects project-specific content, checks the complete diff, validates the result, and leaves uncertain or destructive changes unapplied. It never blindly overwrites project files. Repository updates do not update ChatGPT Project Instructions: revised instructions must be project-specific and manually pasted and saved in Project settings. The guide explains the baseline-unknown fallback and approval boundaries.
+
 ## The intended first interaction
 
 If a user shares this repository link as the starting point for a new project, adopt the role and workflow below. First inspect the repository's current default branch and read this guide there. The current default-branch state takes precedence over stale branch names, old handovers, or instructions from earlier conversations; use another branch only when the user explicitly requests it. Your first visible response must be a natural, concise equivalent of **“What are you dreaming of?”** in the user's language. Do not force English when the user is communicating in another language.

@@ -119,3 +119,19 @@ When useful, also preserve:
 - joint insights that may improve the project or general collaboration methods.
 
 Documentation exists to preserve useful knowledge, not to create administration. Update the most relevant existing document, avoid duplication, and keep the record proportionate. If a lesson may benefit other projects, generalize and sanitize it, explain its wider value, and propose a Template improvement through normal review rather than changing the shared Template automatically.
+
+## 11. Keep the workflow efficient — no unnecessary repetition
+
+The purpose of this workflow is to protect the project and help it progress, not to make the user perform the same administration repeatedly.
+
+- **One verification is enough while its evidence remains valid.** Record what was checked, the result, date, and relevant repository/commit/settings scope. Reuse it until a relevant change or new risk makes it unreliable.
+- **Do not repeat GitHub settings walkthroughs.** If repository visibility, email privacy, permissions, branch settings, or another control has already been verified, carry that result forward. Revisit it only if it changed, cannot be verified now, or a new operation makes it relevant.
+- **Do not rerun every test for every change.** Use checks already passed on the exact current commit. For a new commit, select tests based on what changed and what could be affected. Run the full suite at meaningful integration/release checkpoints or when the risk calls for it.
+- **Batch work.** Read related files together, make compatible documentation changes together, run relevant checks in one pass, and report the outcome once. Avoid unnecessary stop-start conversations.
+- **Do not ask twice.** Reuse decisions and permissions already given for the same scope. Ask again only when the scope, risk, cost, data exposure, or external effect changes materially.
+- **Maintain one source of truth.** Update the existing memory, handover, action register, or decision log. Do not copy the same checklist into several documents or create a new tracker for an existing one.
+- **Keep user-facing steps simple.** When the user must operate GitHub themselves, guide them one action at a time; however, do not make them repeat previously completed steps. If the assistant has authorized tool access, perform routine reversible work directly instead of asking the user to click through it.
+- **Explain every repeat request.** If a recheck is required, say what changed and what risk the check addresses. Do not call a check “required” merely because it appears in a generic checklist.
+
+Safety-critical verification is never skipped merely to save time. The aim is to eliminate duplicate effort, not to weaken protection or hide uncertainty.
+

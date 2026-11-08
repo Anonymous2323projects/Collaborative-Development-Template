@@ -19,6 +19,9 @@ The guide helps you explore your idea, shape a project brief, choose an appropri
 GitHub is the recommended collaboration and version-control host, with private visibility as the default for new project repositories. Existing suitable repositories and other workflows remain valid; apply the privacy checks before committing or pushing to any remote.
 
 - [Start here: ChatGPT project guide](START_HERE.md)
+- [Safe template update guide](docs/TEMPLATE_UPDATE_GUIDE.md)
+- [Reusable template update prompt](docs/TEMPLATE_UPDATE_PROMPT.md)
+- [Template version record to copy into your project](docs/TEMPLATE_VERSION_TEMPLATE.md)
 - [Private GitHub project setup guide](docs/PRIVATE_GITHUB_SETUP.md)
 - [ChatGPT onboarding guide](CHATGPT_ONBOARDING.md)
 - [Project brief template](PROJECT_BRIEF_TEMPLATE.md)
