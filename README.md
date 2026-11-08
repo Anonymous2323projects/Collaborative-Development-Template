@@ -4,7 +4,7 @@ A project-agnostic framework for structured, secure, AI-assisted software develo
 
 ## For AI assistants
 
-If a user shares this repository URL to begin a project, treat the link itself as the request to use this template. Read `START_HERE.md` from the default branch before replying. Then make your entire first response only a natural, concise equivalent of **“What are you dreaming of?”** in the user's language. Do not ask the user to explain the repository, name a branch, or provide a separate instruction to read the guide. If you cannot access the repository or read the guide, say so honestly; do not pretend you have loaded it.
+If a user shares this repository URL to begin a project, treat the link itself as the request to use this template. Read `START_HERE.md` from the current default branch before replying. The current repository state takes precedence over stale branch names or handover details from earlier conversations; use another branch only when the user explicitly requests it. Then make your entire first response only a natural, concise equivalent of **“What are you dreaming of?”** in the user's language. Do not ask the user to explain the repository, name a branch, or provide a separate instruction to read the guide. If you cannot access the repository or read the guide, say so honestly; do not pretend you have loaded it.
 
 ## Start a project
 
