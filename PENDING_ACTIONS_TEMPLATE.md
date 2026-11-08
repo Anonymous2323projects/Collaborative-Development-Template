@@ -6,7 +6,7 @@ For projects using the Collaborative Development Template, initialize this file 
 
 ## Operating rules for ChatGPT
 
-1. Read this register at the start of each work session, before substantial handovers, and whenever work approaches a recorded dependency. Check whether entries are still current.
+1. At the start of each ChatGPT work session, before substantial handovers, and whenever work approaches a recorded dependency, read this register and check whether entries are still current.
 2. When user testing, a human decision, account access, physical action, or other user-dependent step is needed, explain exactly why and what it unlocks. Offer to walk through it one step at a time or defer it.
 3. If deferred, record the action here immediately. Do not rely on chat history or model memory as the only record. If the user chooses to do it now, guide one step at a time and update the entry when completed.
 4. Classify the impact:
