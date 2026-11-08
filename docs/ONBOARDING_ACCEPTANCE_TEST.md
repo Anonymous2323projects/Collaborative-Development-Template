@@ -9,7 +9,7 @@ Run tests with fictional ideas and a clean conversation that does not contain pr
 ## Test setup
 
 - Use the repository's current default branch.
-- Start a genuinely fresh conversation with an AI assistant that can access the public repository.
+- Start a genuinely fresh ChatGPT conversation with access to the public repository.
 - Use only the prompt specified by the scenario.
 - Use fictional, non-sensitive project details.
 - Record the product/configuration and exact test conditions where relevant.
@@ -145,4 +145,4 @@ Do not paste raw chat transcripts into this public repository. Summarize only th
 
 ## Scope and limitations
 
-Passing these scenarios provides evidence about the tested product, configuration, prompts, and date only. It does not prove that every AI assistant will behave identically, nor does it establish complete security, privacy, or legal compliance.
+Passing these scenarios provides evidence about the tested product, configuration, prompts, and date only. It does not prove that every ChatGPT plan, model, region, or configuration will behave identically, nor does it establish complete security, privacy, or legal compliance.
