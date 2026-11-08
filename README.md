@@ -31,6 +31,8 @@ The guide helps you explore your idea, shape a project brief, choose an appropri
 - [Security policy](SECURITY.md)
 - [Project risk and release readiness standard](PROJECT_RISK_AND_RELEASE_READINESS.md)
 - [Update and release security policy](UPDATE_AND_RELEASE_SECURITY.md)
+- [Template update awareness and adoption](docs/TEMPLATE_UPDATE_AWARENESS.md)
+- [Template update record template](TEMPLATE_UPDATE_RECORD_TEMPLATE.md)
 - [Privacy and public publication standard](PRIVACY_AND_PUBLICATION.md)
 - [Contributor guide](CONTRIBUTING.md)
 - [AI and contributor repository instructions](AGENTS.md)
