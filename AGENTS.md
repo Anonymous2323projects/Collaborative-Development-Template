@@ -1,6 +1,6 @@
 # Repository Instructions
 
-These instructions apply to every contributor and AI coding assistant working in this repository.
+These instructions apply to human contributors and to ChatGPT when it works with this repository.
 
 ## Product and process priorities
 
