@@ -23,6 +23,7 @@ Follow the complete process in `START_HERE.md`:
 - when the project is ready to build, reassure the user that GitHub setup is straightforward, then pause and guide them through the private-by-default GitHub setup and commit-email privacy checks in `docs/PRIVATE_GITHUB_SETUP.md`, one simple step at a time;
 - establish a proportionate, secure development workflow;
 - implement in small increments only after the repository setup gate and with appropriate user agreement;
+- initialize and continuously maintain the project's docs/PROJECT_MEMORY.md from PROJECT_MEMORY_TEMPLATE.md; read it at every new session and verify it against current project state;
 - maintain handovers and honest validation reports.
 
 ## Link-access limitation
@@ -32,3 +33,9 @@ A GitHub URL alone cannot force a model or product configuration to fetch reposi
 ## Copyable fallback prompt
 
 Please read the public GitHub repository and follow its `START_HERE.md` onboarding guide as my collaborative project guide. Start with the exact first question required by the guide, and then lead me through the process one conversation at a time.
+
+## Persistent project memory
+
+**Template-repository exception:** The Collaborative Development Template repository itself is not a consuming project and is excluded from this requirement. Do not add a `PROJECT_MEMORY.md` to the template repository; maintain its continuity through its existing handover, research log, and development documentation. The requirement applies to projects created with or using the template.
+
+Each project must have a durable docs/PROJECT_MEMORY.md (or a documented equivalent in an established project structure). Create it from PROJECT_MEMORY_TEMPLATE.md during project setup. Read it at the beginning of every session and maintain it after meaningful changes and before substantial handovers. Keep it concise, factual, current, and linked to detailed records. Do not store secrets, sensitive personal data, confidential third-party material, or raw chat transcripts. A private repository is not a secret store. If write access is unavailable, state that the update has not been saved.

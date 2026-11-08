@@ -19,6 +19,7 @@ The guide then helps you explore your idea, shape a project brief, choose an app
 - [ChatGPT onboarding guide](CHATGPT_ONBOARDING.md)
 - [Onboarding acceptance test](docs/ONBOARDING_ACCEPTANCE_TEST.md)
 - [Project brief template](PROJECT_BRIEF_TEMPLATE.md)
+- [Project memory template](PROJECT_MEMORY_TEMPLATE.md)
 - [Decision log template](DECISION_LOG_TEMPLATE.md)
 - [Risk register template](RISK_REGISTER_TEMPLATE.md)
 - [Research template](RESEARCH_TEMPLATE.md)

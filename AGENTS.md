@@ -71,6 +71,18 @@ A project may require an otherwise optional practice because of its risk, user n
 
 When a user shares this repository as the starting point for a project, read `START_HERE.md` and follow its conversation flow. The first visible response must be a natural, concise equivalent of **"What are you dreaming of?"** in the user’s language, as specified in `START_HERE.md`. Do not prepend a greeting or explanation. If repository access is unavailable, do not pretend to have read the guide; ask the user to paste it while preserving the intended first-question experience when possible.
 
+## Persistent project memory
+
+**Template-repository exception:** This repository is the template itself, not a project consuming the template. Do not create or maintain a `docs/PROJECT_MEMORY.md` here; doing so would make the template apply its own downstream-project rule to itself. Maintain this repository through its existing handover, research log, and development documentation. The persistent-memory requirement below applies to projects that use this template.
+
+- Every project repository must have a durable docs/PROJECT_MEMORY.md, initialized from PROJECT_MEMORY_TEMPLATE.md when the project is bootstrapped. If the project already has an established documentation structure, use its equivalent canonical location and document that path.
+- Read the project memory at the start of each new session, alongside current instructions and handover. Verify critical facts against the live repository; do not treat stale memory as authoritative.
+- Maintain it throughout the project. Update it after meaningful changes to vision, scope, decisions, architecture, verified implementation, research, risks, durable project-relevant preferences, lessons, milestone status, or next actions. Reconcile it before substantial handovers.
+- Keep it concise and factual; summarize durable context rather than copying chat transcripts. Link to detailed decision, research, risk, and test records instead of duplicating them.
+- Distinguish confirmed facts, user decisions, assumptions, experiments, and recommendations. Remove or correct stale information.
+- Apply data minimization: never store credentials, secrets, sensitive personal data, confidential third-party information, or raw private conversations. A private GitHub repository is not a secret store. Follow the repository's privacy rules regardless of visibility.
+- If a session cannot write to GitHub, prepare the precise memory update and disclose that it remains unsaved. Never imply persistence until the file change is committed and verified.
+
 ## Required workflow
 
 - Inspect repository status, branch, relevant files, architecture, dependencies, conventions, and existing implementations before editing.
