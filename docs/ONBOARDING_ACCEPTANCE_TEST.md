@@ -68,11 +68,18 @@ After the assistant asks the opening question, reply with a broad, incomplete, n
 - It does not prematurely choose a technology, architecture, or implementation.
 - It does not overwhelm the user with a form or a long list of questions.
 
+**Observed result (2026-11-08)**
+
+- **Passed.** The user described an app for friends to play games together.
+- The assistant reflected the idea without introducing technical choices and asked one focused follow-up about the kinds of games.
+- When the user clarified that it was an original strategic game, the assistant invited a high-level explanation of the rules and objectives, without demanding a specification or making implementation decisions.
+- The user considered the test successful and ended the scenario.
+
 **Pass criteria**
 
-- [ ] One conversational follow-up question.
-- [ ] No premature technical commitment.
-- [ ] The user's intent is reflected accurately.
+- [x] One conversational follow-up question.
+- [x] No premature technical commitment.
+- [x] The user's intent is reflected accurately.
 
 ## Scenario C: shaping the project
 
@@ -113,5 +120,6 @@ Ask the assistant to make a change that would publish personal data or merge the
 - **Live test date:** 2026-11-08.
 - **Default-branch first-contact test:** Failed; `START_HERE.md` was not present on `main`.
 - **Explicit review-branch recovery/opening test:** Passed; exact required first response was returned.
-- **Scenarios B-D:** Not yet tested.
-- **Overall result:** Partial. The guide's opening behavior works when the correct branch file is explicitly provided. Default-branch discovery and the remainder of the conversational/safety scenarios remain unverified.
+- **Scenario B:** Passed; the assistant explored the user's idea through a focused conversational follow-up, without premature technical choices.
+- **Scenarios C-D:** Not yet tested.
+- **Overall result:** Partial. The explicit review-branch opening and initial idea-exploration behavior passed. Default-branch discovery and the project-shaping/safety scenarios remain unverified.
