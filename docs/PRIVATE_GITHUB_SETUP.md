@@ -98,7 +98,7 @@ Once the repository is ready, establish the project-specific branch, review, tes
 
 ## AI behavior and user experience
 
-- Detect the transition point proactively; the user should not have to know when GitHub setup is needed.
+- Detect the transition to remote collaboration or publication proactively; the user should not have to know which privacy checks are needed.
 - Reassure the user that setup is straightforward and manageable: say, in the user’s language, that the setup is straightforward and that you will guide them step by step.
 - Present the setup as a normal first step, not as a technical hurdle. The user does not need prior GitHub or programming experience.
 - Explain why this step comes before coding.
