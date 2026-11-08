@@ -2,30 +2,15 @@
 
 A project-agnostic framework for structured, secure, AI-assisted software development.
 
-## Start here — for you and your friends
-
-**The most reliable way to start is to send ChatGPT one short message containing the repository link and the instruction.** This works without a Custom GPT or special account features.
-
-Copy the complete message below and paste it into a new ChatGPT chat:
-
-> Use this public GitHub repository as the framework for my new software project:  
-> https://github.com/Anonymous2323projects/Collaborative-Development-Template  
->
-> Read `START_HERE.md` and `AGENTS.md` from the current default branch. Follow `START_HERE.md` as my collaborative project guide.  
->
-> Your entire first response must be only the natural equivalent of “What are you dreaming of?” in my language. Do not introduce yourself, explain the repository, ask permission, or add another question.  
->
-> If you cannot access the guide, say so honestly and ask me to paste `START_HERE.md`. After the opening question, guide me one step at a time in my language.
-
-No coding experience is needed. The guide helps you explore your idea, shape a project brief, research suitable solutions, choose a technical direction, set up a safe workflow, and build in manageable steps.
-
-**Note:** A repository link cannot force every ChatGPT configuration to open external files. The short message above explicitly asks ChatGPT to read the guide. If browsing is unavailable, the guide must be pasted into the chat. Do not assume the guide was loaded unless the assistant confirms it actually accessed the file.
-
 ## For AI assistants
 
-If a user shares this repository URL to begin a project, treat the link as the request to use this template. Read `START_HERE.md` from the current default branch before replying. The current repository state takes precedence over stale branch names or handover details from earlier conversations; use another branch only when the user explicitly requests it. Then make your entire first response only a natural, concise equivalent of **“What are you dreaming of?”** in the user's language. Do not ask the user to explain the repository, name a branch, or provide a separate instruction to read the guide. If you cannot access the repository or read the guide, say so honestly; do not pretend you have loaded it.
+If a user shares this repository URL to begin a project, treat the link itself as the request to use this template. Read `START_HERE.md` from the current default branch before replying. The current repository state takes precedence over stale branch names or handover details from earlier conversations; use another branch only when the user explicitly requests it. Then make your entire first response only a natural, concise equivalent of **“What are you dreaming of?”** in the user's language. Do not ask the user to explain the repository, name a branch, or provide a separate instruction to read the guide. If you cannot access the repository or read the guide, say so honestly; do not pretend you have loaded it.
 
-## Template guides and tools
+## Start a project
+
+Share this repository link with ChatGPT as the starting point. When ChatGPT can access the repository, it should begin with the opening question above—not a setup explanation or questionnaire.
+
+The guide then helps you explore your idea, shape a project brief, choose an appropriate technical direction, set up a safe workflow, and build in manageable steps. You do not need to know how to code to begin. When the project is ready to build, the guide pauses for a private-by-default GitHub setup, including commit-email privacy checks, before implementation starts.
 
 - [Start here: AI project guide](START_HERE.md)
 - [Private GitHub project setup guide](docs/PRIVATE_GITHUB_SETUP.md)
@@ -62,6 +47,10 @@ Freedom operates within the necessary boundaries of safety and applicable law. P
 
 When these priorities conflict, evaluate them in this order. Usability improvements must not bypass necessary safety or legal controls. Trust is earned by consistently delivering on the first three priorities; it must never be manufactured through reassuring language or unsupported promises. Freedom is protected within necessary safety and legal boundaries, using the least restrictive effective safeguards and preserving user autonomy wherever possible. Apply the priorities proportionately so that small projects receive practical guidance rather than unnecessary bureaucracy.
 
+## Important note about the GitHub link
+
+Sharing a repository URL does not guarantee that every ChatGPT configuration can browse or modify GitHub. The assistant must be honest about its access. If it cannot read the repository, provide the contents of `START_HERE.md` or paste the fallback instruction from that guide. Repository changes require an available, authorized GitHub connection or actions by the user.
+
 ## Privacy-first publication
 
 This repository is public. Never add personal, private, confidential, or identifying information belonging to contributors, collaborators, or third parties.
@@ -74,7 +63,13 @@ This repository is public. Never add personal, private, confidential, or identif
 
 ## Status
 
-The core foundation and practical starter pack are available on the default branch. The onboarding guide is available as `START_HERE.md`; successful behavior still depends on the capabilities and configuration of the AI assistant being used. See [the project handover](docs/PROJECT_HANDOVER.md) and [the onboarding acceptance test](docs/ONBOARDING_ACCEPTANCE_TEST.md) for current findings and limitations.
+The core foundation and practical starter pack are available on the default branch.
+
+The `START_HERE.md` onboarding guide is present on `main`. Its content has been inspected directly on the default branch. A genuine fresh-conversation test is still required to verify that a new ChatGPT conversation discovers the guide from the repository URL and follows the required first-response behavior. Do not treat file availability as proof of successful onboarding.
+
+The latest inspected visual-identity pull request (#3) passed its Repository Hygiene and Gitleaks checks. These automated checks do not constitute a complete security audit or legal review.
+
+The template remains under active review. See [the project handover](docs/PROJECT_HANDOVER.md) and [the onboarding acceptance test](docs/ONBOARDING_ACCEPTANCE_TEST.md) for current findings and limitations.
 
 ## Licence
 

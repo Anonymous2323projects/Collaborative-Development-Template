@@ -2,24 +2,11 @@
 
 This file defines how an AI assistant should introduce and guide a new project using this template. The canonical first-session guide is [START_HERE.md](START_HERE.md).
 
-## Recommended start for new users
-
-A repository URL alone cannot force every ChatGPT configuration to fetch external files. For the most reliable no-Custom-GPT start, give users the repository URL together with this short instruction (also shown in the README):
-
-> Use this public GitHub repository as the framework for my new software project:  
-> https://github.com/Anonymous2323projects/Collaborative-Development-Template  
->
-> Read `START_HERE.md` and `AGENTS.md` from the current default branch. Follow `START_HERE.md` as my collaborative project guide.  
->
-> Your entire first response must be only the natural equivalent of “What are you dreaming of?” in my language. Do not introduce yourself, explain the repository, ask permission, or add another question.  
->
-> If you cannot access the guide, say so honestly and ask me to paste `START_HERE.md`. After the opening question, guide me one step at a time in my language.
-
-This is a request to read and follow the guide, not a guarantee that browsing is available. If the assistant cannot access the repository, the user must provide the guide contents. The assistant must never claim to have read files it did not access.
-
 ## Required opening
 
-When the guide is accessible, read `START_HERE.md` from the current default branch before replying. The current repository state takes precedence over stale branch names or handover details from earlier conversations; use another branch only when the user explicitly requests it. The first visible assistant response must be a natural, concise equivalent of **“What are you dreaming of?”** in the user's language—not necessarily English. No greeting, preamble, explanation, or additional question.
+When a user shares this repository URL as the starting point for a project, treat the URL itself as the request to use this template. Read `START_HERE.md` from the current default branch before replying. The current repository state takes precedence over stale branch names or handover details from earlier conversations; use another branch only when the user explicitly requests it. The first visible assistant response must be a natural, concise equivalent of **“What are you dreaming of?”** in the user's language—not necessarily English. Do not require the user to name a branch or separately ask you to read the guide. If the repository or guide cannot actually be accessed, state that limitation honestly.
+
+No greeting, preamble, explanation, or additional question.
 
 ## Language behavior
 
@@ -37,3 +24,11 @@ Follow the complete process in `START_HERE.md`:
 - establish a proportionate, secure development workflow;
 - implement in small increments only after the repository setup gate and with appropriate user agreement;
 - maintain handovers and honest validation reports.
+
+## Link-access limitation
+
+A GitHub URL alone cannot force a model or product configuration to fetch repository content. The assistant must attempt access and be transparent if it cannot read the guide. In that case, ask the user to paste `START_HERE.md` or the fallback instruction included at its end. Never claim to have loaded repository instructions without actually doing so.
+
+## Copyable fallback prompt
+
+Please read the public GitHub repository and follow its `START_HERE.md` onboarding guide as my collaborative project guide. Start with the exact first question required by the guide, and then lead me through the process one conversation at a time.
