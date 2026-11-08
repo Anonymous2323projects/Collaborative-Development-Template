@@ -11,7 +11,7 @@
 - **Repository:** https://github.com/Anonymous2323projects/Collaborative-Development-Template
 - **Branch:** `work/template-foundation`
 - **Base:** `main`
-- **Latest reviewed commit:** `ffeb65cda967dc2156a9f1b758097168c4be0e95`
+- **Reviewed feature-branch commit before this handover update:** `6923f537c912fe0ac37f3f4ce1ba8343d5086481`
 - **Working tree:** Changes are committed to the feature branch; no merge has been performed.
 - **Pull request:** https://github.com/Anonymous2323projects/Collaborative-Development-Template/pull/1
 
@@ -26,30 +26,30 @@
 
 ## Validation
 
-- **Latest CI run:** https://github.com/Anonymous2323projects/Collaborative-Development-Template/actions/runs/42443110864
-- Sensitive-path and Markdown-link check: passed.
-- Gitleaks secret scan: passed.
+- **GitHub Actions run inspected:** https://github.com/Anonymous2323projects/Collaborative-Development-Template/actions/runs/42444005498
+- Repository hygiene check: passed.
+- Gitleaks full-history secret scan: passed.
 - These checks do not establish that the repository is free of all personal data, vulnerabilities, or legal issues.
+- **Onboarding:** The guide's exact opening response passed when the assistant was explicitly directed to `START_HERE.md` on `work/template-foundation`. The default-branch test did not pass because `START_HERE.md` was absent from `main`. Scenarios covering idea exploration, project shaping, and safety boundaries remain untested. See `docs/ONBOARDING_ACCEPTANCE_TEST.md`.
 
 ## Risks and limitations
 
 - A personal email address exists in public historical Git commit metadata. It is not reproduced here. No history rewrite has been attempted.
-- GitHub private vulnerability reporting has not been verified in repository settings.
-- The onboarding guide has had a document-consistency review; a fresh-conversation test with a real first-time user remains outstanding.
+- GitHub private vulnerability reporting was confirmed by the repository owner to be enabled.
+- The default-branch onboarding experience remains incomplete until the guide is available from `main`.
 - No legal compliance or complete security audit is claimed.
 
 ## Decisions
 
 - **Confirmed:** MIT licence selected by the repository owner.
+- **Confirmed:** GitHub private vulnerability reporting is enabled (owner confirmation).
 - **Still open:** Whether and how to remediate the personal email in historical commit metadata.
-- **Still open:** Whether private vulnerability reporting is enabled.
 - **Deferred:** Optional Code of Conduct and additional contributor terms.
 - **Approval boundary:** Do not merge or publish a release without explicit owner approval.
 
 ## Next safe actions
 
-1. Run the fresh-conversation onboarding test in `docs/ONBOARDING_ACCEPTANCE_TEST.md`.
-2. Review GitHub account commit-email privacy settings for future commits; separately decide whether historical metadata remediation is desired.
-3. Verify private vulnerability reporting in repository settings.
-4. Complete the final public-content and publication review.
-5. Ask the owner for an explicit go/no-go decision before merging.
+1. Complete the final public-content and publication review.
+2. Review the default-branch onboarding limitation and decide whether the full PR is ready for merge.
+3. Complete onboarding scenarios B-D when practical.
+4. Ask the owner for an explicit go/no-go decision before merging.
