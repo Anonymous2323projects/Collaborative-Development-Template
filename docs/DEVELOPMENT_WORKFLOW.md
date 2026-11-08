@@ -71,7 +71,19 @@ This is a deliberate transition gate, not a demand to create a repository during
 - Resolve review comments explicitly.
 - Merge only with the required approval.
 
-## 7. Handover and continuous learning
+## 7. Persistent project memory
+
+Every project repository must maintain docs/PROJECT_MEMORY.md, initialized from the shared PROJECT_MEMORY_TEMPLATE.md during project setup. For an existing project with an equivalent canonical knowledge file, retain that file and document its location rather than creating a duplicate.
+
+- Read the memory at the start of each work session; cross-check critical facts against current code, configuration, tests, and Git state.
+- Update it throughout the project whenever durable context changes: vision, goals, constraints, decisions, architecture, verified implementation, research, risks, lessons, relevant user preferences, milestone status, or next actions.
+- Reconcile it before substantial handovers and after meaningful milestones. Do not wait until the end of a project.
+- Keep it compact and navigable. Put detailed decisions, evidence, experiments, and risks in their specialist logs and link to them.
+- Label facts, decisions, assumptions, experiments, and recommendations distinctly. Correct or remove outdated information.
+- Never store secrets, credentials, sensitive personal data, confidential third-party information, or raw chat transcripts. A private repository is not a secret store.
+- If write access is unavailable, prepare the update and explicitly report that it remains unsaved.
+
+## 8. Handover and continuous learning
 
 Record the current branch and commit, completed work, changed files, tests run, known limitations, unresolved questions, and the next safe action.
 
