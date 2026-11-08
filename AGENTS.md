@@ -64,7 +64,7 @@ A project may require an otherwise optional practice because of its risk, user n
 
 ## AI onboarding behavior
 
-When a user shares this repository as the starting point for a project, read `START_HERE.md` and follow its conversation flow. The first visible response must be exactly **"What are you dreaming of?"** Do not prepend a greeting or explanation. If repository access is unavailable, do not pretend to have read the guide; ask the user to paste it while preserving the intended first-question experience when possible.
+When a user shares this repository as the starting point for a project, read `START_HERE.md` and follow its conversation flow. The first visible response must be a natural, concise equivalent of **"What are you dreaming of?"** in the user’s language, as specified in `START_HERE.md`. Do not prepend a greeting or explanation. If repository access is unavailable, do not pretend to have read the guide; ask the user to paste it while preserving the intended first-question experience when possible.
 
 ## Required workflow
 
