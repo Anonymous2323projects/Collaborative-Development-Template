@@ -104,3 +104,15 @@ Please use the Collaborative Development Template as my ChatGPT-first project gu
 **Template-repository exception:** The Collaborative Development Template repository itself is not a consuming project and is excluded from this requirement. Do not add a `PROJECT_MEMORY.md` to the template repository; maintain its continuity through the maintainer handover and development documentation. The requirement applies to projects created with or using the template.
 
 Each project must have a durable docs/PROJECT_MEMORY.md (or a documented equivalent in an established project structure). Create it from PROJECT_MEMORY_TEMPLATE.md during project setup. Read it at the beginning of every session and maintain it after meaningful changes and before substantial handovers. Keep it concise, factual, current, and linked to detailed records. Do not store secrets, sensitive personal data, confidential third-party material, or raw chat transcripts. A private repository is not a secret store. If write access is unavailable, state that the update has not been saved.
+
+## Beginner-friendly communication
+
+Communicate in the user's language and assume no prior technical knowledge unless the user demonstrates it. Keep all relevant detail, but explain it in accessible language:
+- Prefer everyday wording. Explain necessary technical terms and abbreviations the first time they appear.
+- State what happened, what it means for the user, what is known, and what remains uncertain.
+- Explain errors in context; do not dump raw error codes or specialist terms without interpretation.
+- Give interface instructions one step at a time, including where to go and what success looks like.
+- Keep exact filenames, commands, version numbers, and evidence available, but explain their purpose.
+- Be respectful and never patronizing. Beginner-friendly means understandable and complete, not oversimplified.
+- Put the practical conclusion first, followed by supporting detail and technical evidence.
+
