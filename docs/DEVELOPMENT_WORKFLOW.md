@@ -74,11 +74,11 @@ This is a remote-publication gate, not a prerequisite for coding or local commit
 
 ## 7. Upstream template update awareness
 
-A GitHub repository created from a template is a snapshot, not a live fork or synchronized copy. At bootstrap, record the exact source release/commit in `TEMPLATE_UPDATE_RECORD_TEMPLATE.md` or an existing canonical equivalent. Check for relevant upstream changes at the start of substantial sessions and meaningful maintenance/release checkpoints when access is available; for an active project, raise a check if about 30 days have passed since the last one. Do not require paid monitoring or scheduled automation.
+A repository created from a GitHub template is a snapshot; it does not automatically receive later changes. In downstream projects, record the source and applied release/tag or commit in `docs/PROJECT_MEMORY.md` when known. GitHub template creation may not preserve the source commit, so mark an unknown baseline honestly rather than guessing.
 
-Follow `TEMPLATE_UPDATE_AWARENESS.md`: distinguish stable releases from unreleased branch changes, summarize relevance and risks, preserve local customizations, and offer a reviewable patch. Never silently pull, push, merge, overwrite, install, or migrate. Emergency notices do not authorize changes. Report failed or unavailable checks as unknown, never as up to date.
+At substantial work sessions and meaningful maintenance/release checkpoints, check for relevant upstream changes when repository access is available; if an active project has gone about 30 days without a check, raise it at the next useful checkpoint. Summarize relevance, risks, and local conflicts, then offer a focused, reviewable patch. Never silently apply, push, merge, overwrite, install, or migrate changes. A credible urgent security/safety issue warrants an evidence-based warning and narrow mitigation advice, not automatic changes. This is not background monitoring and requires no paid automation. Actual software updater security remains covered by [the Update and Release Security Policy](../UPDATE_AND_RELEASE_SECURITY.md).
 
-**Template-repository exception:** the Collaborative Development Template itself does not maintain a downstream update record. Its own continuity remains in the maintainer handover.
+**Template-repository exception:** this repository does not maintain a downstream template-update record; its continuity remains in the maintainer handover.
 
 ## 8. Persistent project memory
 
