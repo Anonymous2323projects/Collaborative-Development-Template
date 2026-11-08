@@ -59,7 +59,14 @@ This repository is public. Never add personal, private, confidential, or identif
 
 ## Status
 
-Foundation and practical starter pack under review. The onboarding guide is designed to be reusable and should be adapted to each project's needs. Repository hygiene and Gitleaks checks passed in the latest inspected GitHub Actions run. The fresh-conversation test confirmed the exact opening response when the guide was explicitly accessed on the review branch; default-branch discovery and the remaining onboarding scenarios are still under review.
+The core foundation and practical starter pack are available on the default branch.
+
+The `START_HERE.md` onboarding guide is now present on `main`. Its initial opening behavior and idea-exploration flow have previously been tested through a review branch. However, a fresh-conversation test using the default branch is still required to confirm that the complete onboarding experience works as intended.
+
+The latest inspected visual-identity pull request (#3) passed its Repository Hygiene and Gitleaks checks. These automated checks do not constitute a complete security audit or legal review.
+
+The template remains under active review. See [the project handover](docs/PROJECT_HANDOVER.md) and [the onboarding acceptance test](docs/ONBOARDING_ACCEPTANCE_TEST.md) for current findings and limitations.
+
 
 ## Licence
 
