@@ -14,11 +14,11 @@ Review this existing project against the latest applicable template revision. Id
 2. Read the current upstream default branch. Record exact 40-character HEAD SHA and date. Read current `CHANGELOG.md`, `START_HERE.md`, `README.md`, and relevant guidance.
 3. Find this project's `docs/TEMPLATE_VERSION.md` or equivalent. Identify the exact previously reviewed upstream SHA.
 4. If known, compare that exact upstream SHA to current HEAD. If unknown, say so and perform a file-by-file current-state gap analysis. Never guess or invent historical provenance.
-5. Read current Project Instructions if actually available, README, agent instructions, memory, handover, pending actions, decision log, workflow, security/legal guidance, and overlapping local files.
+5. Read current Project Instructions if actually available, README, agent instructions, and the project's canonical memory/handover. Read other files only when the upstream changes affect them; open specialist security/legal guidance only for changes in those areas.
 6. Distinguish verified facts, user decisions, assumptions, recommendations, and unresolved questions.
 
 ## Phase 2 — Impact matrix
-For each relevant upstream addition, edit, rename or deletion, record: upstream file/change; rationale; classification (required safety/security, important, optional, not applicable, already covered); downstream files affected; local content at risk; proposed adaptation; validation method.
+Create one compact impact list for relevant upstream changes: what changed, whether it applies, affected downstream files, local content or safeguards at risk, and the proposed action (adopt, adapt, already covered, not applicable, or defer). Group related files into one item; do not produce duplicate checklists.
 
 ## Phase 3 — Mandatory preservation rules
 - Never blindly copy or replace template files.
@@ -35,17 +35,16 @@ If authorized write access exists, use a dedicated branch and focused, reversibl
 Without separate explicit approval, do not merge, push directly to the default branch, delete files/branches, rewrite history, force-push, change visibility/permissions/security settings/secrets/billing, publish/release/deploy, alter application behavior/dependencies/user data, or install/replace Project Instructions.
 
 ## Phase 5 — Validation and records
-1. Review the full diff for accidental changes, deletions, secrets, privacy leaks, licence issues, broken links, and instruction conflicts.
-2. Run relevant checks/tests; report exact commands and outcomes. Do not imply unrun tests passed or tests on another SHA apply.
-3. Generate revised Project Instructions only when needed. Keep them project-specific, preserve invariants, check the current field limit, and never silently truncate.
-4. Project Instructions are not installed by repository files. Present the full revision; the owner must paste/save it in **Project settings → Project instructions** and verify it. Do not claim installation without confirmation.
-5. Update `docs/TEMPLATE_VERSION.md` only after reviewed changes are applied. Record exact upstream SHA, review date, downstream commit/PR, adopted and non-adopted changes.
-6. Update memory/handover only with durable verified facts; do not save raw chat transcripts.
+1. Review the complete proposed change once for accidental edits/deletions, secrets, privacy, licences, broken links, and instruction conflicts.
+2. Apply only relevant changes on a reviewable branch, preserving local content and safeguards.
+3. Run checks for the changed files and affected behavior. Reuse valid evidence for unchanged work; do not rerun unrelated checks.
+4. If Project Instructions need updating, prepare the full project-specific text. The owner must paste/save it in **Project settings → Project instructions**; check the field limit shown there and never silently truncate.
+5. Update `docs/TEMPLATE_VERSION.md` once after adoption, recording the exact upstream SHA, review date, downstream commit/PR, and adopted/deferred items. Update memory/handover only for durable facts, without copying chat transcripts.
 
 ## Final report
 State exact upstream SHA; downstream branch and commit/PR; adopted/adapted/deferred/rejected changes; files/data left untouched; validation performed/not performed; risks and manual actions; and whether the project was reviewed against that SHA. Never say it synchronized automatically.
 
-Work proactively within these boundaries. Ask only for a genuine blocker or consequential decision.
+Work proactively within these boundaries. Batch related work and report once. Ask only for a genuine blocker or a consequential decision that has not already been authorized.
 
 ## Communication requirement
 
