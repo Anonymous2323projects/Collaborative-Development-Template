@@ -4,6 +4,8 @@ Notable user-facing changes to the template are recorded here. This is a curated
 
 ## Unreleased
 
+- Added a safe downstream template-update guide, reusable update prompt, and copyable exact-SHA version record. Clarified manual updates, preservation of project-specific work, and separate Project Instructions installation.
+
 - Added project-specific OpenAI Model Spec alignment, instruction-hierarchy and prompt-injection safeguards, plus updated shared-Project privacy wording.
 - Added unit tests for repository hygiene helpers and CodeQL analysis for the Python maintenance script.
 - Documented the reported Google AI Studio free-plan origin and limitations of the manifesto banner's rights/provenance evidence.
