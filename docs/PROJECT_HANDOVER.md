@@ -27,6 +27,7 @@
 - Proactive copilot-style execution and collaboration guidance was integrated through PR #11.
 - The downstream persistent project-memory requirement and explicit template-repository exception were integrated through PR #12.
 - Maintainer-record separation and onboarding/privacy-boundary corrections were integrated through PR #13 (merge commit `21a29a6fad66c6e3c82e2ab20eda78c864595864`).
+- Free-plan-first ChatGPT continuity and the human-dependent action register were integrated through PR #14 (squash merge `2c93ee400d259c4e3bd801af207ee200ccc74778`).
 - The README banner was switched to the repository-local asset in commit `fac8578787ea5d414bae98c81ad0f9309337525b`.
 
 These entries describe repository changes only; they are not evidence of a complete security, privacy, or legal audit.
@@ -44,7 +45,7 @@ These entries describe repository changes only; they are not evidence of a compl
 ## Current maintenance focus
 
 - GitHub's repository-level **Template repository** setting is enabled and verified: the GitHub API reports `is_template: true`. The repository can now be used through GitHub's “Use this template” workflow.
-- Complete review and merge decision for PR #14; it adds Free-plan-first ChatGPT continuity and the human-dependent action register.
+- Run and record the real ChatGPT Free onboarding acceptance test (Scenario F); the repository currently contains the test specification, not a live test result.
 - Keep README and onboarding links aligned with the actual starter-pack contents.
 - Keep onboarding acceptance criteria generic and maintainable; record any future test results separately and only in sanitized form.
 - Review the distinction between mandatory safeguards, recommended practices, and user-selectable workflow choices.
