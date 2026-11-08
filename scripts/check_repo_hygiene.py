@@ -122,7 +122,7 @@ def workflow_policy_errors(path: Path, content: str) -> list[str]:
     errors = []
     if not re.search(r"^permissions\s*:", content, re.MULTILINE):
         errors.append(f"{path}: explicit top-level GITHUB_TOKEN permissions are required")
-    if re.search(r"^\s*uses:\s*[^\s#]+@(?![0-9a-fA-F]{40}(?:\s|$))", content, re.MULTILINE):
+    if re.search(r"^\s*(?:-\s*)?uses:\s*[^\s#]+@(?![0-9a-fA-F]{40}(?:\s|$))", content, re.MULTILINE):
         errors.append(f"{path}: external actions must be pinned to a full 40-character commit SHA")
     if re.search(r"^\s*permissions:\s*write-all\s*$", content, re.MULTILINE):
         errors.append(f"{path}: permissions: write-all is not allowed")
