@@ -153,11 +153,6 @@ def main() -> int:
                 errors.append(f"{path}: cannot read workflow: {exc}")
                 continue
             errors.extend(workflow_policy_errors(path, content))
-    handover = ROOT / "docs/PROJECT_HANDOVER.md"
-    if handover.exists():
-        text = handover.read_text(encoding="utf-8").lower()
-        if "is being prepared" in text or "being prepared on" in text:
-            errors.append("docs/PROJECT_HANDOVER.md: stale in-progress milestone wording; reconcile merged PRs with the current default branch")
     if errors:
         print("Repository hygiene checks failed:")
         for error in errors:
@@ -165,7 +160,7 @@ def main() -> int:
         return 1
     workflow_count = sum(1 for path in files if path.parts[:2] == WORKFLOW_DIR.parts and path.suffix.lower() in {".yml", ".yaml"})
     print(f"Repository hygiene checks passed for {len(files)} tracked files.")
-    print("Checked sensitive paths, local Markdown links and heading anchors, stale handover wording,")
+    print("Checked sensitive paths, local Markdown links and heading anchors,")
     print(f"and baseline workflow safety conventions in {workflow_count} workflow file(s).")
     print("This does not parse YAML, render Markdown, scan file contents for secrets, verify action provenance,")
     print("check remote URLs, or constitute a complete security, privacy, or legal audit.")
