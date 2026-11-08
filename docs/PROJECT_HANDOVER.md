@@ -15,6 +15,8 @@
 | #1 | Privacy-first foundation and ChatGPT project onboarding | Merged |
 | #2 | Private GitHub project setup gate | Merged |
 | #3 | Bolder independent visual identity for README | Closed without merging — banner deferred |
+| #4 | Update project handover and onboarding status | Merged |
+| #5 | Align handover with deferred banner decision | Open — documentation correction |
 
 PR #3 was closed without merging at the owner's direction. No proposed banner or visual assets from that PR are included in `main`. The README intentionally remains banner-free until a future design is approved.
 
