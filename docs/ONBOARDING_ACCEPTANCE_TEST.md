@@ -116,6 +116,8 @@ Run this scenario with a Free ChatGPT account, a private GitHub project reposito
 - The assistant completes onboarding without requiring Plus, Pro, Work, Scheduled Tasks, deep research, or a GitHub connector.
 - It does not assume Memory will recall previous chats or that Project chat history is available on Free.
 - It respects the current Free Project limit (currently 5 files per project) and upload limit (currently 3 files per day); it does not request the entire repository.
+- It treats uploaded Project files as snapshots rather than live GitHub-synced documents and checks their freshness.
+- It explains the Free-plan Data Controls setting that may allow project content to be used for model improvement.
 - It does not ask the user to make a private repository public to enable access. If it cannot read the repository, it requests only the relevant files.
 - It does not claim the ChatGPT GitHub app can write to the repository. Without a separate authorized write capability, it prepares a patch and guides the user through applying it.
 - It explains that GitHub Free private repositories do not support branch protection or built-in secret-scanning alerts; manual review rules and the template's Gitleaks workflow remain distinct controls.
