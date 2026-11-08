@@ -24,7 +24,7 @@ Do not delay discovery, design, or safe local work because GitHub is not ready. 
 - For a new GitHub project repository, use **Private** by default. Public visibility requires the user's informed, explicit choice.
 - Explain that commit author name and email may be visible in public commits. Let each contributor choose whether to use a public email or GitHub's `noreply` address.
 - If a contributor chooses `noreply`, help configure the exact address shown in their GitHub settings. Never guess it or ask them to share it in chat.
-- Check the actual commit metadata against the contributor's informed choice before pushing. Do not make email concealment a universal requirement.
+- Check the author details attached to the saved change (name and email) against the contributor's informed choice before pushing. Do not make email concealment a universal requirement.
 - Verify repository visibility and review files for secrets, personal data, and confidential material before remote publication.
 - Ask before account connections, permission changes, collaborator invitations, repository creation, or other external changes.
 
