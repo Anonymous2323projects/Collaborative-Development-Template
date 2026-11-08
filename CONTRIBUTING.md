@@ -6,7 +6,7 @@ Thanks for helping improve this project-agnostic development template.
 
 - Read `AGENTS.md`, `SECURITY.md`, and `PRIVACY_AND_PUBLICATION.md`.
 - Keep contributions reusable across unrelated projects and technology stacks unless a section is explicitly labelled as stack-specific.
-- Do not submit personal information, private conversations, credentials, confidential material, or content copied from private projects.
+- Do not submit another person's personal information, private conversations, credentials, confidential material, or content copied from private projects without the necessary authorization. You decide whether your own name or contact details should appear publicly; this project does not require you to disclose them or to hide them.
 - Confirm that you have the right to contribute the material and that its licence is compatible with the repository's MIT licence.
 
 ## Workflow
