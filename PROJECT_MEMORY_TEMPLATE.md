@@ -46,14 +46,6 @@ Use the project's decision, research, and risk records for detail. Do not copy t
 
 <Only durable, non-sensitive preferences clearly expressed by the user and relevant to this project.>
 
-## Meaningful memory changes
-
-Record only changes to durable project knowledge, not every conversation.
-
-| Date | What changed | Evidence |
-|---|---|---|
-| <DATE> | <SHORT SUMMARY> | <COMMIT / ISSUE / PR / SOURCE> |
-
 ---
 
 ## Instructions for maintaining this file
