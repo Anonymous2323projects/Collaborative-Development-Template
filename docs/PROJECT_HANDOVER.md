@@ -19,6 +19,7 @@
 - The README banner is stored at `assets/manifesto-banner.png` and referenced locally from `README.md`.
 - Reusable project resources are maintained separately from this repository's own maintenance records.
 - `PENDING_ACTIONS_TEMPLATE.md` is an optional register for meaningful human-dependent actions in downstream projects.
+- `docs/TEMPLATE_UPDATE_AWARENESS.md` defines user-controlled upstream update discovery/adoption; `TEMPLATE_UPDATE_RECORD_TEMPLATE.md` records the source baseline in downstream projects. The template repository itself is exempt.
 - ChatGPT Free compatibility is the baseline; Projects, Memory, GitHub connections, and automation are convenience features with plan-dependent limits.
 - The public repository must not contain private conversations, personal data, credentials, or project-specific material from unrelated work.
 
@@ -41,6 +42,10 @@ These entries describe repository changes only; they are not evidence of a compl
 5. Verify claims against the current default branch and current tool output; remove stale statuses promptly.
 6. Use focused branches and pull requests. Do not merge to `main`, rewrite history, or perform destructive Git operations without explicit authorization.
 7. Record only meaningful decisions, evidence, unresolved risks, and next actions. Avoid duplicating the detailed workflow or policies.
+
+## Recent verified repository milestones
+
+- Upstream template update awareness and the downstream source-baseline record are being prepared on branch `feature/template-update-awareness`; the change is not yet merged.
 
 ## Current maintenance focus
 
