@@ -76,7 +76,7 @@ When a user shares this repository as the starting point for a project, read `ST
 **Template-repository exception:** This repository is the template itself, not a project consuming the template. Do not create or maintain a `docs/PROJECT_MEMORY.md` here; doing so would make the template apply its own downstream-project rule to itself. Maintain this repository through its existing handover, research log, and development documentation. The persistent-memory requirement below applies to projects that use this template.
 
 - Every project repository must have a durable docs/PROJECT_MEMORY.md, initialized from PROJECT_MEMORY_TEMPLATE.md when the project is bootstrapped. If the project already has an established documentation structure, use its equivalent canonical location and document that path.
-- Read the project memory and pending-action register at the start of each new session, alongside current instructions and handover. Verify critical facts against the live repository; do not treat stale memory or action records as authoritative.
+- Read the project memory and, if one exists, the pending-action register at the start of each new session, alongside current instructions and handover. Do not create an empty action register just to satisfy this check; initialize one only when meaningful human-dependent actions arise. Verify critical facts against the live repository; do not treat stale memory or action records as authoritative.
 - Maintain it throughout the project. Update it after meaningful changes to vision, scope, decisions, architecture, verified implementation, research, risks, durable project-relevant preferences, lessons, milestone status, or next actions. Reconcile it before substantial handovers.
 - Keep it concise and factual; summarize durable context rather than copying chat transcripts. Link to detailed decision, research, risk, and test records instead of duplicating them.
 - Distinguish confirmed facts, user decisions, assumptions, experiments, and recommendations. Remove or correct stale information.
@@ -86,7 +86,7 @@ When a user shares this repository as the starting point for a project, read `ST
 ### Human-dependent actions and continuity
 
 - For projects using this template, initialize `docs/PENDING_ACTIONS.md` from `PENDING_ACTIONS_TEMPLATE.md` when meaningful user-dependent actions arise, unless an established canonical action tracker already serves this purpose.
-- Read the action register at session start and before handovers. When a user test or decision is needed, explain the reason and offer step-by-step guidance now or deferral. Record deferred actions durably.
+- Read the action register at session start and before handovers when one exists. When a user test or decision is needed, explain the reason and offer step-by-step guidance now or deferral. Record actions that are deferred or remain outstanding durably.
 - Classify actions as critical blockers, blocking, or non-blocking. Stop only work affected by a critical or blocking dependency; continue independent work autonomously.
 - Surface reminders at relevant checkpoints without nagging. Do not promise future notifications unless an external scheduled task was actually created and verified; obtain authorization before creating one.
 - Keep action records synchronized with project memory and handovers. Avoid duplicate task lists; use the project's established issue tracker when appropriate.
