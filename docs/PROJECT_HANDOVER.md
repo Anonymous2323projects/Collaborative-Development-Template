@@ -1,56 +1,110 @@
 # Project Handover
 
-## Project and task
+## Project
 
-- **Project:** Collaborative Development Template
-- **Goal:** Maintain a reusable, privacy-first template that helps people and AI assistants develop projects collaboratively and safely.
-- **Status:** Foundation under review; pull request #1 remains open and in draft.
-
-## Repository state
-
+- **Name:** Collaborative Development Template
 - **Repository:** https://github.com/Anonymous2323projects/Collaborative-Development-Template
-- **Working branch:** `work/template-foundation`
-- **Target branch:** `main`
-- **Pull request:** https://github.com/Anonymous2323projects/Collaborative-Development-Template/pull/1
-- **Integration status:** No merge has been performed. The feature branch is ahead of `main`; check the live PR for the current head commit and comparison.
+- **Default branch:** `main`
+- **Purpose:** Maintain a reusable, privacy-first framework for structured AI-assisted software development.
+- **Current status:** Core foundation integrated; visual identity and documentation maintenance under review.
 
-## Completed
+## 1. Repository integration status
 
-- Added repository-wide instructions for AI assistants and contributors.
-- Added the ChatGPT onboarding guide and reusable project brief, decision, risk, research, and milestone templates.
-- Added privacy, security, incident response, update/release, and release-readiness guidance.
-- Added issue and pull request templates, review checklist, and repository hygiene validation.
-- Added the MIT licence, following the repository owner's approval, and aligned the README and contribution guidance.
-- Integrated a supplementary set of general collaboration and development principles into existing guidance: active AI partnership, honest constructive challenge, user ownership, reuse-before-rebuild research, principle-level classification, and a lightweight path for preserving and proposing reusable project insights.
-- Strengthened the development workflow, research note, and handover template without adding a duplicate policy document or changing the existing security/update/privacy safeguards.
-- Recorded the live onboarding and safety test results in `docs/ONBOARDING_ACCEPTANCE_TEST.md`.
+| Pull request | Subject | Status |
+|---|---|---|
+| #1 | Privacy-first foundation and ChatGPT project onboarding | Merged |
+| #2 | Private GitHub project setup gate | Merged |
+| #3 | Bolder independent visual identity for README | Open — not merged |
 
-## Validation
+PR #3 is limited to presentation and visual identity. It must not be used to introduce unrelated changes to security policies, project priorities, onboarding rules, or development workflows.
 
-- **Automated validation:** The feature-branch workflow runs the sensitive-path/Markdown-link check and Gitleaks full-history secret scan. Both jobs passed on a previously inspected commit. A successful run for the latest collaboration-principles commits has not yet been confirmed; consult the [live Actions history](https://github.com/Anonymous2323projects/Collaborative-Development-Template/actions?query=branch%3Awork%2Ftemplate-foundation) before treating the latest head as validated.
-- These checks do not establish that the repository is free of all personal data, vulnerabilities, or legal issues.
-- **Onboarding:** The explicit review-branch opening test and Scenario B passed. Scenario C was accepted by the user but only partially exercised against its written criteria. In Scenario D, the personal-data publication and unreviewed-merge tests passed in conversation; the history-rewrite/force-push scenario remains untested. The default-branch opening test failed because `START_HERE.md` is not present on `main`. See `docs/ONBOARDING_ACCEPTANCE_TEST.md`.
+## 2. Current project structure
 
-## Risks and limitations
+The template is built around five priorities, in strict order:
 
-- A personal email address exists in public historical Git commit metadata. It is not reproduced here. No history rewrite has been attempted.
-- GitHub private vulnerability reporting was confirmed by the repository owner to be enabled.
-- The default-branch onboarding experience remains incomplete until the guide is available from `main`.
-- The test results are manual conversation evidence, not an independent security assessment or a guarantee of behavior across AI products.
-- No legal compliance or complete security audit is claimed.
+1. Safety
+2. Legal solidity
+3. Usability
+4. Trust
+5. Freedom
 
-## Decisions
+Its five core components are:
 
-- **Confirmed:** MIT licence selected by the repository owner.
-- **Confirmed:** GitHub private vulnerability reporting is enabled (owner confirmation).
-- **Still open:** Whether and how to remediate the personal email in historical commit metadata.
-- **Deferred:** Optional Code of Conduct and additional contributor terms.
-- **Approval boundary:** Do not merge or publish a release without explicit owner approval.
+- MEMORY
+- ROADMAP
+- HANDOVER
+- RESEARCH LOG
+- DEVELOPMENT WORKFLOW
 
-## Next safe actions
+The `START_HERE.md` onboarding guide is present on `main`.
 
-1. Complete the remaining targeted public-content and publication review.
-2. Resolve or explicitly accept the default-branch onboarding limitation.
-3. Run the actual history-rewrite/force-push safety prompt if a complete live test record is required.
-4. Present the final scope, checks, limitations, and risks to the repository owner.
-5. Obtain an explicit go/no-go decision before merging.
+## 3. Completed work
+
+- Core repository instructions and onboarding documentation.
+- Privacy-first GitHub project setup guidance.
+- Reusable project brief, decision, risk, research, and milestone templates.
+- Development workflow and handover guidance.
+- Security, incident response, privacy, publication, and release-readiness policies.
+- Repository hygiene and secret-scanning automation.
+- General collaboration principles integrated into the existing documentation.
+
+## 4. Validation and limitations
+
+The latest inspected PR #3 head passed both jobs in the Repository Hygiene workflow:
+
+- Sensitive paths and Markdown links.
+- Gitleaks full-history secret scanning.
+
+These results apply to the inspected commit only. They do not establish that the entire repository is free of security, privacy, or legal issues.
+
+### Onboarding validation
+
+The recorded onboarding tests contain:
+
+- Explicit review-branch opening test: passed.
+- Initial idea exploration: passed.
+- Project-shaping scenario: accepted by the user, but only partially exercised.
+- Personal-data publication boundary: passed in conversation.
+- Unreviewed merge boundary: passed in conversation.
+- History rewrite / force-push scenario: not fully tested.
+
+The original default-branch test failed because `START_HERE.md` was not available on `main` at that time.
+
+The guide is now present on `main`. A new fresh-conversation test is still required. The historical failure must remain in the test record.
+
+## 5. Outstanding risks
+
+### Historical Git metadata
+
+A personal email address was identified in historical public commit metadata. It is not reproduced here. No history rewrite has been attempted.
+
+The repository owner has enabled GitHub email privacy settings for future commits. This does not remove information already present in historical commits.
+
+Any remediation must be assessed separately, including its impact on commit references, collaborators, and distributed copies. Never rewrite history or force-push without explicit informed approval.
+
+### Visual identity
+
+PR #3 remains open.
+
+The final banner and visual identity require owner approval. The repository should maintain a distinctive independent DIY identity without implying official affiliation with Anonymous or using anarchist symbolism.
+
+### Onboarding
+
+The fresh-conversation default-branch test remains outstanding.
+
+## 6. Next actions
+
+1. Complete the visual identity review for PR #3.
+2. Perform a fresh-conversation onboarding test using the public `main` branch.
+3. Update the acceptance-test record with the actual result.
+4. Complete the outstanding targeted privacy and publication review.
+5. Decide whether historical commit metadata requires remediation.
+6. Present the final review findings and risks to the repository owner.
+
+## 7. Approval boundaries
+
+- No merge without explicit owner approval.
+- No release or publication beyond the existing public repository without approval.
+- No history rewrite or force-push without informed approval.
+- No publication of personal or confidential information.
+- No weakening of established safety, privacy, or legal safeguards for convenience or presentation.
