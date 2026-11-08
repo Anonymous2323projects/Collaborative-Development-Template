@@ -22,6 +22,7 @@ Do not assume a report channel is configured until it has been checked in reposi
 - Review network listeners, file-system access, subprocess execution, update mechanisms, and generated binaries.
 - Add appropriate static analysis, dependency scanning, secret scanning, tests, and build verification for the adopted stack.
 - Maintain a vulnerability response and update process appropriate to the project.
+- Follow [the Update and Release Security Policy](UPDATE_AND_RELEASE_SECURITY.md): verify update provenance and signatures, communicate changes clearly, and obtain the user's informed approval before installing updates unless a clearly disclosed and justified deployment model requires otherwise.
 
 ## Important limitations
 
