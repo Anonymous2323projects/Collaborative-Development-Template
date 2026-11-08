@@ -12,7 +12,11 @@ If a user shares this repository URL to begin a project, treat the link itself a
 
 Share this repository link with ChatGPT as the starting point. When ChatGPT can access the repository, it should begin with the opening question above—not a setup explanation or questionnaire.
 
-The guide helps you explore your idea, shape a project brief, choose an appropriate technical direction, and build in manageable steps. You do not need to know how to code to begin. GitHub is the recommended collaboration and version-control host, with private visibility as the default for new project repositories. Existing suitable repositories and other workflows remain valid; apply the privacy checks before committing or pushing to any remote.
+The guide helps you explore your idea, shape a project brief, choose an appropriate technical direction, and build in manageable steps. You do not need to know how to code to begin.
+
+**REQUIRED: configure Project Instructions before relying on the template workflow.** After creating your ChatGPT Project, you must copy the project-specific instructions prepared using `START_HERE.md` into **Project settings → Project instructions** and save them. GitHub does not automatically install these instructions in ChatGPT, and merely linking this repository or uploading its files does not activate the workflow. Without this step, ChatGPT may not consistently follow the template's project continuity, safety, collaboration, and memory practices. Keep the generated text within the current Project Instructions field limit; if it does not fit, prioritize essential rules and keep detailed procedures in Project or repository files. The field's character allowance can change, so check the limit shown in ChatGPT. Follow the mandatory setup and verification steps in [Start here](START_HERE.md).
+
+GitHub is the recommended collaboration and version-control host, with private visibility as the default for new project repositories. Existing suitable repositories and other workflows remain valid; apply the privacy checks before committing or pushing to any remote.
 
 - [Start here: ChatGPT project guide](START_HERE.md)
 - [Private GitHub project setup guide](docs/PRIVATE_GITHUB_SETUP.md)
