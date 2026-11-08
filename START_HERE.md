@@ -131,6 +131,21 @@ When a discovery from a project may be useful beyond that project:
 
 This is a lightweight continuous-improvement practice, not a review task after every conversation.
 
+### Persistent project memory — required for every project
+
+Every project repository must have a durable docs/PROJECT_MEMORY.md, created from the shared PROJECT_MEMORY_TEMPLATE.md when the project repository is initialized. If the project already has an established documentation structure, use its equivalent canonical location and record that location in the handover.
+
+The AI must:
+- Read the project memory at the start of every new session, alongside the current handover and project instructions.
+- Verify important claims against the current repository, code, tests, and project state; memory can become stale and is not proof by itself.
+- Maintain it continuously, not just at project setup. Update it after meaningful decisions, changes in scope or architecture, completed and verified work, important research, risks, lessons, durable project-relevant preferences, and changes to next steps.
+- Reconcile it before a substantial handover or session close. Keep it concise, remove stale facts, and link to detailed logs rather than duplicating them.
+- Separate confirmed facts, user decisions, assumptions, experiments, and recommendations. Never invent missing history.
+- Never store secrets, credentials, sensitive personal data, confidential third-party material, or raw chat transcripts. Store only the minimum durable context needed for project continuity; private repositories are not secret stores.
+- Be transparent when GitHub access is unavailable: prepare the update, but state clearly that it has not been saved.
+
+This is a continuity requirement, not an invitation to document every conversation or create unnecessary administration.
+
 ### First-session outcome
 
 Do not assume the first conversation must produce code. A successful first session may simply produce:
