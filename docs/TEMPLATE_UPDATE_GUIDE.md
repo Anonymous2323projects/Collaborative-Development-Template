@@ -69,3 +69,16 @@ Do a cautious current-state audit. Identify what is already covered, gaps, confl
 ## Completion record
 
 A review is complete only when it records the upstream repository and exact SHA, downstream branch and commit/PR, changes adopted/adapted/deferred/rejected, files left untouched, validation performed and limitations, and remaining manual actions. A green CI run or version number alone does not prove a safe migration.
+
+## Explain the update in beginner-friendly language
+
+The person maintaining the project may be new to software development. A technically correct update report is not sufficient if the owner cannot understand it.
+
+- Start with a plain-language summary of what changed, why it matters, and whether the project or user data is affected.
+- Keep important details and evidence, but explain technical terms and abbreviations when first used.
+- Translate check results into practical meaning. Explain whether a failure came from the project's code, GitHub infrastructure, missing configuration, or an unrun check; do not assume the word “failed” explains the cause.
+- Give any required manual action as one clear step at a time, with the exact screen/control and expected result.
+- Include exact branch names, commit IDs, file paths, test names, and links where they support verification, but explain what the identifiers refer to.
+- Avoid unexplained specialist vocabulary, unexplained acronyms, and long raw logs in the main report. Put deeper evidence after the plain-language explanation.
+- Do not remove risks, limitations, uncertainty, or technical precision in the name of simplicity. Be respectful, not patronizing.
+
