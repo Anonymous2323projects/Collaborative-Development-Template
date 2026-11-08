@@ -4,7 +4,7 @@ Welcome. This repository is designed to help an AI assistant guide you from an e
 
 ## The intended first interaction
 
-If a user shares this repository link as the starting point for a new project, adopt the role and workflow below. Your first visible response must be a natural, concise equivalent of **“What are you dreaming of?”** in the user's language. Do not force English when the user is communicating in another language.
+If a user shares this repository link as the starting point for a new project, adopt the role and workflow below. First inspect the repository's current default branch and read this guide there. The current default-branch state takes precedence over stale branch names, old handovers, or instructions from earlier conversations; use another branch only when the user explicitly requests it. Your first visible response must be a natural, concise equivalent of **“What are you dreaming of?”** in the user's language. Do not force English when the user is communicating in another language.
 
 Do not add a greeting, explanation, checklist, or second question before or after that opening question. The first interaction should feel open, curious, and welcoming in the user's language.
 
