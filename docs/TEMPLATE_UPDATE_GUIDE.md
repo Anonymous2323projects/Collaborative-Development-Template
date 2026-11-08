@@ -15,10 +15,10 @@ When adopting the template, copy [TEMPLATE_VERSION_TEMPLATE.md](TEMPLATE_VERSION
 1. Confirm the canonical upstream repository: https://github.com/Anonymous2323projects/Collaborative-Development-Template
 2. Inspect its current default branch and record its exact HEAD SHA and date.
 3. Read current `CHANGELOG.md`, `START_HERE.md`, `README.md`, and relevant changed documents.
-4. Read the downstream version record, current Project Instructions (if available), README, agent instructions, memory, handover, pending actions, decision log, workflow, security/legal policies, and overlapping local files.
+4. Read the downstream version record, current Project Instructions (if available), README, agent instructions, and the project's canonical memory/handover. Open other files **only when the upstream change affects them**; consult specialist security/legal policies only when the change touches those areas.
 5. If the previous SHA is known, compare that exact upstream commit with the new SHA. A GitHub compare URL is `https://github.com/Anonymous2323projects/Collaborative-Development-Template/compare/OLD_SHA...NEW_SHA`.
 6. If the baseline is unknown, say so and perform a current-state, file-by-file gap analysis. Do not claim a historical diff.
-7. Build an impact matrix for every relevant addition, edit, rename, and deletion: upstream change, rationale, classification (required safety/security, important, optional, not applicable, already covered), downstream files affected, local content at risk, proposed adaptation, and validation.
+7. Make one compact impact list for relevant changes only: what changed, whether this project needs it, which local files are affected, any conflict/risk, and the proposed action (adopt, adapt, already covered, not applicable, or defer). Do not create a separate row for every file when several files form one coherent change.
 
 Do not rely on stale chat context, cached Project uploads, tags, or moving branch names as proof of current state.
 
@@ -49,12 +49,11 @@ Do not perform destructive actions, publish, release, merge, change permissions/
 
 Prefer a dedicated update branch and a small pull request. Before requesting approval:
 
-1. Review the complete diff, including renames and deletions.
-2. Check links, instruction precedence, privacy, licences, and consistency with local policy.
-3. Run relevant available documentation checks and project tests. State exact commands and outcomes; never claim an unrun check passed.
-4. Check revised Project Instructions against the actual character limit shown in ChatGPT. Limits can change; never silently truncate.
-5. Update the downstream version record only after the changes have been reviewed and applied. Record upstream SHA and downstream commit/PR.
-6. List adopted, adapted, deferred, rejected, and untouched areas, plus validation limitations and manual actions.
+1. Review the complete proposed changes once, including deletions and renames. Check links, instruction conflicts, privacy, licences, and local safeguards as part of that same review.
+2. Apply only relevant changes on a reviewable branch. Keep project-specific content intact; do not create duplicate rules or documents.
+3. Run checks that cover the changed files and affected behavior. Reuse valid results for unchanged files/commits; explain any necessary repeat check.
+4. If Project Instructions need updating, prepare a project-specific version and have the owner paste/save it in ChatGPT. Check the field limit shown there; never silently truncate.
+5. Update the version record once, after adoption, and provide one concise completion summary covering the upstream SHA, downstream change, adopted/deferred items, validation, limitations, and any remaining user action.
 
 Do not merge the PR, publish a release, change repository settings, or overwrite Project Instructions unless the user explicitly authorizes that action.
 
