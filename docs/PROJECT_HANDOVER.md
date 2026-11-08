@@ -9,11 +9,10 @@
 ## Repository state
 
 - **Repository:** https://github.com/Anonymous2323projects/Collaborative-Development-Template
-- **Branch:** `work/template-foundation`
-- **Base:** `main`
-- **Reviewed feature-branch commit before this handover update:** `6923f537c912fe0ac37f3f4ce1ba8343d5086481`
-- **Working tree:** Changes are committed to the feature branch; no merge has been performed.
+- **Working branch:** `work/template-foundation`
+- **Target branch:** `main`
 - **Pull request:** https://github.com/Anonymous2323projects/Collaborative-Development-Template/pull/1
+- **Integration status:** No merge has been performed. The feature branch is ahead of `main`; check the live PR for the current head commit and comparison.
 
 ## Completed
 
@@ -22,21 +21,23 @@
 - Added privacy, security, incident response, update/release, and release-readiness guidance.
 - Added issue and pull request templates, review checklist, and repository hygiene validation.
 - Added the MIT licence, following the repository owner's approval, and aligned the README and contribution guidance.
-- Updated the pull request description to record scope, evidence, limitations, and open items.
+- Recorded the live onboarding and safety test results in `docs/ONBOARDING_ACCEPTANCE_TEST.md`.
 
 ## Validation
 
-- **GitHub Actions run inspected:** https://github.com/Anonymous2323projects/Collaborative-Development-Template/actions/runs/42444005498
-- Repository hygiene check: passed.
-- Gitleaks full-history secret scan: passed.
+- Latest GitHub Actions run for the current feature-branch head: [pull request run](https://github.com/Anonymous2323projects/Collaborative-Development-Template/actions/runs/42447679345).
+- **Sensitive paths and Markdown links:** passed.
+- **Gitleaks full-history secret scan:** passed.
+- Both jobs also passed on the push-triggered run for the same commit: https://github.com/Anonymous2323projects/Collaborative-Development-Template/actions/runs/42447675543.
 - These checks do not establish that the repository is free of all personal data, vulnerabilities, or legal issues.
-- **Onboarding:** The guide's exact opening response passed when the assistant was explicitly directed to `START_HERE.md` on `work/template-foundation`. The default-branch test did not pass because `START_HERE.md` was absent from `main`. Scenarios covering idea exploration, project shaping, and safety boundaries remain untested. See `docs/ONBOARDING_ACCEPTANCE_TEST.md`.
+- **Onboarding:** The explicit review-branch opening test and Scenario B passed. Scenario C was accepted by the user but only partially exercised against its written criteria. In Scenario D, the personal-data publication and unreviewed-merge tests passed in conversation; the history-rewrite/force-push scenario remains untested. The default-branch opening test failed because `START_HERE.md` is not present on `main`. See `docs/ONBOARDING_ACCEPTANCE_TEST.md`.
 
 ## Risks and limitations
 
 - A personal email address exists in public historical Git commit metadata. It is not reproduced here. No history rewrite has been attempted.
 - GitHub private vulnerability reporting was confirmed by the repository owner to be enabled.
 - The default-branch onboarding experience remains incomplete until the guide is available from `main`.
+- The test results are manual conversation evidence, not an independent security assessment or a guarantee of behavior across AI products.
 - No legal compliance or complete security audit is claimed.
 
 ## Decisions
@@ -49,7 +50,8 @@
 
 ## Next safe actions
 
-1. Complete the final public-content and publication review.
-2. Review the default-branch onboarding limitation and decide whether the full PR is ready for merge.
-3. Complete onboarding scenarios B-D when practical.
-4. Ask the owner for an explicit go/no-go decision before merging.
+1. Complete the remaining targeted public-content and publication review.
+2. Resolve or explicitly accept the default-branch onboarding limitation.
+3. Run the actual history-rewrite/force-push safety prompt if a complete live test record is required.
+4. Present the final scope, checks, limitations, and risks to the repository owner.
+5. Obtain an explicit go/no-go decision before merging.
