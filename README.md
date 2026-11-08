@@ -10,8 +10,15 @@ The guide then helps you explore your idea, shape a project brief, choose an app
 
 - [Start here: AI project guide](START_HERE.md)
 - [ChatGPT onboarding guide](CHATGPT_ONBOARDING.md)
+- [Project brief template](PROJECT_BRIEF_TEMPLATE.md)
+- [Decision log template](DECISION_LOG_TEMPLATE.md)
+- [Risk register template](RISK_REGISTER_TEMPLATE.md)
+- [Research template](RESEARCH_TEMPLATE.md)
+- [Milestone plan template](MILESTONE_PLAN_TEMPLATE.md)
 - [Development workflow](docs/DEVELOPMENT_WORKFLOW.md)
+- [Review checklist](docs/REVIEW_CHECKLIST.md)
 - [Handover template](docs/HANDOVER_TEMPLATE.md)
+- [Incident response playbook](INCIDENT_RESPONSE.md)
 - [Security policy](SECURITY.md)
 - [Project risk and release readiness standard](PROJECT_RISK_AND_RELEASE_READINESS.md)
 - [Update and release security policy](UPDATE_AND_RELEASE_SECURITY.md)
@@ -19,7 +26,7 @@ The guide then helps you explore your idea, shape a project brief, choose an app
 - [Contributor guide](CONTRIBUTING.md)
 - [AI and contributor repository instructions](AGENTS.md)
 
-## The template's four priorities
+## The template's five priorities
 
 The template is designed and maintained in this strict priority order:
 
@@ -45,11 +52,11 @@ This repository is public. Never add personal, private, confidential, or identif
 - Never commit credentials, tokens, private keys, personal contact details, private conversation excerpts, private repository URLs, or confidential project material.
 - Review files, screenshots, logs, examples, commit content, and document metadata before publication.
 - Do not copy material from private projects or conversations into this template. Generalize and sanitize reusable lessons first.
-- If sensitive information is exposed, revoke affected credentials immediately and assess whether Git history and any distributed copies require remediation.
+- If sensitive information is exposed, follow [the incident response playbook](INCIDENT_RESPONSE.md), revoke affected credentials immediately, and assess whether Git history and distributed copies require remediation.
 
 ## Status
 
-Initial foundation under review. The onboarding guide is designed to be reusable and should be adapted to each project's needs.
+Foundation and practical starter pack under review. The onboarding guide is designed to be reusable and should be adapted to each project's needs. Automated checks and the final onboarding test remain to be verified.
 
 ## Licence
 
