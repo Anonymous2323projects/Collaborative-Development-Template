@@ -55,6 +55,7 @@ These entries describe repository changes only; they are not evidence of a compl
 - Keep onboarding acceptance criteria generic and maintainable; record any future test results separately and only in sanitized form.
 - Review the distinction between mandatory safeguards, recommended practices, and user-selectable workflow choices.
 - Ensure automated checks are described according to what they actually test; do not treat hygiene or secret scanning as a complete content or security review.
+- Review [the maintainer-only repository settings checklist](REPOSITORY_SETTINGS_CHECKLIST.md); branch protection, repository metadata, and security settings require GitHub administration access and are not changed by documentation commits.
 
 ## Handover checklist
 
