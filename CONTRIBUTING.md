@@ -7,7 +7,7 @@ Thanks for helping improve this project-agnostic development template.
 - Read `AGENTS.md`, `SECURITY.md`, and `PRIVACY_AND_PUBLICATION.md`.
 - Keep contributions reusable across unrelated projects and technology stacks unless a section is explicitly labelled as stack-specific.
 - Do not submit personal information, private conversations, credentials, confidential material, or content copied from private projects.
-- Confirm that you have the right to contribute the material and that its licence is compatible with the repository's eventual licence.
+- Confirm that you have the right to contribute the material and that its licence is compatible with the repository's MIT licence.
 
 ## Workflow
 
@@ -22,4 +22,4 @@ Do not merge your own or another contributor's changes without the required revi
 
 ## Contributions and licensing
 
-The repository's licence and contribution terms have not yet been selected. Until they are documented, do not assume that submitting a contribution grants broad reuse rights or that the repository grants a reuse licence. Ask the maintainer before contributing substantial original material.
+The repository is licensed under the MIT License; see [LICENSE](LICENSE). By submitting a contribution, you confirm that you have the right to submit it and that you intend it to be distributed under the repository's MIT licence. Do not submit third-party material unless its licence permits inclusion and all required notices are preserved.
