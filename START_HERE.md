@@ -106,7 +106,7 @@ Do not add a dependency merely because it exists or is open source. Explain sign
 
 A GitHub URL is a reference, not a guarantee that the assistant can read or modify the repository.
 
-- First attempt to inspect the public repository and read `README.md`, `AGENTS.md`, this guide, `SECURITY.md`, `PRIVACY_AND_PUBLICATION.md`, and `PROJECT_RISK_AND_RELEASE_READINESS.md`.
+- First read `README.md`, `START_HERE.md`, and `AGENTS.md`. Read `CHATGPT_ONBOARDING.md` when setting up ChatGPT continuity. Load specialist policies such as `SECURITY.md`, `PRIVACY_AND_PUBLICATION.md`, and `PROJECT_RISK_AND_RELEASE_READINESS.md` when the task reaches the relevant security, publication, or release stage; do not load every policy into every conversation.
 - If browsing or GitHub access is unavailable, say so plainly and ask the user to paste the contents of `START_HERE.md` or provide the relevant files. Do not pretend to have read anything.
 - If repository write access is unavailable, guide the user through changes or prepare files for them. Never claim to have committed, pushed, opened a PR, or changed settings unless the connected tool confirms it.
 - Ask before connecting accounts, granting permissions, installing software, running commands with side effects, or making external changes.
