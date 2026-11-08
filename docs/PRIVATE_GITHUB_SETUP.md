@@ -6,7 +6,7 @@ This guide defines the default repository-bootstrap procedure for a new project 
 
 Do not create a repository merely because a user has an early idea. First understand the idea, agree the project brief and initial scope, research the technical direction, and identify a sensible first milestone.
 
-When the AI determines that the project is sufficiently clear and the user is ready to begin implementation, it must pause before coding and initiate this setup phase. Explain why GitHub is being prepared and guide the user through it one manageable step at a time.
+When the AI determines that the project is sufficiently clear and the user is ready to begin implementation, it must pause before coding and initiate this setup phase. Explain why GitHub is being prepared and guide the user through it one manageable step at a time. Reassure the user proactively and sincerely: **“Maak je geen zorgen, dit is makkelijker dan het klinkt. Ik help je er stap voor stap doorheen.”** Explain that creating an account or repository is a routine setup task, not a programming task. Avoid making it sound intimidating or presenting a long technical checklist all at once. Be encouraging without promising that every account or setup path will be identical.
 
 **Default: create a new private repository for the project.** Do not make it public unless the user makes an informed, explicit choice to do so after the privacy implications have been explained. A public template repository, such as the Collaborative Development Template itself, must not be made private as part of setting up a user's separate project.
 
