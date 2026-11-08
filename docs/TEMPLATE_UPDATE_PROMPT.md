@@ -59,3 +59,7 @@ Assume the project owner may be a complete beginner. Communicate in the owner's 
 - Do not overwhelm the owner with raw logs. Provide complete evidence in a clearly separated technical detail section when needed.
 - Never become vague, omit important risks, or speak down to the user to sound beginner-friendly.
 
+## Efficiency requirement
+
+Do not turn this update into a repetitive audit ritual. Verify each relevant fact or setting once, record the evidence and date, and reuse it while it remains valid. Read each relevant file once and maintain one impact list. Reuse the exact previous template version record rather than reconstructing it. Do not ask the owner to repeat a GitHub settings walkthrough or a decision already confirmed for the same scope. Run checks that cover the changed files and risks; do not rerun unrelated successful checks without a reason. Batch related edits and checks and give one consolidated report. Recheck only when a relevant change, stale evidence, or new risk makes it necessary, and explain why. Keep all genuine safety, privacy, legal, data-loss, and consequential-action approvals intact.
+
