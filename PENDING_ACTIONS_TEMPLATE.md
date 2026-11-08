@@ -30,7 +30,7 @@ For projects using the Collaborative Development Template, initialize this file 
 
 | ID | Action / exact user step | Why it matters / what it unlocks | Priority | Status | Owner | Next review trigger | Last surfaced | Evidence / outcome |
 |---|---|---|---|---|---|---|---|---|
-| PA-001 | <CLEAR ACTION> | <DEPENDENCY OR BENEFIT> | <PRIORITY> | <STATUS> | <USER / AI / OTHER> | <DATE OR TRIGGER> | <DATE> | <LINK OR NONE> |
+| <ID> | <CLEAR ACTION> | <DEPENDENCY OR BENEFIT> | <PRIORITY> | <STATUS> | <USER / AI / OTHER> | <DATE OR TRIGGER> | <DATE> | <LINK OR NONE> |
 
 ## Reminder preferences
 
