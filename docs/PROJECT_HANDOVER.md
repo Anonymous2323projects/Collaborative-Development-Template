@@ -9,7 +9,7 @@
 - **Default branch:** `main`
 - **Purpose:** Maintain a reusable, privacy-first framework for structured AI-assisted software development.
 - **Core priorities:** Safety, legal solidity, usability, trust, freedom.
-- **Core components:** Memory, roadmap, handover, research log, development workflow.
+- **Core components:** Memory, roadmap, handover, research records, development workflow.
 
 ## Current baseline
 
