@@ -11,6 +11,8 @@ A contributor controls whether their own name or contact details appear publicly
 Never publish another person's real name or personal contact details without that person's explicit authorization for that exact public use. This applies equally to friends, family, collaborators, repository owners, and other contributors. A contributor's choice about their own information does not grant permission to publish someone else's.
 
 Git commit metadata may contain an author and committer email address. Each contributor should choose and configure the address they are comfortable making public, including a platform-provided privacy address where available. Do not alter another contributor's commit identity or rewrite their history without their explicit permission. For a contributor's own historical metadata, assess the scope, practical benefit, and impact on collaborators before considering history cleanup.
+
+Do not publish the following without the relevant person's explicit authorization and a clear, appropriate need:
 - home addresses, precise location data, personal identifiers, account IDs, private profile details, or private repository URLs;
 - private conversations, chat transcripts, emails, support tickets, voice recordings, or screenshots containing personal information;
 - passwords, API keys, access tokens, private keys, certificates, recovery codes, session cookies, or other credentials;
