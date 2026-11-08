@@ -9,6 +9,8 @@
 - **Third-party stock or source image:** none identified by the maintainer; independent provenance review has not been performed.
 - **Rights and reuse status:** Google’s current Gemini API Additional Terms state that Google does not claim ownership over generated content, while also warning that similar content may be generated for others and placing responsibility for use on the user. Those terms do not establish that an output is copyrightable, exclusive, free of third-party rights, or automatically licensed to every downstream user. The exact terms applicable at generation time and the exact AI Studio configuration have not been independently established. Google’s current additional terms also state that, for users in the European Economic Area, Switzerland, and the United Kingdom, the paid-service data-use terms apply to all Services, including AI Studio and unpaid quota, even when offered free of charge; this is a data-processing distinction, not a separate ownership guarantee.
 
+Google’s current terms also distinguish unpaid-service data use: outside the EEA, Switzerland, and the UK, Google says it may use prompts and generated responses from unpaid services to provide, improve, and develop products and machine-learning technologies, and human reviewers may process that content. For the EEA, Switzerland, and UK, the paid-service data-use provisions apply instead. The prompt used for this banner is not recorded, so no claim is made about what it contained. Do not submit confidential or sensitive material to unpaid AI services.
+
 Official references checked 2026-11-08:
 - [Gemini API Additional Terms of Service](https://ai.google.dev/gemini-api/terms)
 - [Google Terms of Service](https://policies.google.com/terms)
