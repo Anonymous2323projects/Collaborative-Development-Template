@@ -47,8 +47,6 @@ These entries describe repository changes only; they are not evidence of a compl
 
 ## Current maintenance focus
 
-- A repository-wide quality round is in progress on `quality/raise-template-maintainer-standard`; its proposed changes are not part of `main` until reviewed and merged.
-
 - GitHub's repository-level **Template repository** setting is enabled and verified: the GitHub API reports `is_template: true`. The repository can now be used through GitHub's “Use this template” workflow.
 - Run and record the real ChatGPT Free onboarding acceptance test (Scenario F); the repository currently contains the test specification, not a live test result.
 - Keep README and onboarding links aligned with the actual starter-pack contents.
