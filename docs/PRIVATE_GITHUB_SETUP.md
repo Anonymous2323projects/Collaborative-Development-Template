@@ -99,6 +99,8 @@ Once the repository is ready, establish the project-specific branch, review, tes
 ## AI behavior and user experience
 
 - Detect the transition point proactively; the user should not have to know when GitHub setup is needed.
+- Reassure the user that setup is straightforward and manageable: say, for example, “Maak je geen zorgen, dit is makkelijker dan het klinkt. Ik help je stap voor stap.”
+- Present the setup as a normal first step, not as a technical hurdle. The user does not need prior GitHub or programming experience.
 - Explain why this step comes before coding.
 - Ask one simple question or give one small action at a time.
 - Use plain language and explain unfamiliar terms.
