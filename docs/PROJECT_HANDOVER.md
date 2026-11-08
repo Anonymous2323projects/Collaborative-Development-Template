@@ -1,109 +1,60 @@
-# Project Handover
+# Template Maintainer Handover
 
-## Project
+> Maintainer-facing continuity note for the Collaborative Development Template repository. This is not a downstream project handover and is not part of the starter pack. Keep it factual, current, minimal, and free of private conversations or personal data.
+
+## Repository
 
 - **Name:** Collaborative Development Template
 - **Repository:** https://github.com/Anonymous2323projects/Collaborative-Development-Template
 - **Default branch:** `main`
 - **Purpose:** Maintain a reusable, privacy-first framework for structured AI-assisted software development.
-- **Current status:** Core foundation integrated; documentation aligned. Visual identity intentionally deferred.
+- **Core priorities:** Safety, legal solidity, usability, trust, freedom.
+- **Core components:** Memory, roadmap, handover, research log, development workflow.
 
-## 1. Repository integration status
+## Current baseline
 
-| Pull request | Subject | Status |
-|---|---|---|
-| #1 | Privacy-first foundation and ChatGPT project onboarding | Merged |
-| #2 | Private GitHub project setup gate | Merged |
-| #3 | Bolder independent visual identity for README | Closed without merging — banner deferred |
-| #4 | Update project handover and onboarding status | Merged |
-| #5 | Align handover with deferred banner decision | Merged |
-| #6 | Restore direct repository-link onboarding | Merged |
+- The reusable onboarding guide is `START_HERE.md`.
+- The repository-specific instructions are in `AGENTS.md`.
+- Downstream projects must maintain `docs/PROJECT_MEMORY.md`; this template repository is explicitly exempt to prevent recursive self-application.
+- The README banner is stored at `assets/manifesto-banner.png` and referenced locally from `README.md`.
+- Reusable project resources are maintained separately from this repository's own maintenance records.
+- The public repository must not contain private conversations, personal data, credentials, or project-specific material from unrelated work.
 
-PR #3 was closed without merging at the owner's direction. No proposed banner or visual assets from that PR are included in `main`. The README intentionally remains banner-free until a future design is approved.
+## Recent verified repository milestones
 
-## 2. Current project structure
+- Proactive copilot-style execution and collaboration guidance was integrated through PR #11.
+- The downstream persistent project-memory requirement and explicit template-repository exception were integrated through PR #12.
+- The README banner was switched to the repository-local asset in commit `fac8578787ea5d414bae98c81ad0f9309337525b`.
 
-The template is built around five priorities, in strict order:
+These entries describe repository changes only; they are not evidence of a complete security, privacy, or legal audit.
 
-1. Safety
-2. Legal solidity
-3. Usability
-4. Trust
-5. Freedom
+## Maintenance rules
 
-Its five core components are:
+1. Keep public onboarding focused on using the template, not on this repository's own history.
+2. Keep maintainer QA records separate from reusable project templates and starter resources.
+3. Generalize and sanitize any cross-project learning before proposing it for this public repository.
+4. Do not copy raw chat transcripts, private files, personal data, or confidential third-party material.
+5. Verify claims against the current default branch and current tool output; remove stale statuses promptly.
+6. Use focused branches and pull requests. Do not merge to `main`, rewrite history, or perform destructive Git operations without explicit authorization.
+7. Record only meaningful decisions, evidence, unresolved risks, and next actions. Avoid duplicating the detailed workflow or policies.
 
-- MEMORY
-- ROADMAP
-- HANDOVER
-- RESEARCH LOG
-- DEVELOPMENT WORKFLOW
+## Current maintenance focus
 
-The `START_HERE.md` onboarding guide is present on `main`.
+- Keep README and onboarding links aligned with the actual starter-pack contents.
+- Keep onboarding acceptance criteria generic and maintainable; record any future test results separately and only in sanitized form.
+- Review the distinction between mandatory safeguards, recommended practices, and user-selectable workflow choices.
+- Ensure automated checks are described according to what they actually test; do not treat hygiene or secret scanning as a complete content or security review.
 
-## 3. Completed work
+## Handover checklist
 
-- Core repository instructions and onboarding documentation.
-- Privacy-first GitHub project setup guidance.
-- Reusable project brief, decision, risk, research, and milestone templates.
-- Development workflow and handover guidance.
-- Security, incident response, privacy, publication, and release-readiness policies.
-- Repository hygiene and secret-scanning automation.
-- General collaboration principles integrated into the existing documentation.
+Before a substantial maintainer handover, verify:
 
-## 4. Validation and limitations
+- [ ] Current branch and commit.
+- [ ] Open pull requests and unresolved review comments.
+- [ ] Changed files and rationale.
+- [ ] Checks actually run and their results.
+- [ ] Known limitations and unresolved risks.
+- [ ] Next safe action and any approval required.
+- [ ] Public content, metadata, assets, and history reviewed for accidental disclosure.
 
-The documentation update in PR #4 passed both Repository Hygiene checks on its final head:
-
-- Sensitive paths and Markdown links.
-- Gitleaks full-history secret scanning.
-
-These results apply to the inspected commit only. They do not establish that the entire repository is free of security, privacy, or legal issues.
-
-### Onboarding validation
-
-The recorded onboarding tests contain:
-
-- Explicit review-branch opening test: passed.
-- Initial idea exploration: passed.
-- Project-shaping scenario: accepted by the user, but only partially exercised.
-- Personal-data publication boundary: passed in conversation.
-- Unreviewed merge boundary: passed in conversation.
-- History rewrite / force-push scenario: not fully tested.
-
-The original default-branch test failed because `START_HERE.md` was not available on `main` at that time.
-
-The guide is now present on `main`. A new fresh-conversation test is still required. The historical failure must remain in the test record.
-
-## 5. Outstanding risks
-
-### Historical Git metadata
-
-A personal email address was identified in historical public commit metadata. It is not reproduced here. No history rewrite has been attempted.
-
-The repository owner has enabled GitHub email privacy settings for future commits. This does not remove information already present in historical commits.
-
-Any remediation must be assessed separately, including its impact on commit references, collaborators, and distributed copies. Never rewrite history or force-push without explicit informed approval.
-
-### Visual identity
-
-The banner is intentionally deferred. PR #3 was closed without merging, and the README on `main` contains no banner. Any future visual identity must receive owner approval and maintain a distinctive independent DIY identity without implying official affiliation with Anonymous or using anarchist symbolism.
-
-### Onboarding
-
-PR #6 restores explicit URL-first onboarding instructions in the README and ChatGPT onboarding guide. A URL-only retest still failed when the assistant followed stale `work/template-foundation` context instead of the current default branch. The guide now explicitly establishes the current default branch as authoritative unless the user requests another branch. A clean test outside any Project context remains outstanding.
-
-## 6. Next actions
-
-1. Repeat the URL-only onboarding test in a genuinely independent conversation outside the existing Project context.
-2. Complete the outstanding targeted privacy and publication review.
-3. Decide whether historical commit metadata requires remediation.
-4. Present the final review findings and risks to the repository owner.
-
-## 7. Approval boundaries
-
-- No merge without explicit owner approval.
-- No release or publication beyond the existing public repository without approval.
-- No history rewrite or force-push without informed approval.
-- No publication of personal or confidential information.
-- No weakening of established safety, privacy, or legal safeguards for convenience or presentation.
+Do not store credentials, sensitive personal data, raw conversations, or confidential material in this file.

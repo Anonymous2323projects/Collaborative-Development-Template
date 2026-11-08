@@ -2,13 +2,13 @@
 
 This guide defines the default repository-bootstrap procedure for a new project using the Collaborative Development Template.
 
-## Mandatory transition gate: ready to build
+## Repository readiness and privacy checks
 
-Do not create a repository merely because a user has an early idea. First understand the idea, agree the project brief and initial scope, research the technical direction, and identify a sensible first milestone.
+Do not create or configure a repository merely because a user has an early idea. First understand the idea, agree the project brief and initial scope, research the technical direction, and identify a sensible first milestone.
 
-When the AI determines that the project is sufficiently clear and the user is ready to begin implementation, it must pause before coding and initiate this setup phase. Explain why GitHub is being prepared and guide the user through it one manageable step at a time. Reassure the user proactively and sincerely in their current language: explain that the setup is easier than it may sound and that you will guide them through it step by step. Explain that creating an account or repository is a routine setup task, not a programming task. Avoid making it sound intimidating or presenting a long technical checklist all at once. Be encouraging without promising that every account or setup path will be identical.
+Before the first remote commit or push, check the user's existing setup and help make the chosen workflow safe. GitHub is the recommended default for collaborative version control, but a suitable existing repository, local-first workflow, or another host may be appropriate. Do not block local implementation solely because remote hosting is not ready. Explain the trade-offs and preserve the user's informed choice. When GitHub is chosen, guide the user through the relevant checks one manageable step at a time. Reassure them that setup is straightforward and does not require programming experience.
 
-**Default: create a new private repository for the project.** Do not make it public unless the user makes an informed, explicit choice to do so after the privacy implications have been explained. A public template repository, such as the Collaborative Development Template itself, must not be made private as part of setting up a user's separate project.
+**Default for a new GitHub repository: Private.** Do not make it public unless the user makes an informed, explicit choice after the privacy implications have been explained. A public template repository, such as the Collaborative Development Template itself, must not be made private as part of setting up a separate project. If the user already has a suitable repository or chooses another host/local workflow, assess that setup rather than creating a duplicate.
 
 ## 1. Check the user's starting point
 
@@ -90,7 +90,7 @@ Before any project files are committed or pushed:
 
 Do not request that the user paste configuration output containing personal details into chat. Prefer asking the user to confirm the setting on their own device or provide a redacted screenshot.
 
-Only after this gate is satisfied should the project move into implementation.
+Complete the relevant remote-publication checks before the first push. Local implementation may proceed earlier when the user has chosen a local-first workflow and the work can be carried out safely.
 
 ## 6. Continue with the normal development workflow
 
@@ -98,10 +98,10 @@ Once the repository is ready, establish the project-specific branch, review, tes
 
 ## AI behavior and user experience
 
-- Detect the transition point proactively; the user should not have to know when GitHub setup is needed.
+- Detect the transition to remote collaboration or publication proactively; the user should not have to know which privacy checks are needed.
 - Reassure the user that setup is straightforward and manageable: say, in the user’s language, that the setup is straightforward and that you will guide them step by step.
-- Present the setup as a normal first step, not as a technical hurdle. The user does not need prior GitHub or programming experience.
-- Explain why this step comes before coding.
+- Present the privacy checks as a normal, manageable part of remote publication, not as a technical hurdle. The user does not need prior GitHub or programming experience.
+- Explain why these checks matter before remote publication.
 - Ask one simple question or give one small action at a time.
 - Use plain language and explain unfamiliar terms.
 - Never imply that a setting is enabled or a repository is private until verified.

@@ -20,9 +20,9 @@ Follow the complete process in `START_HERE.md`:
 - co-create a project brief and distinguish decisions from assumptions;
 - explain trade-offs in accessible language;
 - research suitable existing solutions before building equivalent functionality;
-- when the project is ready to build, reassure the user that GitHub setup is straightforward, then pause and guide them through the private-by-default GitHub setup and commit-email privacy checks in `docs/PRIVATE_GITHUB_SETUP.md`, one simple step at a time;
+- before the first remote commit or push, check whether a suitable repository already exists and review its visibility and privacy settings; recommend a private GitHub repository by default for new repositories, but respect a suitable existing repository or a reasonable local/alternative-host workflow. Use `docs/PRIVATE_GITHUB_SETUP.md` when GitHub is chosen; do not block local implementation solely because remote hosting is not configured;
 - establish a proportionate, secure development workflow;
-- implement in small increments only after the repository setup gate and with appropriate user agreement;
+- implement in small increments once the first milestone and working environment are agreed; complete the applicable remote-publication privacy checks before the first push;
 - initialize and continuously maintain the project's docs/PROJECT_MEMORY.md from PROJECT_MEMORY_TEMPLATE.md; read it at every new session and verify it against current project state;
 - maintain handovers and honest validation reports.
 
