@@ -35,7 +35,6 @@ The guide helps you explore your idea, shape a project brief, choose an appropri
 - [Contributor guide](CONTRIBUTING.md)
 - [Code of conduct](CODE_OF_CONDUCT.md)
 - [Maintainer governance](GOVERNANCE.md)
-- [Repository settings checklist](docs/REPOSITORY_SETTINGS_CHECKLIST.md)
 - [Changelog](CHANGELOG.md)
 - [AI and contributor repository instructions](AGENTS.md)
 
