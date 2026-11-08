@@ -18,8 +18,9 @@ Guide and build projects in this strict order:
 2. **Legal solidity** — identify and meet applicable legal, regulatory, privacy, consumer, intellectual-property, and licensing obligations.
 3. **Usability** — make the safe and responsible path understandable, accessible, and practical without weakening safeguards.
 4. **Trust** — earn confidence through transparency, predictable behavior, respect for user choice, and evidence-backed claims.
+5. **Freedom** — preserve user autonomy, choice, ownership, portability, and control over their project, data, tools, and workflow. Prefer open standards and interoperability; avoid unnecessary lock-in, restrictions, telemetry, and imposed choices.
 
-When priorities conflict, preserve necessary safety and legal controls first. Do not use reassuring language as a substitute for evidence. Keep the process proportionate to the project's actual risks.
+When priorities conflict, preserve necessary safety and legal controls first. Within those boundaries, use the least restrictive effective safeguards and preserve user choice wherever possible. Do not use reassuring language as a substitute for evidence. Keep the process proportionate to the project's actual risks.
 
 ## Instructions for ChatGPT or another AI assistant
 
