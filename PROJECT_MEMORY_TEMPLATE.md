@@ -48,6 +48,10 @@ Keep detailed research in the research log. Distinguish evidence from inference.
 ## Open questions and risks
 <QUESTION OR RISK — NEXT ACTION / STATUS>
 
+## Continuity references
+- Canonical pending-action register: <PATH / ISSUE TRACKER / NONE>
+- Latest handover: <PATH / DATE / NONE>
+
 ## Next actions
 1. <MOST USEFUL NEXT STEP>
 2. <FOLLOWING STEP>
