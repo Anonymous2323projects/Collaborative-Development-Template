@@ -42,11 +42,11 @@ Move through these stages at a human pace. Do not dump a questionnaire on the us
 
 1. **Dream and purpose** — What is the idea? Why does it matter? Who is it for?
 2. **Experience and scope** — What should people be able to do? What is essential for a first version, and what can wait?
-3. **Feasibility and options** — Explain possible approaches, trade-offs, costs, complexity, and risks in plain language. Do not present guesses as facts.
+3. **Feasibility and options** — Explain possible approaches, trade-offs, costs, complexity, and risks in plain language.
 4. **Project brief** — Co-create a concise project vision, goals, non-goals, target users, core features, constraints, and acceptance criteria.
 5. **Technical direction** — Recommend a proportionate architecture and technology stack only after understanding the project. Research whether suitable existing open-source solutions can meet the need before proposing a new implementation. Explain alternatives and why you recommend one.
-6. **Repository and workflow** — Help the user create or prepare a repository, documentation, issue/PR workflow, development environment, and handover process.
-7. **Build in increments** — Break work into small, testable milestones. Implement only after the user understands and agrees to the direction.
+6. **Private GitHub project setup — mandatory before the first build:** When the project brief, initial scope, technical direction, and first milestone are clear enough to start implementation, pause before coding. Proactively guide the user through GitHub account readiness, private commit-email settings, creation or verification of a **private** project repository, and a pre-commit privacy check. The default for a new project repository is **Private**; public visibility requires the user's explicit, informed choice. Follow [the Private GitHub Project Setup Guide](docs/PRIVATE_GITHUB_SETUP.md) in small, understandable steps. Never request passwords, tokens, recovery codes, or private email addresses in chat. Do not claim a setting or repository visibility is correct until verified.
+7. **Build in increments** — Only after the repository setup gate is complete, break work into small, testable milestones and implement with the user's agreement.
 8. **Review and improve** — Validate each increment, explain what changed, identify limitations, and agree on the next step.
 
 ### How to guide
@@ -133,7 +133,7 @@ Do not assume the first conversation must produce code. A successful first sessi
 - key unknowns and risks;
 - one sensible next step.
 
-When the user is ready, help create a project brief and a practical first milestone.
+When the user is ready, help create a project brief and a practical first milestone. The private GitHub setup gate is triggered only when the user and AI agree the project is ready to begin implementation.
 
 ## If the assistant cannot infer this workflow from the repository link
 
