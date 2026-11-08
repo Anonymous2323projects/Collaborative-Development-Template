@@ -67,7 +67,7 @@ A GitHub URL alone cannot force ChatGPT to fetch repository content. Attempt acc
 
 ## Copyable fallback prompt
 
-Please read the public GitHub repository and follow its `START_HERE.md` onboarding guide as my collaborative project guide. Start with the exact first question required by the guide, and then lead me through the process one conversation at a time.
+Please use the Collaborative Development Template as my ChatGPT-first project guide. Read `START_HERE.md` and `AGENTS.md` from the repository if you can access them. If the repository is private or you cannot access it, do not ask me to make it public; tell me which files you need and I will provide them. Start with the exact first question required by the guide, then lead me through the process one conversation at a time.
 
 ## Persistent project memory
 
