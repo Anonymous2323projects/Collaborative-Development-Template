@@ -57,6 +57,32 @@ Every release should have, at minimum:
 
 Security fixes should be prioritized and communicated responsibly. Avoid exposing sensitive vulnerability details before users have a reasonable opportunity to update.
 
+
+## Security severity and emergency response
+
+Classify security releases based on the actual exploitability, impact, exposure, and availability of mitigations. Do not classify a release as mandatory merely to accelerate ordinary feature adoption.
+
+| Level | Typical situation | Expected response |
+|---|---|---|
+| Normal | Features, improvements, routine fixes | User chooses when to install. |
+| Security | Meaningful vulnerability without evidence of active exploitation or immediate severe impact | Clearly recommend the patch and explain the risk; allow reasonable deferral. |
+| Critical | Severe exploitable vulnerability, such as a remotely exploitable code-execution flaw, especially where exposure is broad or mitigation is limited | Issue an expedited security release, prominently warn users, set a short and justified deferral window where appropriate, and explain support consequences. |
+| Emergency | Credible active exploitation, compromise of a release/signing channel, or an imminent severe risk that cannot reasonably be mitigated otherwise | Take proportionate containment action immediately; this may include disabling the affected feature, blocking a vulnerable version or requiring an emergency update where technically and legally justified. |
+
+These are response categories, not automatic severity labels. A qualified maintainer should document the evidence, affected versions, exploitability, impact, mitigations, and reason for the chosen response. Reassess the decision as facts change.
+
+### Proportionate lockdown
+
+Prefer the narrowest effective protective action:
+
+1. Disable or restrict only the vulnerable feature, endpoint, plugin, or integration where that safely contains the risk.
+2. If feature-level containment is insufficient, prevent the vulnerable version from accessing affected services or performing the dangerous operation, with a clear explanation and recovery path.
+3. Require an emergency update only when the risk justifies it and a verified, trustworthy update is available. If no trustworthy patch is available, do not install an unverified replacement; isolate or disable the affected functionality and communicate the mitigation.
+4. Preserve user-created projects and data. Do not use a security incident as a reason to erase user content or perform unrelated migrations.
+5. Provide an appeal/support path or documented manual recovery where feasible, and record the incident and decision.
+
+A forced update must never mean silently executing arbitrary code from a server. The update artifact and metadata must pass the signature, integrity, product, platform, and anti-rollback checks in this policy before installation. Where installation consent is overridden for a genuine emergency, the product must disclose that possibility in advance, explain the specific incident and action, minimize the scope, and comply with applicable law and platform rules.
+
 ## Different deployment models
 
 This policy must be adapted to the delivery model:
