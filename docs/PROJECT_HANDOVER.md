@@ -19,6 +19,7 @@
 - The README banner is stored at `assets/manifesto-banner.png` and referenced locally from `README.md`.
 - Reusable project resources are maintained separately from this repository's own maintenance records.
 - `PENDING_ACTIONS_TEMPLATE.md` is an optional register for meaningful human-dependent actions in downstream projects.
+- Downstream projects record their known template baseline and last upstream check in the existing project memory; unknown source commits must remain explicitly unknown. The template repository itself is exempt.
 - ChatGPT Free compatibility is the baseline; Projects, Memory, GitHub connections, and automation are convenience features with plan-dependent limits.
 - The public repository must not contain private conversations, personal data, credentials, or project-specific material from unrelated work.
 
@@ -29,6 +30,8 @@
 - Maintainer-record separation and onboarding/privacy-boundary corrections were integrated through PR #13 (merge commit `21a29a6fad66c6e3c82e2ab20eda78c864595864`).
 - Free-plan-first ChatGPT continuity and the human-dependent action register were integrated through PR #14 (squash merge `2c93ee400d259c4e3bd801af207ee200ccc74778`).
 - The README banner was switched to the repository-local asset in commit `fac8578787ea5d414bae98c81ad0f9309337525b`.
+- PR #15 also adds explicit Free-plan continuity guidance for conversations restarted inside the same ChatGPT Project: preserve Project Instructions, resume from durable project records, and do not rely on prior-chat recall.
+- A minimal, user-controlled upstream template update-awareness improvement is being prepared on branch `feature/template-update-awareness`; PR #15 is open and not yet merged.
 
 These entries describe repository changes only; they are not evidence of a complete security, privacy, or legal audit.
 
