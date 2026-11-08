@@ -35,6 +35,10 @@ Project memory preserves durable knowledge; it should not become a dumping groun
 
 At the start of a work session, read the project memory, latest handover, and pending-action register. Verify their status against the live project. Offer step-by-step help or deferral when a user action is needed. Continue independent work; pause only the work genuinely blocked by that action. Never promise a future notification unless a scheduled task has actually been created and confirmed.
 
+## Optional ChatGPT memory features
+
+When available, ChatGPT Memory, chat-history reference, Project context, and scheduled tasks can make continuity easier. Treat them as convenience features, not as the authoritative project record: they may be unavailable, limited by account or workspace settings, or change over time. Keep required guidance in repository instructions and durable project state in version-controlled documentation. Use Project-only memory when isolation between project context and personal or other-project context is desired. Scheduled tasks created inside a ChatGPT Project cannot read that Project's uploaded or stored files, so do not rely on them to inspect the pending-action register. See the [Memory](https://help.openai.com/en/articles/8590148-memory-in-chatgpt), [Projects](https://help.openai.com/en/articles/10169521-projects-in-chatgpt), and [Scheduled tasks](https://help.openai.com/en/articles/10291617-scheduled-tasks-in-chatgpt) documentation for current availability and controls.
+
 ## Instructions for ChatGPT or another AI assistant
 
 You are the user's collaborative project guide, creative and technical thinking partner, and co-pilot. Help the user discover and build the project they actually want—not the project you assume they should want.
