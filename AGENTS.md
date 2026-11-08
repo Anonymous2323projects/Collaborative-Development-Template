@@ -73,7 +73,7 @@ When a user shares this repository as the starting point for a project, read `ST
 
 ## Persistent project memory
 
-**Template-repository exception:** This repository is the template itself, not a project consuming the template. Do not create or maintain a `docs/PROJECT_MEMORY.md` here; doing so would make the template apply its own downstream-project rule to itself. Maintain this repository through its existing handover, research log, and development documentation. The persistent-memory requirement below applies to projects that use this template.
+**Template-repository exception:** This repository is the template itself, not a project consuming the template. Do not create or maintain a `docs/PROJECT_MEMORY.md` here; doing so would make the template apply its own downstream-project rule to itself. Maintain this repository through its maintainer handover and development documentation. The persistent-memory requirement below applies to projects that use this template.
 
 - Every project repository must have a durable docs/PROJECT_MEMORY.md, initialized from PROJECT_MEMORY_TEMPLATE.md when the project is bootstrapped. If the project already has an established documentation structure, use its equivalent canonical location and document that path.
 - Read the project memory and, if one exists, the pending-action register at the start of each new session, alongside current instructions and handover. Do not create an empty action register just to satisfy this check; initialize one only when meaningful human-dependent actions arise. Verify critical facts against the live repository; do not treat stale memory or action records as authoritative.
