@@ -4,7 +4,7 @@ These instructions apply to every contributor and AI coding assistant working in
 
 ## Product and process priorities
 
-Apply the template's priorities in this strict order: **1. Safety, 2. Legal solidity, 3. Usability, 4. Trust.** When trade-offs arise, do not sacrifice necessary safety or legal controls for convenience. Make compliant and safe workflows as clear and usable as possible; build trust through transparent, evidence-backed behavior rather than claims.
+Apply the template's priorities in this strict order: **1. Safety, 2. Legal solidity, 3. Usability, 4. Trust, 5. Freedom.** When trade-offs arise, do not sacrifice necessary safety or legal controls for convenience. Make compliant and safe workflows as clear and usable as possible; build trust through transparent, evidence-backed behavior rather than claims. Preserve user autonomy, choice, ownership, portability, and control wherever possible. Use the least restrictive effective safeguards; avoid unnecessary lock-in, restrictions, telemetry, and imposed technical or commercial choices. Freedom does not mean facilitating unsafe or unlawful conduct.
 
 ## Non-negotiable rules
 
