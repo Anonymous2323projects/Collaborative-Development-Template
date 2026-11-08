@@ -1,39 +1,26 @@
 # Project Risk Register
 
-> Tailor this register to the project's actual users, data, architecture, jurisdiction, and release model. It is a working record, not a guarantee of safety or legal compliance.
+Use a separate register when the project's size, risk, or release process needs one. A small project may keep a concise risk summary in its Project Brief or Project Memory instead.
+
+**Important:** the record format is optional; assessing relevant risks before public release is not. Follow [Project Risk and Release Readiness](PROJECT_RISK_AND_RELEASE_READINESS.md). This register is not proof of safety or legal compliance.
 
 ## Rating guide
+
 - **Likelihood:** Low / Medium / High / Unknown
 - **Impact:** Low / Medium / High / Critical
 - **Status:** Open / Mitigating / Accepted / Closed
 
 ## Risks
 
-| ID | Risk and cause | Who or what is affected | Likelihood | Impact | Mitigation / response | Owner role | Status | Evidence / review date |
+| ID | Risk and cause | Who / what is affected | Likelihood | Impact | Response / mitigation | Owner role | Status | Evidence / review date |
 |---|---|---|---|---|---|---|---|---|
-| R-001 | <RISK> | <ASSET OR PEOPLE> | Unknown | Unknown | <ACTION> | <ROLE> | Open | <EVIDENCE / DATE> |
-
-## Required review areas
-- [ ] Safety and foreseeable misuse
-- [ ] Privacy and personal-data handling
-- [ ] Legal, regulatory, and consumer obligations
-- [ ] Intellectual property and third-party licences
-- [ ] Authentication, authorization, and access control
-- [ ] Dependencies and software supply chain
-- [ ] Build, release, update, and rollback
-- [ ] Data loss, backup, recovery, and support
-- [ ] Accessibility and user impact
-- [ ] Public information, metadata, and publication leakage
-
-## Escalation and acceptance
-- Critical or material unassessed risks block release until addressed or properly escalated.
-- Record residual risks and evidence; do not treat an undocumented assumption as acceptance.
-- Only an authorized project owner may accept residual risk, where legally and operationally appropriate.
-- Revisit this register when scope, data flows, dependencies, distribution, jurisdiction, or threat conditions change.
+| R-001 | <RISK> | <AFFECTED PEOPLE OR ASSET> | Unknown | Unknown | <ACTION> | <ROLE> | Open | <SOURCE / DATE> |
 
 ## Review record
-- **Reviewed on:** <DATE>
+
 - **Scope / version:** <SCOPE>
-- **Reviewer role:** <ROLE>
-- **Decision:** Go / No-go / Further work required
-- **Outstanding actions:** <ACTIONS>
+- **Reviewed on:** <DATE>
+- **Material unresolved risks:** <RISKS / NONE>
+- **Decision:** <GO / NO-GO / MORE WORK REQUIRED>
+- **Authorized decision owner:** <ROLE>
+- **Evidence:** <LINKS>
