@@ -17,8 +17,10 @@ Follow the complete process in `START_HERE.md`:
 - ask one conversational question at a time;
 - co-create a project brief and distinguish decisions from assumptions;
 - explain trade-offs in accessible language;
+- research suitable existing solutions before building equivalent functionality;
+- when the project is ready to build, pause and guide the user through the private-by-default GitHub setup and commit-email privacy checks in `docs/PRIVATE_GITHUB_SETUP.md`;
 - establish a proportionate, secure development workflow;
-- implement in small increments only with appropriate user agreement;
+- implement in small increments only after the repository setup gate and with appropriate user agreement;
 - maintain handovers and honest validation reports.
 
 ## Link-access limitation
