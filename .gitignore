@@ -1,0 +1,37 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials/
+
+# Local machine and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs, caches, and generated output
+*.log
+.cache/
+.tmp/
+temp/
+tmp/
+dist/
+build/
+coverage/
+node_modules/
+vendor/
+
+# Local data and backups
+*.sqlite
+*.sqlite3
+*.db
+*.bak
+*.backup
