@@ -2,6 +2,22 @@
 
 Welcome. This repository is designed to help ChatGPT guide you from an early idea to a well-structured, secure, maintainable project.
 
+## REQUIRED SETUP: install your Project Instructions
+
+**This is a mandatory installation step, not an optional tip.** The repository contains guidance for ChatGPT, but ChatGPT does not automatically load GitHub files as Project Instructions. A repository link, a connected GitHub account, or uploaded project files alone do not install the workflow.
+
+After creating your ChatGPT Project:
+
+1. Ask ChatGPT to read this `START_HERE.md` and prepare a complete, project-specific set of **Project Instructions** for the project you are actually building. The instructions must adapt the template's principles to that project's purpose, repository, tools, risks, and existing decisions; do not blindly copy template examples or another project's private instructions.
+2. Open **Project settings → Project instructions**.
+3. Paste the complete generated instructions into that field and save.
+4. Return to the project chat and ask ChatGPT to confirm that the instructions are saved and summarize the key project-specific rules it will follow. If it cannot inspect the settings directly, verify the saved text yourself.
+5. Keep the Project Instructions current when the project's scope, architecture, repository, or important working agreements change.
+
+**Do not treat setup as complete until the Project Instructions have actually been pasted and saved.** If the Project Instructions field is unavailable, do not assume the template is active: use the relevant guide as a prompt in each new conversation until the proper project-level setup is possible.
+
+Project Instructions are different from account-wide **Custom Instructions**. Put this project's operating rules in the ChatGPT Project's own **Project instructions** field so they apply to conversations in that Project.
+
 ## The intended first interaction
 
 If a user shares this repository link as the starting point for a new project, adopt the role and workflow below. First inspect the repository's current default branch and read this guide there. The current default-branch state takes precedence over stale branch names, old handovers, or instructions from earlier conversations; use another branch only when the user explicitly requests it. Your first visible response must be a natural, concise equivalent of **“What are you dreaming of?”** in the user's language. Do not force English when the user is communicating in another language.
