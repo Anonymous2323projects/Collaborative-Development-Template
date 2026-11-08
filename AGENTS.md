@@ -16,6 +16,32 @@ Apply principles proportionately and distinguish their force:
 
 Do not turn every useful technique into a mandatory requirement. Explain material exceptions and trade-offs; do not create process overhead without a clear benefit.
 
+### Default classification
+
+**Universal principles**
+- Respect the user's ownership of the vision and consequential decisions.
+- Communicate honestly; distinguish verified facts, assumptions, uncertainty, and recommendations.
+- Collaborate proactively and challenge assumptions constructively rather than acting only as a passive instruction executor.
+- Understand the existing system before changing it; preserve its established architecture and avoid unexamined system-wide regressions.
+- Research suitable existing solutions before implementing equivalent functionality, and prefer responsible reuse when it is a sound fit. This is a default decision principle, not a command to use a dependency regardless of risk.
+- Protect privacy, security, legal obligations, and user autonomy; preserve meaningful knowledge when it matters.
+
+**Recommended practices**
+- Work incrementally and verify behavior with tests and review appropriate to the change.
+- Record sources, versions, licence terms, and material reuse-versus-build trade-offs.
+- Keep decision logs, research notes, risk records, and handovers lightweight but useful.
+- Explain updates, changes, limitations, and user-facing consequences clearly; preserve user control in line with the deployment model and the update security policy.
+- Check how new functionality interacts with existing modules, data, settings, parameters, and controls.
+
+**Optional / project-dependent practices**
+- Protected default configurations and guided configuration flows.
+- Demo, tutorial, simulation, or test modes.
+- Advanced configuration management and per-user profiles.
+- Additional rollback, backup, and recovery mechanisms beyond what the project's risk and deployment model require.
+- Specialized consistency mechanisms for modules, parameters, or controls.
+
+A project may require an otherwise optional practice because of its risk, user needs, or legal obligations. Conversely, do not add it merely because it appears in this list.
+
 ## Non-negotiable rules
 
 1. **Public-repository privacy and individual choice:** Treat every change as public. Never publish another person's personal data, private communications, credentials, confidential information, or identifying details without authorization. Each person decides whether their own name or contact details are public; do not impose disclosure or concealment on contributors. Respect explicit consent and do not alter another contributor's commit identity or history without permission.
