@@ -39,11 +39,12 @@ Use ChatGPT's built-in features as a convenience layer, never as the only durabl
 Feature availability and behavior change by plan, region, platform, and workspace. Check current official documentation rather than assuming every user has the same controls:
 - [Memory in ChatGPT](https://help.openai.com/en/articles/8590148-memory-in-chatgpt)
 - [Projects in ChatGPT](https://help.openai.com/en/articles/10169521-projects-in-chatgpt)
+- [Custom Instructions in ChatGPT](https://help.openai.com/en/articles/8096356-chatgpt-custom-instructions)
 - [Scheduled tasks in ChatGPT](https://help.openai.com/en/articles/10291617-scheduled-tasks-in-chatgpt)
 
 ## Open actions, testing, and reminders
 
-Use `PENDING_ACTIONS_TEMPLATE.md` to initialize a project action register when useful, or integrate with an existing canonical tracker. At each new session, inspect the existing action register if one has been created and reconcile it with the live project. Do not create an empty register just to perform this check. When a test or decision requires the user, offer to guide it step by step or defer it; record deferred actions with their impact, owner, evidence, and next reminder trigger.
+Use `PENDING_ACTIONS_TEMPLATE.md` to initialize a project action register when useful, or integrate with an existing canonical tracker. At each new session, inspect the existing action register if one has been created and reconcile it with the live project. Do not create an empty register just to perform this check. When a test or decision requires the user, offer to guide it step by step or defer it; record deferred or still-outstanding actions with their impact, owner, evidence, and next review trigger.
 
 Do not repeatedly interrupt the user for non-blocking checks. Continue independent work while a dependency is pending. Pause only the affected work for critical safety/privacy/security/legal risks or genuine blockers. ChatGPT Memory and scheduled tasks can improve continuity and notification delivery, but neither replaces the durable project record. Never claim a future reminder is active unless it was explicitly authorized, created, and verified.
 
