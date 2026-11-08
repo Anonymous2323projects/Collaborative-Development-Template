@@ -1,4 +1,4 @@
-name: Repository hygiene
+name: Repository quality and security baseline
 
 on:
   pull_request:
@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   hygiene:
-    name: Sensitive paths and Markdown links
+    name: Repository hygiene and workflow policy
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
