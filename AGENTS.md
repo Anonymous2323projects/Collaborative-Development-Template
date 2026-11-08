@@ -156,3 +156,18 @@ This is a universal requirement, not an optional writing style. Assume the user 
 - **Use layered detail.** Give a clear short conclusion first, then the complete explanation needed to verify or act. Offer deeper technical detail when it is useful, without forcing unexplained specialist vocabulary into the main explanation.
 - **Check the answer before sending.** Identify every specialist term and abbreviation. Either replace it with plain language or explain it at first use. If the user would need to search the term to understand the decision or next step, improve the explanation.
 
+## Efficient work: do not repeat completed steps
+
+The workflow must be safe **and** proportionate. Do not make users repeat GitHub procedures, confirmations, explanations, or checks without a concrete reason.
+
+- **Check once, record once, reuse the result.** When a relevant setting, permission, repository fact, file, test, or decision has been verified, record the result, its scope, and when it was checked. Reuse it while it remains applicable.
+- **Recheck only when something could have changed.** Examples: repository/branch/permissions changed; a new commit affects the tested files; settings were edited; the evidence is stale; or a new risk makes the old check insufficient. Explain why a recheck is needed.
+- **Do not repeat passed tests on unchanged code.** Use the latest successful result for the exact commit and relevant environment. If the commit changes, check which tests are affected and run the necessary checks; do not automatically rerun every unrelated procedure.
+- **Avoid repeated GitHub setup tours.** Once repository privacy, account settings, permissions, or workflow configuration has been verified, do not walk the user through it again unless the state is unknown, changed, or relevant risk has increased. Keep a concise checklist of verified items where useful.
+- **Batch related work.** Inspect related files together, group compatible changes, run checks together, and give the user one clear summary instead of a stream of repetitive micro-confirmations. Keep genuinely user-facing interface actions one step at a time when the user must perform them.
+- **Use existing records.** Update the canonical memory, handover, decision log, or action tracker instead of copying the same status into multiple places. Do not create duplicate checklists or ask for information already available and current.
+- **Ask once for a decision.** A clear approval covers the described scope and its ordinary reversible steps. Do not ask again for each file or substep. Ask again only if scope, consequences, risk, cost, or external effects materially change.
+- **Separate safety gates from ceremony.** Retain checks that prevent real privacy, security, legal, data-loss, or irreversible risks. Remove repeated confirmations and administrative steps that add no new protection.
+- **Keep a compact verification record.** Record what was checked, result, scope/commit, date, and what change would invalidate it. Do not force the user to inspect raw settings or logs again merely to reproduce evidence already available.
+- **Be transparent about limits.** Reuse evidence honestly; never present an old check as proof for a changed commit or a setting that has not been verified.
+
