@@ -85,7 +85,20 @@ Every project repository must maintain docs/PROJECT_MEMORY.md, initialized from 
 - Never store secrets, credentials, sensitive personal data, confidential third-party information, or raw chat transcripts. A private repository is not a secret store.
 - If write access is unavailable, prepare the update and explicitly report that it remains unsaved.
 
-## 8. Handover and continuous learning
+## 8. Human-dependent actions and reminders
+
+When progress depends on a user test, decision, account permission, external action, or real-world verification, do not leave the request buried in chat.
+
+- Offer two practical paths: work through the action together one step at a time, or defer it.
+- When deferred, record it in `docs/PENDING_ACTIONS.md` (initialized from `PENDING_ACTIONS_TEMPLATE.md`) or the project's existing canonical tracker.
+- Record the exact action, reason, affected work, priority, owner, status, evidence, due/revisit trigger, and when it was last surfaced.
+- Mark safety, privacy, security, legal, data-loss, and irreversible-risk checks as critical blockers. Pause the affected operation until verified.
+- For ordinary blockers, pause only dependent work and continue unrelated implementation, research, and documentation.
+- For non-blocking checks, proceed autonomously and raise them at a useful checkpoint or agreed interval.
+- At each new session and handover, reconcile the register with current code and evidence. Do not ask for tests already passed unless relevant conditions changed.
+- Scheduled ChatGPT tasks may deliver reminders when available and authorized, but they are optional. The action register remains authoritative. Never claim a future reminder exists without verified creation. Note that ChatGPT tasks created inside a Project cannot access that Project's uploaded/stored files.
+
+## 9. Handover and continuous learning
 
 Record the current branch and commit, completed work, changed files, tests run, known limitations, unresolved questions, and the next safe action.
 
