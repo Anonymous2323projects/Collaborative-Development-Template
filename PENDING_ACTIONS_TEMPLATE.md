@@ -4,7 +4,7 @@ Use this file as the durable register of actions that require a human, a decisio
 
 For projects using the Collaborative Development Template, initialize this file from this template when there are meaningful human-dependent actions. Keep it concise. If the project already has a suitable canonical issue tracker or action register, use that instead and record its location in `PROJECT_MEMORY.md`.
 
-## Operating rules for the AI
+## Operating rules for ChatGPT
 
 1. Read this register at the start of each work session, before substantial handovers, and whenever work approaches a recorded dependency. Check whether entries are still current.
 2. When user testing, a human decision, account access, physical action, or other user-dependent step is needed, explain exactly why and what it unlocks. Offer to walk through it one step at a time or defer it.
