@@ -1,6 +1,6 @@
 # Decision Log
 
-> Record decisions that affect direction, scope, architecture, privacy, security, licensing, or user experience. Keep entries concise and link to supporting evidence where useful.
+> Use a separate log only for material decisions that need a durable explanation or review trail. Small choices can stay in the project memory or relevant issue/PR. Keep entries concise and link to evidence.
 
 ## Decision <NUMBER>: <SHORT TITLE>
 
