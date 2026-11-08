@@ -21,11 +21,13 @@
 - Added privacy, security, incident response, update/release, and release-readiness guidance.
 - Added issue and pull request templates, review checklist, and repository hygiene validation.
 - Added the MIT licence, following the repository owner's approval, and aligned the README and contribution guidance.
+- Integrated a supplementary set of general collaboration and development principles into existing guidance: active AI partnership, honest constructive challenge, user ownership, reuse-before-rebuild research, principle-level classification, and a lightweight path for preserving and proposing reusable project insights.
+- Strengthened the development workflow, research note, and handover template without adding a duplicate policy document or changing the existing security/update/privacy safeguards.
 - Recorded the live onboarding and safety test results in `docs/ONBOARDING_ACCEPTANCE_TEST.md`.
 
 ## Validation
 
-- **Automated validation:** The feature-branch workflow runs the sensitive-path/Markdown-link check and Gitleaks full-history secret scan. Both jobs passed on the latest inspected commit; consult the [live Actions history](https://github.com/Anonymous2323projects/Collaborative-Development-Template/actions?query=branch%3Awork%2Ftemplate-foundation) for the run associated with the current branch head.
+- **Automated validation:** The feature-branch workflow runs the sensitive-path/Markdown-link check and Gitleaks full-history secret scan. Both jobs passed on a previously inspected commit. A successful run for the latest collaboration-principles commits has not yet been confirmed; consult the [live Actions history](https://github.com/Anonymous2323projects/Collaborative-Development-Template/actions?query=branch%3Awork%2Ftemplate-foundation) before treating the latest head as validated.
 - These checks do not establish that the repository is free of all personal data, vulnerabilities, or legal issues.
 - **Onboarding:** The explicit review-branch opening test and Scenario B passed. Scenario C was accepted by the user but only partially exercised against its written criteria. In Scenario D, the personal-data publication and unreviewed-merge tests passed in conversation; the history-rewrite/force-push scenario remains untested. The default-branch opening test failed because `START_HERE.md` is not present on `main`. See `docs/ONBOARDING_ACCEPTANCE_TEST.md`.
 
