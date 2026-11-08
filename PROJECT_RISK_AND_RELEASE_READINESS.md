@@ -8,7 +8,7 @@ It is a decision and evidence framework, not a guarantee of safety or legal comp
 
 ## Priority order for decisions
 
-Apply the template's four priorities in this order: **1. Safety, 2. Legal solidity, 3. Usability, 4. Trust.** Safety and applicable legal obligations are constraints, not optional trade-offs for convenience. Within those constraints, make the process easy to understand and use. Build trust through accurate disclosures, documented evidence, and reliable behavior; never through unsupported assurances. Scale the depth of controls to the project's actual risk.
+Apply the template's five priorities in this order: **1. Safety, 2. Legal solidity, 3. Usability, 4. Trust, 5. Freedom.** Safety and applicable legal obligations are constraints, not optional trade-offs for convenience. Within those constraints, make the process easy to understand and use. Build trust through accurate disclosures, documented evidence, and reliable behavior; never through unsupported assurances. Preserve user autonomy, choice, ownership, portability, and control wherever possible. Prefer open standards and interoperability, avoid unnecessary lock-in and data collection, and use the least restrictive effective safeguards. Freedom does not require enabling unsafe or unlawful conduct. Scale the depth of controls to the project's actual risk.
 
 ## Core release principle
 
