@@ -13,6 +13,7 @@ The guide then helps you explore your idea, shape a project brief, choose an app
 - [Development workflow](docs/DEVELOPMENT_WORKFLOW.md)
 - [Handover template](docs/HANDOVER_TEMPLATE.md)
 - [Security policy](SECURITY.md)
+- [Project risk and release readiness standard](PROJECT_RISK_AND_RELEASE_READINESS.md)
 - [Update and release security policy](UPDATE_AND_RELEASE_SECURITY.md)
 - [Privacy and public publication standard](PRIVACY_AND_PUBLICATION.md)
 - [Contributor guide](CONTRIBUTING.md)
