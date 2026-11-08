@@ -1,113 +1,77 @@
 # Private GitHub Project Setup Guide
 
-This guide defines the default repository-bootstrap procedure for a new project using the Collaborative Development Template.
+Use this guide when a project is ready to work with a remote GitHub repository. It is not a reason to delay discovery, design, or safe local development.
 
-## Repository readiness and privacy checks
-
-Do not create or configure a repository merely because a user has an early idea. First understand the idea, agree the project brief and initial scope, research the technical direction, and identify a sensible first milestone.
-
-Before the first remote commit or push, check the user's existing setup and help make the chosen workflow safe. GitHub is the recommended default for collaborative version control, but a suitable existing repository, local-first workflow, or another host may be appropriate. Do not block local implementation solely because remote hosting is not ready. Explain the trade-offs and preserve the user's informed choice. When GitHub is chosen, guide the user through the relevant checks one manageable step at a time. Reassure them that setup is straightforward and does not require programming experience.
-
-**Default for a new GitHub repository: Private.** Do not make it public unless the user makes an informed, explicit choice after the privacy implications have been explained. A public template repository, such as the Collaborative Development Template itself, must not be made private as part of setting up a separate project. If the user already has a suitable repository or chooses another host/local workflow, assess that setup rather than creating a duplicate.
-
-## 1. Check the user's starting point
+## 1. Check the starting point
 
 Ask one question at a time:
 
 1. Does the user already have a GitHub account?
-2. Can the user sign in successfully?
-3. Is the user already using GitHub for this project, or does a suitable repository already exist?
+2. Is there already a suitable repository for this project?
+3. Is the user able to access it?
 
-If the user has no account, guide them to [GitHub sign-up](https://github.com/signup). Explain each step in plain language and wait for the user to complete it. Do not request passwords, authentication codes, recovery codes, or other secrets in chat.
+If an appropriate repository exists, inspect its settings before suggesting changes. Do not create a duplicate or change visibility without explicit approval.
 
-If the user already has an appropriate repository, inspect its visibility and configuration before proposing changes. Do not create duplicates or change an existing repository's visibility without explicit approval.
+If the user needs an account, guide them to [GitHub sign-up](https://github.com/signup). Never ask for passwords, authentication codes, recovery codes, or other secrets in chat.
 
-## 2. Secure the account's commit email privacy
+## 2. Choose the commit identity knowingly
 
-Before the first remote commit or push, guide the user to review GitHub's email privacy settings:
+A Git commit can contain the author's name and email address. Explain this before the first remote push, then let each contributor choose how their own identity appears.
 
-1. Open [GitHub email settings](https://github.com/settings/emails).
-2. Enable **Keep my email addresses private**.
-3. Enable **Block command line pushes that expose my email**, where this option is available.
-4. Find and copy the exact GitHub-provided `noreply` email address shown in the account's email settings.
-5. Explain that this protects the email address in future GitHub web-based operations and, when Git is configured correctly, future command-line commits.
+- **Public email:** the contributor may use an email address they are comfortable making visible in commit history.
+- **GitHub `noreply` email:** the contributor can use the address GitHub provides in [email settings](https://github.com/settings/emails). This helps keep their personal email out of future commits.
+- **Other informed choice:** respect the contributor's decision where GitHub supports it.
 
-For command-line Git commits, configure Git to use the exact `noreply` address shown in that user's own GitHub settings. Never guess, construct, or substitute an example address. If the user is using a graphical Git client or an IDE, guide them to its equivalent author-email setting.
+If the contributor chooses `noreply`, help them configure the exact address shown in their own GitHub settings for command-line Git or their chosen editor. Do not guess or construct an address, and do not ask them to paste it into chat. GitHub's **Keep my email addresses private** setting controls web-based commits; command-line Git must also be configured with the chosen address. The optional **Block command line pushes that expose my email** setting can provide an additional safeguard, but it does not configure Git.
 
-For GitHub web-based commits, the privacy setting makes GitHub use the noreply address. The command-line block setting is an additional safeguard; it does not configure Git by itself.
+Before the first push, check the author details attached to the saved change (name and email) and compare them with the contributor's choice. The contributor can confirm the result without sharing the full address in chat.
 
 **Important limits:**
-- Email privacy is not anonymity. The GitHub username, commit author name, project content, and other activity may still identify the contributor.
-- Changing the setting does not remove a personal email address from commits already created or pushed.
-- Do not rewrite existing Git history to change commit identity without explaining the consequences and obtaining explicit permission.
-- Never ask the user to paste their personal email address or noreply address into the conversation. The user can configure it locally or show only a redacted confirmation.
+- A `noreply` address is not anonymity. A username, author name, code, or other public activity may still identify someone.
+- Changing settings does not remove an email address from commits already pushed.
+- Do not rewrite existing history or change another contributor's commit identity without explaining the consequences and obtaining explicit permission.
+- Never impose either disclosure or concealment. Each contributor controls their own identity details.
 
-Official guidance:
-- [Keeping command-line pushes from exposing a personal email](https://docs.github.com/en/account-and-profile/how-tos/email-preferences/blocking-command-line-pushes-that-expose-your-personal-email-address)
-- [Setting the commit email address](https://docs.github.com/en/account-and-profile/how-tos/email-preferences/setting-your-commit-email-address)
-- [GitHub email addresses and noreply addresses](https://docs.github.com/en/account-and-profile/concepts/email-addresses)
+Official guidance: [Set your commit email](https://docs.github.com/en/account-and-profile/how-tos/email-preferences/setting-your-commit-email-address), [Email addresses on GitHub](https://docs.github.com/en/account-and-profile/concepts/email-addresses).
 
-## 3. Create the project repository as private
+## 3. Create or choose the repository
 
-Guide the user through GitHub's repository creation page:
+For a new GitHub project repository, **Private** is the default recommendation. Public visibility requires the user's informed, explicit choice after explaining what becomes visible.
 
 1. Open [Create a new repository](https://github.com/new).
-2. Choose a clear, project-appropriate repository name.
-3. Add a short description if useful.
-4. Set visibility to **Private**. This is the default for this workflow.
-5. Initialize with a README if appropriate for the chosen setup.
-6. Create the repository and confirm that GitHub displays it as **Private**.
+2. Choose a clear name and add a description if useful.
+3. Select **Private** unless the user has explicitly chosen public visibility.
+4. Initialize with a README only if appropriate for the chosen setup.
+5. Create the repository and verify its owner, URL, and visibility.
 
-Do not ask the user to publish source code, project plans, screenshots, issue text, or other material merely to make setup easier. Keep the project private while its contents, ownership, licensing, and release intentions are still being developed.
+A private repository is accessible to its owner and people or applications they authorize. It is not a secret store or a substitute for account security, backups, and careful access management. Grant only the permissions collaborators need.
 
-A private repository is accessible to its owner and people or applications the owner authorizes. It is not a substitute for account security, careful permission management, backups, or secret handling. Review collaborator access and grant only the minimum permissions needed.
+Do not make a repository public just to obtain a GitHub feature. Plan availability changes; check the current [protected branch documentation](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [secret scanning documentation](https://docs.github.com/en/code-security/concepts/secret-security/about-alerts), and [GitHub Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions) before relying on a specific plan limit. The template's own Gitleaks workflow is an additional check, not a guarantee or a substitute for GitHub Secret Protection.
 
-**GitHub Free limitations for private repositories:** GitHub Free does not provide branch-protection rules or built-in secret-scanning alerts for personal private repositories. The project's review and no-merge-without-approval rules therefore remain manual unless the repository's plan supports enforcement. The template's own Gitleaks GitHub Actions workflow can provide an additional scan while Actions quota is available, but it is not the same as GitHub's built-in Secret Protection and is not a guarantee. GitHub Free currently includes $12 USD of monthly compute usage for private-repository Actions, roughly equivalent to 2,000 minutes on a standard 2-core Linux runner. Other runner types consume the allowance at different rates. The plan also includes 500 MB of artifact storage (shared with GitHub Packages) and 10 GB of cache per repository. Additional compute usage may be billed if a payment method is configured; otherwise, Actions usage is blocked after the included allowance is exhausted. Re-check current plan terms before relying on these figures. Do not make a repository public just to obtain a security feature; choose visibility based on the project's privacy needs.
+If a connected tool can create a repository, explain the intended owner, name, visibility, and initial contents first, then obtain explicit approval. Never claim creation unless verified.
 
-Official plan details: [branch protection availability](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [secret scanning availability](https://docs.github.com/en/code-security/concepts/secret-security/about-alerts), and [GitHub Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions).
+## 4. Prepare and verify before the first push
 
-If a connected GitHub tool can create repositories, the AI must still explain the intended name, owner, private visibility, and initial contents, then obtain the user's explicit approval before creating it. If no authorized repository-creation capability is available, guide the user through the GitHub interface; never claim to have created it.
+- Confirm the correct repository and intended visibility.
+- Confirm the contributor's chosen commit identity is configured.
+- Check the author details attached to the saved change (name and email) against that choice.
+- Review files and commit contents for secrets, personal data, confidential information, and unintended publication.
+- Check collaborator access and explain any external permissions being requested.
+- Explain what was verified and what remains unknown.
 
-## 4. Prepare the repository safely
+Do not ask the user to paste personal email addresses or unredacted configuration output into chat. A redacted screenshot or local confirmation is usually enough.
 
-After creation:
+Local work can continue before these remote-publication checks are complete, provided it is safe and no remote push occurs.
 
-- Verify the repository URL and confirm that its visibility is private.
-- Confirm that the intended owner is correct.
-- Add only the agreed starter files and project documentation.
-- Use a project-specific README, project brief, decision log, research log, risk notes, and milestone plan as appropriate.
-- Keep secrets, passwords, tokens, private keys, personal data, and confidential third-party information out of the repository.
-- Use placeholders and synthetic examples in documentation.
-- Decide whether collaborators are needed; explain access levels before inviting anyone.
-- Do not install tools, connect accounts, grant application permissions, or run commands with side effects without the user's informed approval.
+## 5. Continue with the project workflow
 
-## 5. Verify before the first commit or push
+Once the repository is ready, follow [the development workflow](DEVELOPMENT_WORKFLOW.md). On plans where branch protection is unavailable, review and merge approval remain manual working agreements. Keep the process proportionate to the project's size and risk.
 
-Before any project files are committed to or pushed to a remote repository:
+## How ChatGPT should guide the user
 
-- Confirm the repository is private.
-- Confirm email privacy is enabled in GitHub settings.
-- Confirm Git or the selected Git client uses the user's GitHub-provided noreply address for commits.
-- Confirm the command-line email-block setting is enabled where available.
-- Review the files and commit contents for secrets, personal data, confidential information, and unintended publication.
-- Explain what has been checked and what has not been verified.
-
-Do not request that the user paste configuration output containing personal details into chat. Prefer asking the user to confirm the setting on their own device or provide a redacted screenshot.
-
-Complete the relevant remote-publication checks before the first push. Local implementation may proceed earlier when the user has chosen a local-first workflow and the work can be carried out safely.
-
-## 6. Continue with the normal development workflow
-
-Once the repository is ready, establish project-specific branch, review, testing, handover, and backup practices as described in [the development workflow](DEVELOPMENT_WORKFLOW.md). On GitHub Free private repositories, enforce review discipline manually because branch-protection rules are not available. Keep the workflow proportionate to the project's size and risk.
-
-## AI behavior and user experience
-
-- Detect the transition to remote collaboration or publication proactively; the user should not have to know which privacy checks are needed.
-- Reassure the user that setup is straightforward and manageable: say, in the user’s language, that the setup is straightforward and that you will guide them step by step.
-- Present the privacy checks as a normal, manageable part of remote publication, not as a technical hurdle. The user does not need prior GitHub or programming experience.
-- Explain why these checks matter before remote publication.
-- Ask one simple question or give one small action at a time.
-- Use plain language and explain unfamiliar terms.
-- Never imply that a setting is enabled or a repository is private until verified.
-- Keep the user in control of account creation, account connections, permissions, repository visibility, collaborator invitations, and publication.
-- If the user chooses a different setup, explain the trade-offs and record the decision. Do not silently override the private-by-default safeguard.
+- Explain the reason for each check in plain language.
+- Give one manageable step at a time.
+- Reuse verified settings; do not make the user repeat setup without a reason.
+- Preserve the user's choice of repository, visibility, and own commit identity.
+- Ask before account connections, permission changes, invitations, repository creation, or publication.
+- Never claim that a setting or repository state is verified until it has actually been checked.
