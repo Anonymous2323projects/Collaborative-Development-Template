@@ -1,6 +1,6 @@
 # Start Here: Your ChatGPT Project Guide
 
-Welcome. This repository is designed to help an AI assistant guide you from an early idea to a well-structured, secure, maintainable project.
+Welcome. This repository is designed to help ChatGPT guide you from an early idea to a well-structured, secure, maintainable project.
 
 ## The intended first interaction
 
