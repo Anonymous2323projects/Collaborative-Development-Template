@@ -28,7 +28,7 @@ For projects using the Collaborative Development Template, initialize this file 
 
 ## Open actions
 
-| ID | Action / exact user step | Why it matters / what it unlocks | Priority | Status | Owner | Next review trigger | Last surfaced | Evidence / outcome |
+| ID | Action / exact required step | Why it matters / what it unlocks | Priority | Status | Owner | Next review trigger | Last surfaced | Evidence / outcome |
 |---|---|---|---|---|---|---|---|---|
 | <ID> | <CLEAR ACTION> | <DEPENDENCY OR BENEFIT> | <PRIORITY> | <STATUS> | <USER / AI / OTHER> | <DATE OR TRIGGER> | <DATE> | <LINK OR NONE> |
 
