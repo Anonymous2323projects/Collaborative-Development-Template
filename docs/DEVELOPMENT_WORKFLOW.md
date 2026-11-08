@@ -49,6 +49,7 @@ This is a remote-publication gate, not a prerequisite for coding or local commit
 
 - Work on a focused branch.
 - Keep changes small and reviewable.
+- On GitHub Free private repositories, branch protection is unavailable; treat pull-request review and explicit merge approval as manual workflow rules. Do not claim GitHub enforces them.
 - Preserve existing architecture and conventions; avoid parallel systems where an existing one can be extended appropriately.
 - Evaluate system-wide effects across modules, interfaces, workflows, dependencies, data, and existing behavior.
 - Avoid unrelated refactors and hidden behavior changes.
