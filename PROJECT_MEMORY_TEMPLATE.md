@@ -48,14 +48,22 @@ Keep detailed research in the research log. Distinguish evidence from inference.
 ## Open questions and risks
 <QUESTION OR RISK — NEXT ACTION / STATUS>
 
-## Next actions
-1. <MOST USEFUL NEXT STEP>
-2. <FOLLOWING STEP>
+## Continuity references
+- Canonical pending-action register: <PATH / ISSUE TRACKER / NONE>
+- Latest handover: <PATH / DATE / NONE>
 
-## Session update record
-| Date | Session / change | Memory updated |
+## Next AI-owned steps
+1. <MOST USEFUL NEXT STEP THE ASSISTANT CAN TAKE>
+2. <FOLLOWING INDEPENDENT STEP>
+
+Human-dependent tests, decisions, and access requests belong in the canonical pending-action register when one exists; do not duplicate that list here.
+
+## Meaningful memory change history
+Record only sessions that changed durable project knowledge; do not log every conversation.
+
+| Date | Durable change | Evidence / source |
 |---|---|---|
-| <DATE> | <SHORT SUMMARY> | <YES / NO — WHY> |
+| <DATE> | <SHORT SUMMARY> | <ISSUE / PR / COMMIT / NONE> |
 
 ---
 

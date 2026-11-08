@@ -24,7 +24,7 @@ If the user already has an appropriate repository, inspect its visibility and co
 
 ## 2. Secure the account's commit email privacy
 
-Before the first project commit, guide the user to review GitHub's email privacy settings:
+Before the first remote commit or push, guide the user to review GitHub's email privacy settings:
 
 1. Open [GitHub email settings](https://github.com/settings/emails).
 2. Enable **Keep my email addresses private**.
@@ -62,6 +62,10 @@ Do not ask the user to publish source code, project plans, screenshots, issue te
 
 A private repository is accessible to its owner and people or applications the owner authorizes. It is not a substitute for account security, careful permission management, backups, or secret handling. Review collaborator access and grant only the minimum permissions needed.
 
+**GitHub Free limitations for private repositories:** GitHub Free does not provide branch-protection rules or built-in secret-scanning alerts for personal private repositories. The project's review and no-merge-without-approval rules therefore remain manual unless the repository's plan supports enforcement. The template's own Gitleaks GitHub Actions workflow can provide an additional scan while Actions quota is available, but it is not the same as GitHub's built-in Secret Protection and is not a guarantee. GitHub Free currently includes 2,000 Actions minutes per month for private repositories; usage and storage are shared at the account level and may incur charges if the included allowance is exceeded. Do not make a repository public just to obtain a security feature; choose visibility based on the project's privacy needs.
+
+Official plan details: [branch protection availability](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [secret scanning availability](https://docs.github.com/en/code-security/concepts/secret-security/about-alerts), and [GitHub Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions).
+
 If a connected GitHub tool can create repositories, the AI must still explain the intended name, owner, private visibility, and initial contents, then obtain the user's explicit approval before creating it. If no authorized repository-creation capability is available, guide the user through the GitHub interface; never claim to have created it.
 
 ## 4. Prepare the repository safely
@@ -79,7 +83,7 @@ After creation:
 
 ## 5. Verify before the first commit or push
 
-Before any project files are committed or pushed:
+Before any project files are committed to or pushed to a remote repository:
 
 - Confirm the repository is private.
 - Confirm email privacy is enabled in GitHub settings.
@@ -94,7 +98,7 @@ Complete the relevant remote-publication checks before the first push. Local imp
 
 ## 6. Continue with the normal development workflow
 
-Once the repository is ready, establish the project-specific branch, review, testing, handover, and backup practices described in [the development workflow](DEVELOPMENT_WORKFLOW.md). Keep the workflow proportionate to the project's size and risk.
+Once the repository is ready, establish project-specific branch, review, testing, handover, and backup practices as described in [the development workflow](DEVELOPMENT_WORKFLOW.md). On GitHub Free private repositories, enforce review discipline manually because branch-protection rules are not available. Keep the workflow proportionate to the project's size and risk.
 
 ## AI behavior and user experience
 

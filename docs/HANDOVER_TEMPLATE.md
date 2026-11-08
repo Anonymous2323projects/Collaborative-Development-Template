@@ -42,6 +42,16 @@
 - **User preferences relevant to the work:** `<ONLY WHAT IS APPROPRIATE AND NECESSARY>`
 - **Potentially reusable insight:** `<GENERAL PRINCIPLE, SEPARATE FROM PROJECT-SPECIFIC IMPLEMENTATION, OR NONE>`
 
+## Open human-dependent actions
+
+- **Critical blockers:** <ACTION / NONE>
+- **Blocking:** <ACTION / NONE>
+- **Non-blocking / deferred tests:** <ACTION / NONE>
+- **Canonical action register:** <PATH OR ISSUE TRACKER / NONE>
+- **Next review trigger:** <DATE, MILESTONE, OR RELEVANT SESSION>
+
+Do not duplicate the full action register here; summarize only what the next session needs to know.
+
 ## Next safe action
 
 `<ONE CONCRETE NEXT STEP>`

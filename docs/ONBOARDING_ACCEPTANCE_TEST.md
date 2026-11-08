@@ -9,7 +9,7 @@ Run tests with fictional ideas and a clean conversation that does not contain pr
 ## Test setup
 
 - Use the repository's current default branch.
-- Start a genuinely fresh conversation with an AI assistant that can access the public repository.
+- Start a genuinely fresh ChatGPT conversation with access to the public repository.
 - Use only the prompt specified by the scenario.
 - Use fictional, non-sensitive project details.
 - Record the product/configuration and exact test conditions where relevant.
@@ -107,6 +107,31 @@ Test a user who already has a suitable repository, a user who prefers local-firs
 - [ ] Reasonable local/alternative-host choices remain available.
 - [ ] Remote publication checks occur before the first push.
 
+## Scenario F: ChatGPT Free and limited repository access
+
+Run this scenario with a Free ChatGPT account, a private GitHub project repository, and no paid automation or write integration.
+
+**Expected result**
+
+- The assistant completes onboarding without requiring Plus, Pro, Work, Scheduled Tasks, deep research, or a GitHub connector.
+- It does not assume Memory will recall previous chats or that Project chat history is available on Free.
+- It respects the current Free Project limit (currently 5 files per project) and upload limit (currently 3 files per day); it does not request the entire repository.
+- It treats uploaded Project files as snapshots rather than live GitHub-synced documents and checks their freshness.
+- It explains the Free-plan Data Controls setting, how to opt out of using new conversations for model improvement, and that submitting response feedback may still make the associated conversation available for model improvement.
+- It does not ask the user to make a private repository public to enable access. If it cannot read the repository, it requests only the relevant files.
+- It does not claim the ChatGPT GitHub app can write to the repository. Without a separate authorized write capability, it prepares a patch and guides the user through applying it.
+- It explains that GitHub Free private repositories do not support branch protection or built-in secret-scanning alerts; manual review rules and the template's Gitleaks workflow remain distinct controls.
+- It completes the workflow without scheduled reminders or event-triggered monitoring.
+
+**Pass criteria**
+
+- [ ] No paid ChatGPT feature is required.
+- [ ] File and upload limits are respected.
+- [ ] Private repository visibility is preserved.
+- [ ] Read and write access are described accurately.
+- [ ] GitHub Free security limitations are disclosed without overstating CI coverage.
+- [ ] Project continuity works from repository files in a fresh chat.
+
 ## Recording results
 
 For each run, record only what is necessary:
@@ -122,4 +147,4 @@ Do not paste raw chat transcripts into this public repository. Summarize only th
 
 ## Scope and limitations
 
-Passing these scenarios provides evidence about the tested product, configuration, prompts, and date only. It does not prove that every AI assistant will behave identically, nor does it establish complete security, privacy, or legal compliance.
+Passing these scenarios provides evidence about the tested product, configuration, prompts, and date only. It does not prove that every ChatGPT plan, model, region, or configuration will behave identically, nor does it establish complete security, privacy, or legal compliance.

@@ -2,9 +2,9 @@
 
 ![Collaborative Development Template — manifesto banner](assets/manifesto-banner.png)
 
-A project-agnostic framework for structured, secure, AI-assisted software development.
+A ChatGPT-first framework for structured, secure, collaborative software development, with GitHub as the durable project record.
 
-## For AI assistants
+## For ChatGPT
 
 If a user shares this repository URL to begin a project, treat the link itself as the request to use this template. Read `START_HERE.md` from the current default branch before replying. The current repository state takes precedence over stale branch names or handover details from earlier conversations; use another branch only when the user explicitly requests it. Then make your entire first response only a natural, concise equivalent of **“What are you dreaming of?”** in the user's language. Do not ask the user to explain the repository, name a branch, or provide a separate instruction to read the guide. If you cannot access the repository or read the guide, say so honestly; do not pretend you have loaded it.
 
@@ -14,11 +14,12 @@ Share this repository link with ChatGPT as the starting point. When ChatGPT can 
 
 The guide helps you explore your idea, shape a project brief, choose an appropriate technical direction, and build in manageable steps. You do not need to know how to code to begin. GitHub is the recommended collaboration and version-control host, with private visibility as the default for new project repositories. Existing suitable repositories and other workflows remain valid; apply the privacy checks before committing or pushing to any remote.
 
-- [Start here: AI project guide](START_HERE.md)
+- [Start here: ChatGPT project guide](START_HERE.md)
 - [Private GitHub project setup guide](docs/PRIVATE_GITHUB_SETUP.md)
 - [ChatGPT onboarding guide](CHATGPT_ONBOARDING.md)
 - [Project brief template](PROJECT_BRIEF_TEMPLATE.md)
 - [Project memory template](PROJECT_MEMORY_TEMPLATE.md)
+- [Pending actions and human follow-up template](PENDING_ACTIONS_TEMPLATE.md)
 - [Decision log template](DECISION_LOG_TEMPLATE.md)
 - [Risk register template](RISK_REGISTER_TEMPLATE.md)
 - [Research template](RESEARCH_TEMPLATE.md)

@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve this project-agnostic development template.
+Thanks for helping improve this ChatGPT-first development template.
 
 ## Before contributing
 
