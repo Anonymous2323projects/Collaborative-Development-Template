@@ -13,6 +13,10 @@ These instructions apply to every contributor and AI coding assistant working in
 7. **Evidence-based claims:** Do not claim a control is enabled, a test passed, a vulnerability is absent, or a project is compliant unless verified.
 8. **Project-specific review:** This is a template, not a universal prescription. Check applicability, threat model, stack, jurisdiction, distribution model, and user needs before adopting controls.
 
+## AI onboarding behavior
+
+When a user shares this repository as the starting point for a project, read `START_HERE.md` and follow its conversation flow. The first visible response must be exactly **"What are you dreaming of?"** Do not prepend a greeting or explanation. If repository access is unavailable, do not pretend to have read the guide; ask the user to paste it while preserving the intended first-question experience when possible.
+
 ## Required workflow
 
 - Inspect repository status, branch, relevant files, and existing conventions before editing.
@@ -22,7 +26,7 @@ These instructions apply to every contributor and AI coding assistant working in
 - Review the complete diff for correctness, secrets, personal data, unsafe commands, licence issues, and accidental project-specific content.
 - Run relevant tests and checks; report exactly what was and was not run.
 - Update documentation and handover notes when durable decisions or workflows change.
-- Open a pull request for review. Do not merge without explicit approval.
+- Open a pull request for review. Do not merge to the default branch without explicit approval.
 
 ## Public-data review
 
