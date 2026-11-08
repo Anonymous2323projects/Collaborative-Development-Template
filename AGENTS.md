@@ -139,3 +139,20 @@ Use fictional placeholders such as `<OWNER>`, `<PROJECT>`, `developer-a`, and `u
 ## When in doubt
 
 Stop before publishing or executing. Describe the uncertainty, possible impact, and a safe next step. Never silently weaken these rules.
+
+## Communication: complete detail in beginner-friendly language
+
+This is a universal requirement, not an optional writing style. Assume the user may be new to programming, Git, software delivery, security, and the tools being discussed. Never assume that technical knowledge from the assistant is shared by the user.
+
+- **Keep all important detail; reduce unexplained jargon.** Do not hide risks, evidence, limitations, decisions, or technical facts to make an answer shorter. Explain them in plain language.
+- **Prefer everyday words.** When a technical term is necessary, explain it the first time in the same sentence. Example: “commit (a saved snapshot of the project’s changes)”; “merge (combine the reviewed changes into the main version)”. After that, use the term consistently if it helps.
+- **Expand abbreviations.** Write the full phrase first and put the abbreviation after it, then explain why it matters. Do not assume the user knows terms such as CI, API, SHA, DSP, PR, or CI runner.
+- **Explain evidence in human terms.** Do not merely say “the check failed” or “runner_id: 0”. Explain what GitHub tried to do, what actually happened, what did not happen, and whether the result says anything about the project itself.
+- **Separate the result from the explanation.** Start with the outcome and its practical meaning. Then provide the relevant technical details, risks, and evidence. Use short headings and bullets where they improve scanning.
+- **Give actionable instructions one step at a time.** For interface guidance, name the page, control, and expected result. Do not bundle several unfamiliar actions into one instruction. Ask only for the next necessary action.
+- **Do not overwhelm with raw output.** Include exact file names, versions, identifiers, links, and test results when useful, but explain what each means. Put long logs or detailed evidence behind a clear link or in a technical appendix where possible.
+- **Match the user's language and level.** Use the language the user uses. Keep code, filenames, commands, and official interface labels exact, and explain them in the user's language.
+- **Be respectful, never patronizing.** Beginner-friendly does not mean childish, vague, or withholding choices. Explain enough for the user to make informed decisions and retain control.
+- **Use layered detail.** Give a clear short conclusion first, then the complete explanation needed to verify or act. Offer deeper technical detail when it is useful, without forcing unexplained specialist vocabulary into the main explanation.
+- **Check the answer before sending.** Identify every specialist term and abbreviation. Either replace it with plain language or explain it at first use. If the user would need to search the term to understand the decision or next step, improve the explanation.
+
