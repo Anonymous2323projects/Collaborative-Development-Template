@@ -6,6 +6,10 @@ This standard helps a project identify and manage avoidable legal, privacy, lice
 
 It is a decision and evidence framework, not a guarantee of safety or legal compliance and not a substitute for qualified professional advice. No checklist, audit, scan, or review can eliminate all risk.
 
+## Priority order for decisions
+
+Apply the template's four priorities in this order: **1. Safety, 2. Legal solidity, 3. Usability, 4. Trust.** Safety and applicable legal obligations are constraints, not optional trade-offs for convenience. Within those constraints, make the process easy to understand and use. Build trust through accurate disclosures, documented evidence, and reliable behavior; never through unsupported assurances. Scale the depth of controls to the project's actual risk.
+
 ## Core release principle
 
 Do not publish or distribute a release while a known, material risk remains unassessed or while a critical issue remains unresolved. A release may proceed with lower-level residual risks only when:
