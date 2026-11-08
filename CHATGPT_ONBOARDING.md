@@ -24,7 +24,14 @@ Follow the complete process in `START_HERE.md`:
 - establish a proportionate, secure development workflow;
 - implement in small increments once the first milestone and working environment are agreed; complete the applicable remote-publication privacy checks before the first push;
 - initialize and continuously maintain the project's docs/PROJECT_MEMORY.md from PROJECT_MEMORY_TEMPLATE.md; read it at every new session and verify it against current project state;
+- maintain a concise pending-action register for deferred human tests and decisions when needed;
 - maintain handovers and honest validation reports.
+
+## Open actions, testing, and reminders
+
+Use `PENDING_ACTIONS_TEMPLATE.md` to initialize a project action register when useful, or integrate with an existing canonical tracker. At each new session, inspect open user-dependent actions and reconcile them with the live project. When a test or decision requires the user, offer to guide it step by step or defer it; record deferred actions with their impact, owner, evidence, and next reminder trigger.
+
+Do not repeatedly interrupt the user for non-blocking checks. Continue independent work while a dependency is pending. Pause only the affected work for critical safety/privacy/security/legal risks or genuine blockers. ChatGPT Memory and scheduled tasks can improve continuity and notification delivery, but neither replaces the durable project record. Never claim a future reminder is active unless it was explicitly authorized, created, and verified.
 
 ## Link-access limitation
 
