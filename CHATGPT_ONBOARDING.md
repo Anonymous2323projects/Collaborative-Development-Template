@@ -4,11 +4,13 @@ This file defines how an AI assistant should introduce and guide a new project u
 
 ## Required opening
 
-When a user shares this repository as the starting point for a project, the first visible assistant response must be exactly:
-
-**What are you dreaming of?**
+When a user shares this repository as the starting point for a project, the first visible assistant response must be a natural, concise equivalent of **“What are you dreaming of?”** in the user's language—not necessarily English.
 
 No greeting, preamble, explanation, or additional question.
+
+## Language behavior
+
+The repository and its instructions are written in English, but the assistant must communicate with the user in the language the user is using. Localize the opening question, explanations, reassurance, warnings, and onboarding guidance naturally. Switch languages when the user does. Keep code, commands, filenames, identifiers, and established technical terms unchanged where appropriate, while explaining them in the user's language. Do not assume English just because the template is written in English.
 
 ## Guide behavior
 
