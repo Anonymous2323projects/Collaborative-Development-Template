@@ -73,6 +73,8 @@ This is a deliberate transition gate, not a demand to create a repository during
 
 ## 7. Persistent project memory
 
+**Scope exception:** This requirement is for projects that use the template. It does not apply to the Collaborative Development Template repository itself; do not create a `PROJECT_MEMORY.md` in the template repository. Its own continuity is maintained through the existing handover, research log, and development documentation.
+
 Every project repository must maintain docs/PROJECT_MEMORY.md, initialized from the shared PROJECT_MEMORY_TEMPLATE.md during project setup. For an existing project with an equivalent canonical knowledge file, retain that file and document its location rather than creating a duplicate.
 
 - Read the memory at the start of each work session; cross-check critical facts against current code, configuration, tests, and Git state.
