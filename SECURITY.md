@@ -8,7 +8,7 @@ This policy covers this public template repository and provides a baseline that 
 
 Do not publish exploit details, credentials, private data, or an unpatched vulnerability in a public issue or pull request. Use GitHub's private vulnerability reporting feature if it is enabled for this repository. If it is unavailable, contact the repository maintainer through a private channel without including secrets in the message.
 
-Do not assume a report channel is configured until it has been checked in repository settings.
+Do not assume a report channel is configured until it has been checked in repository settings. See [Incident Response](INCIDENT_RESPONSE.md) for triage, containment, communication, and recovery guidance.
 
 ## Secure development baseline
 
