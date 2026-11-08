@@ -1,6 +1,6 @@
 # Research Note
 
-> Separate source findings from interpretation. Prefer primary sources and record when each source was checked. Keep research proportionate to the decision and its risks.
+> Use this for research that supports a meaningful decision or needs traceability—not for routine lookups. Separate source findings from interpretation, prefer primary sources, and keep the depth proportionate to the decision and its risks.
 
 ## Research question
 
