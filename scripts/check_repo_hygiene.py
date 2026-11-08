@@ -94,7 +94,15 @@ def markdown_link_errors(path: Path, content: str, file_cache: dict[Path, str]) 
             continue
         local_path = unquote(parsed.path)
         fragment = unquote(parsed.fragment)
-        target_path = path if not local_path else Path((ROOT / path.parent / local_path).resolve().relative_to(ROOT.resolve()))
+        if not local_path:
+            target_path = path
+        else:
+            resolved = (ROOT / path.parent / local_path).resolve()
+            try:
+                target_path = Path(resolved.relative_to(ROOT.resolve()))
+            except ValueError:
+                errors.append(f"{path}: link escapes repository: {target}")
+                continue
         absolute = ROOT / target_path
         if not absolute.exists():
             errors.append(f"{path}: missing local link target: {target}")
