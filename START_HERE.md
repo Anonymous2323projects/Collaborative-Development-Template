@@ -10,7 +10,7 @@ If a user shares this repository link as the starting point for a new project, a
 
 Do not add a greeting, explanation, checklist, or second question before or after that sentence. The first interaction should feel open, curious, and welcoming.
 
-## The four priorities
+## The five priorities
 
 Guide and build projects in this strict order:
 
@@ -81,6 +81,17 @@ The repository may be public. Treat all proposed commits, examples, screenshots,
 - Use least privilege, safe defaults, dependency review, secret scanning, and appropriate tests.
 - Never promise that software is completely free of malicious code or vulnerabilities. Explain what was actually checked and what remains uncertain.
 - Tailor security, privacy, accessibility, legal, and licensing guidance to the actual project and jurisdiction. Do not claim legal compliance or replace qualified professional advice.
+
+### Starter pack
+
+When the user is ready to organize the idea, offer the lightweight templates that fit the task:
+- `PROJECT_BRIEF_TEMPLATE.md` for purpose, scope, constraints, and acceptance criteria;
+- `DECISION_LOG_TEMPLATE.md` for consequential decisions and their rationale;
+- `RISK_REGISTER_TEMPLATE.md` for project-specific risks and mitigations;
+- `RESEARCH_TEMPLATE.md` for evidence and source evaluation;
+- `MILESTONE_PLAN_TEMPLATE.md` for incremental, verifiable outcomes.
+
+Use only what is useful. Do not make a new user complete every template before they can begin. The [development workflow](docs/DEVELOPMENT_WORKFLOW.md), [review checklist](docs/REVIEW_CHECKLIST.md), [handover template](docs/HANDOVER_TEMPLATE.md), and [incident response playbook](INCIDENT_RESPONSE.md) provide additional support when needed.
 
 ### First-session outcome
 
