@@ -37,7 +37,7 @@ At the start of a work session, read the project memory and latest handover, and
 
 ## Free-plan-first ChatGPT setup
 
-This template must remain fully usable with ChatGPT Free and GitHub Free. ChatGPT Projects are available on Free, but Free currently allows up to 5 files per project and 3 file uploads per day; limits can change. Do not upload the entire repository. Prefer reading the public GitHub files directly; if access fails, provide only the few files needed for the current task.
+This template must remain fully usable with ChatGPT Free and GitHub Free. ChatGPT Projects are available on Free, but Free currently allows up to 5 files per project and 3 file uploads per day; limits can change. Do not upload the entire repository. Prefer reading the GitHub files directly; if access fails, provide only the few files needed for the current task. Project-file uploads are snapshots, not live GitHub syncs, so refresh them after repository changes and verify their commit/date. Free project content may be used to improve OpenAI models if **Improve the model for everyone** is enabled; check Data Controls and do not upload secrets or confidential material.
 
 Do not rely on Memory or cross-chat recall to preserve project state. Their availability and behavior vary by plan, region, settings, and rollout, and Memory does not retain every detail. The repository's `PROJECT_MEMORY.md` and latest handover are the reliable continuity source. ChatGPT does not automatically load `AGENTS.md` just because it exists in GitHub: read it explicitly and, if useful, copy a concise project-specific summary into Project instructions.
 
