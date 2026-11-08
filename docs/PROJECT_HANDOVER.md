@@ -31,7 +31,7 @@
 - Free-plan-first ChatGPT continuity and the human-dependent action register were integrated through PR #14 (squash merge `2c93ee400d259c4e3bd801af207ee200ccc74778`).
 - The README banner was switched to the repository-local asset in commit `fac8578787ea5d414bae98c81ad0f9309337525b`.
 - PR #15 was squash-merged as `0fb2fb4a2ca68aa2fdd94c52a25fe4e7987b5923`; it adds user-controlled upstream template update awareness and same-Project conversation rollover guidance.
-- PR #16 is being prepared on `feature/project-continuity-setup` to align the Free-plan onboarding with current OpenAI Project behavior: reusable instructions belong in Project Instructions (not a separate description field), project-chat reference can work when memory controls are enabled, and durable project records remain authoritative.
+- PR #16 was merged into `main` as `e1bae2c48519cc2aa5c2b671ca448b5608ff6a36`; it aligned Free-plan onboarding with current OpenAI Project behavior: reusable instructions belong in Project Instructions, same-Project chat reference depends on memory settings, and durable project records remain authoritative.
 
 These entries describe repository changes only; they are not evidence of a complete security, privacy, or legal audit.
 
@@ -53,6 +53,7 @@ These entries describe repository changes only; they are not evidence of a compl
 - Keep onboarding acceptance criteria generic and maintainable; record any future test results separately and only in sanitized form.
 - Review the distinction between mandatory safeguards, recommended practices, and user-selectable workflow choices.
 - Ensure automated checks are described according to what they actually test; do not treat hygiene or secret scanning as a complete content or security review.
+- Review [the maintainer-only repository settings checklist](REPOSITORY_SETTINGS_CHECKLIST.md); branch protection, repository metadata, and security settings require GitHub administration access and are not changed by documentation commits.
 
 ## Handover checklist
 

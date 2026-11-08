@@ -33,6 +33,10 @@ The guide helps you explore your idea, shape a project brief, choose an appropri
 - [Update and release security policy](UPDATE_AND_RELEASE_SECURITY.md)
 - [Privacy and public publication standard](PRIVACY_AND_PUBLICATION.md)
 - [Contributor guide](CONTRIBUTING.md)
+- [Code of conduct](CODE_OF_CONDUCT.md)
+- [Maintainer governance](GOVERNANCE.md)
+- [Repository settings checklist](docs/REPOSITORY_SETTINGS_CHECKLIST.md)
+- [Changelog](CHANGELOG.md)
 - [AI and contributor repository instructions](AGENTS.md)
 
 ## The template's five priorities
