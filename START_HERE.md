@@ -157,7 +157,7 @@ Do not assume the first conversation must produce code. A successful first sessi
 - key unknowns and risks;
 - one sensible next step.
 
-When the user is ready, help create a project brief and a practical first milestone. The private GitHub setup gate is triggered only when the user and AI agree the project is ready to begin implementation.
+When the user is ready, help create a project brief and a practical first milestone. Repository-readiness and privacy checks are triggered before the first remote commit or push, not as a prerequisite for safe local exploration or implementation.
 
 ## If the assistant cannot infer this workflow from the repository link
 
