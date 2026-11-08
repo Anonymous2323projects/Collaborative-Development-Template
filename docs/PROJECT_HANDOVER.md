@@ -7,6 +7,7 @@
 - **Name:** Collaborative Development Template
 - **Repository:** https://github.com/Anonymous2323projects/Collaborative-Development-Template
 - **Default branch:** `main`
+- **Verified `main` commit at this handover:** `f908c230f183951dd8afd6a63444a8b125e53488` (PR #18 squash merge)
 - **Purpose:** Maintain a ChatGPT-first, privacy-first framework for collaborative software development, using GitHub as the durable project record.
 - **Core priorities:** Safety, legal solidity, usability, trust, freedom.
 - **Core components:** Memory, roadmap, handover, research records, development workflow.
@@ -21,6 +22,7 @@
 - `PENDING_ACTIONS_TEMPLATE.md` is an optional register for meaningful human-dependent actions in downstream projects.
 - Downstream projects record their known template baseline and last upstream check in the existing project memory; unknown source commits must remain explicitly unknown. The template repository itself is exempt.
 - ChatGPT Free compatibility is the baseline; Projects, Memory, GitHub connections, and automation are convenience features with plan-dependent limits.
+- ChatGPT Project continuity is configured through **Project settings → Project instructions**. Current OpenAI Projects documentation does not describe a separate free-form project-description field. The short copyable continuity block is in `START_HERE.md`; same-Project chat reference remains conditional on memory settings.
 - The public repository must not contain private conversations, personal data, credentials, or project-specific material from unrelated work.
 
 ## Recent verified repository milestones
@@ -32,6 +34,8 @@
 - The README banner was switched to the repository-local asset in commit `fac8578787ea5d414bae98c81ad0f9309337525b`.
 - PR #15 was squash-merged as `0fb2fb4a2ca68aa2fdd94c52a25fe4e7987b5923`; it adds user-controlled upstream template update awareness and same-Project conversation rollover guidance.
 - PR #16 was merged into `main` as `e1bae2c48519cc2aa5c2b671ca448b5608ff6a36`; it aligned Free-plan onboarding with current OpenAI Project behavior: reusable instructions belong in Project Instructions, same-Project chat reference depends on memory settings, and durable project records remain authoritative.
+- PR #17 was squash-merged as `d4f612aa9b10efc42d9452ffb3137c3388681238`; it added maintainer governance, conduct guidance, Dependabot configuration, repository settings guidance, and expanded repository hygiene checks. CI passed on `main`.
+- PR #18 was squash-merged as `f908c230f183951dd8afd6a63444a8b125e53488`; it updated SHA-pinned `actions/checkout` from 6.1.0 to 7.0.1. Both repository hygiene and secret-scanning checks passed on the merged commit.
 
 These entries describe repository changes only; they are not evidence of a complete security, privacy, or legal audit.
 
@@ -48,12 +52,13 @@ These entries describe repository changes only; they are not evidence of a compl
 ## Current maintenance focus
 
 - GitHub's repository-level **Template repository** setting is enabled and verified: the GitHub API reports `is_template: true`. The repository can now be used through GitHub's “Use this template” workflow.
-- Run and record the real ChatGPT Free onboarding acceptance test (Scenario F); the repository currently contains the test specification, not a live test result.
+- Run and record the real ChatGPT Free onboarding acceptance test (Scenarios F and G); the repository currently contains the test specification, not a live test result.
 - Keep README and onboarding links aligned with the actual starter-pack contents.
 - Keep onboarding acceptance criteria generic and maintainable; record any future test results separately and only in sanitized form.
 - Review the distinction between mandatory safeguards, recommended practices, and user-selectable workflow choices.
 - Ensure automated checks are described according to what they actually test; do not treat hygiene or secret scanning as a complete content or security review.
-- Review [the maintainer-only repository settings checklist](REPOSITORY_SETTINGS_CHECKLIST.md); branch protection, repository metadata, and security settings require GitHub administration access and are not changed by documentation commits.
+- Review [the maintainer-only repository settings checklist](REPOSITORY_SETTINGS_CHECKLIST.md); repository description/topics remain unset, and branch-protection settings could not be verified through the available GitHub integration because its installation lacks administration access.
+- Latest live repository check: no open pull requests; `main` is at `f908c230f183951dd8afd6a63444a8b125e53488`; the two checks on that commit completed successfully. There are 16 historical branches associated with merged PRs (#1, #2, #4–#17) and one closed, unmerged branch for PR #3. No historical branch was deleted.
 
 ## Handover checklist
 
