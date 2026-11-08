@@ -72,7 +72,15 @@ This is a remote-publication gate, not a prerequisite for coding or local commit
 - Resolve review comments explicitly.
 - Merge only with the required approval.
 
-## 7. Persistent project memory
+## 7. Upstream template update awareness
+
+A GitHub repository created from a template is a snapshot, not a live fork or synchronized copy. At bootstrap, record the exact source release/commit in `TEMPLATE_UPDATE_RECORD_TEMPLATE.md` or an existing canonical equivalent. Check for relevant upstream changes at the start of substantial sessions and meaningful maintenance/release checkpoints when access is available; for an active project, raise a check if about 30 days have passed since the last one. Do not require paid monitoring or scheduled automation.
+
+Follow `TEMPLATE_UPDATE_AWARENESS.md`: distinguish stable releases from unreleased branch changes, summarize relevance and risks, preserve local customizations, and offer a reviewable patch. Never silently pull, push, merge, overwrite, install, or migrate. Emergency notices do not authorize changes. Report failed or unavailable checks as unknown, never as up to date.
+
+**Template-repository exception:** the Collaborative Development Template itself does not maintain a downstream update record. Its own continuity remains in the maintainer handover.
+
+## 8. Persistent project memory
 
 **Scope exception:** This requirement is for projects that use the template. It does not apply to the Collaborative Development Template repository itself; do not create a `PROJECT_MEMORY.md` in the template repository. Its own continuity is maintained through the maintainer handover and development documentation.
 
@@ -86,7 +94,7 @@ Every project repository must maintain docs/PROJECT_MEMORY.md, initialized from 
 - Never store secrets, credentials, sensitive personal data, confidential third-party information, or raw chat transcripts. A private repository is not a secret store.
 - If write access is unavailable, prepare the update and explicitly report that it remains unsaved.
 
-## 8. Human-dependent actions and reminders
+## 9. Human-dependent actions and reminders
 
 When progress depends on a user test, decision, account permission, external action, or real-world verification, do not leave the request buried in chat.
 
@@ -99,7 +107,7 @@ When progress depends on a user test, decision, account permission, external act
 - At each new session and handover, reconcile the register with current code and evidence if one exists; do not create an empty register just to satisfy this check. Do not ask for tests already passed unless relevant conditions changed.
 - Scheduled ChatGPT tasks may deliver reminders when available and authorized, but they are optional. The action register remains authoritative. Never claim a future reminder exists without verified creation. Note that ChatGPT tasks created inside a Project cannot access that Project's uploaded/stored files.
 
-## 9. Handover and continuous learning
+## 10. Handover and continuous learning
 
 Record the current branch and commit, completed work, changed files, tests run, known limitations, unresolved questions, and the next safe action.
 
