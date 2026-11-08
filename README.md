@@ -1,5 +1,7 @@
 # Collaborative Development Template
 
+![Collaborative Development Template — manifesto banner](https://i.ibb.co/F4BnjzCw/manifesto-banner-2400x720-1.png)
+
 A project-agnostic framework for structured, secure, AI-assisted software development.
 
 ## For AI assistants
