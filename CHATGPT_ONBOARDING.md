@@ -57,14 +57,6 @@ Feature availability and behavior change by plan, region, platform, and workspac
 - [Data Controls in ChatGPT](https://help.openai.com/en/articles/7730893-data-controls-in-chatgpt)
 - [File uploads and limits](https://help.openai.com/en/articles/8555545-uploading-files-and-audio-to-chatgpt)
 
-## Upstream template update awareness
-
-A repository created from a GitHub template is a snapshot; it does not automatically receive upstream changes. During project setup, record the exact source release/commit using `TEMPLATE_UPDATE_RECORD_TEMPLATE.md` or an existing equivalent. At the start of substantial sessions and meaningful maintenance/release checkpoints, check for relevant upstream changes when GitHub access is available. If an active project has not been checked for about 30 days, raise a check at the next useful checkpoint. This must remain usable on ChatGPT Free without Scheduled Tasks, Work, or background monitoring.
-
-Present stable releases separately from unreleased default-branch changes. Explain relevance, affected files, compatibility/security/legal implications, and local customization conflicts. Offer to prepare a focused, reviewable patch or branch. Never auto-pull, auto-push, auto-merge, overwrite, install, or migrate. Emergency notices are warnings and decision paths—not remote-control permission. Follow `docs/TEMPLATE_UPDATE_AWARENESS.md`. If access fails, report the status as unknown rather than claiming the project is current.
-
-The template repository itself is exempt from maintaining a downstream template update record; its continuity remains in the maintainer handover.
-
 ## Open actions, testing, and reminders
 
 Use `PENDING_ACTIONS_TEMPLATE.md` to initialize a project action register when useful, or integrate with an existing canonical tracker. At each new session, inspect the existing action register if one has been created and reconcile it with the live project. Do not create an empty register just to perform this check. When a test or decision requires the user, offer to guide it step by step or defer it; record deferred or still-outstanding actions with their impact, owner, evidence, and next review trigger.
