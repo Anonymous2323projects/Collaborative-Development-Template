@@ -23,7 +23,7 @@ We want participation in this project to be respectful, constructive, and safe. 
 
 ## Reporting and enforcement
 
-Report a concern privately to the repository maintainer through GitHub's private contact channel. Do not include credentials, exploit payloads, or sensitive personal data in a public issue.
+Report a concern privately to the repository maintainer using a private contact method available through GitHub. If no private contact route is available, use GitHub's platform reporting tools rather than posting sensitive details publicly. Do not include credentials, exploit payloads, or sensitive personal data in a public issue.
 
 The maintainer will review reports as promptly as reasonably possible, protect the confidentiality of the people involved where practical, and decide on a proportionate response. Responses may include a warning, removal of harmful content, temporary restriction, or exclusion from project spaces. The maintainer may decline to act where a report is unsupported or outside the project's scope.
 
