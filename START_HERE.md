@@ -11,6 +11,9 @@ After creating your ChatGPT Project:
 1. Ask ChatGPT to read this `START_HERE.md` and prepare a complete, project-specific set of **Project Instructions** for the project you are actually building. The instructions must adapt the template's principles to that project's purpose, repository, tools, risks, and existing decisions; do not blindly copy template examples or another project's private instructions.
 2. Open **Project settings → Project instructions**.
 3. Paste the complete generated instructions into that field and save.
+
+
+**Keep the generated instructions within the current Project Instructions field limit.** The field has a finite character allowance (often around 8,000 characters; check the limit shown in your ChatGPT interface because product limits can change). If the complete instructions do not fit, prioritize the project's essential operating rules, safety/privacy boundaries, approval requirements, and continuity rules. Keep detailed procedures in the repository or Project files and link/reference them from the instructions. Do not silently truncate the instructions or assume that attaching this repository installs the omitted rules.
 4. Return to the project chat and ask ChatGPT to confirm that the instructions are saved and summarize the key project-specific rules it will follow. If it cannot inspect the settings directly, verify the saved text yourself.
 5. Keep the Project Instructions current when the project's scope, architecture, repository, or important working agreements change.
 
