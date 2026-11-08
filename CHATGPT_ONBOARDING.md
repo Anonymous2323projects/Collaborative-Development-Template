@@ -31,11 +31,10 @@ Follow the complete process in `START_HERE.md`:
 
 Use ChatGPT's built-in features as a convenience layer, never as the only durable project record:
 
-- **Memory and chat-history reference:** useful for relevant preferences and context, but not guaranteed to retain every detail. Check memory sources when provenance matters; correct stale context.
-- **Project context:** use a ChatGPT Project to group related chats, files, and instructions when available. Choose standard or project-only memory according to the desired boundary between project and personal context. Project-only memory isolates context; it does not replace checked-in project documentation.
-- **Custom instructions:** reserve these for stable behavior and collaboration guidance, not fast-changing project state.
-- **Scheduled tasks and monitoring:** use only when available and explicitly authorized. A task created inside a ChatGPT Project cannot access that project's uploaded or stored files, so it cannot independently treat the project action register as its data source.
-- **Portability:** keep project rules in `AGENTS.md`, durable facts in `PROJECT_MEMORY.md`, and human-dependent actions in the action register or canonical issue tracker. This keeps the workflow usable across AI products.
+- **Memory and chat-history reference:** use ChatGPT Memory for durable preferences and relevant context from earlier chats when enabled. It does not retain or retrieve every detail. Check the Memory summary and available source references when accuracy or provenance matters; correct stale information.
+- **ChatGPT Projects:** keep project chats, files, and project instructions together. Choose **Default memory** when relevant personal memory and other eligible chat context should remain available; choose **Project-only memory** when conversations must stay isolated to that project. Availability and cross-chat behavior depend on plan and workspace settings. Neither mode replaces the project's checked-in records.
+- **Custom instructions:** use account-level custom instructions for stable response and collaboration preferences. Put project-specific rules in the Project instructions, and changing project facts in the repository files.
+- **Scheduled tasks:** use ChatGPT Scheduled tasks for a specific reminder or supported recurring check only when available and authorized. A task created inside a ChatGPT Project cannot access files uploaded to or stored in that Project. It therefore cannot independently read `PENDING_ACTIONS.md`. Supported event-triggered tasks can respond to certain connected-app events, including eligible GitHub pull-request activity, but require Work, app connection, and authorization. This is optional—not a required part of the workflow.
 
 Feature availability and behavior change by plan, region, platform, and workspace. Check current official documentation rather than assuming every user has the same controls:
 - [Memory in ChatGPT](https://help.openai.com/en/articles/8590148-memory-in-chatgpt)
