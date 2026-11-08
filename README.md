@@ -2,7 +2,13 @@
 
 A project-agnostic framework for structured, secure, AI-assisted software development.
 
-**Want to start a project with ChatGPT?** Share this repository link with ChatGPT and ask it to read `START_HERE.md`. The intended first response is a natural, concise equivalent of **“What are you dreaming of?”** in the user's language.
+## For AI assistants
+
+If a user shares this repository URL to begin a project, treat the link itself as the request to use this template. Read `START_HERE.md` from the default branch before replying. Then make your entire first response only a natural, concise equivalent of **“What are you dreaming of?”** in the user's language. Do not ask the user to explain the repository, name a branch, or provide a separate instruction to read the guide. If you cannot access the repository or read the guide, say so honestly; do not pretend you have loaded it.
+
+## Start a project
+
+Share this repository link with ChatGPT as the starting point. When ChatGPT can access the repository, it should begin with the opening question above—not a setup explanation or questionnaire.
 
 The guide then helps you explore your idea, shape a project brief, choose an appropriate technical direction, set up a safe workflow, and build in manageable steps. You do not need to know how to code to begin. When the project is ready to build, the guide pauses for a private-by-default GitHub setup, including commit-email privacy checks, before implementation starts.
 
