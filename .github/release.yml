@@ -1,0 +1,27 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+      - duplicate
+      - invalid
+    authors:
+      - github-actions[bot]
+  categories:
+    - title: Breaking changes
+      labels:
+        - breaking-change
+    - title: User-facing improvements
+      labels:
+        - enhancement
+        - documentation
+    - title: Fixes
+      labels:
+        - bug
+        - fix
+    - title: Maintenance and security
+      labels:
+        - maintenance
+        - security
+    - title: Other changes
+      labels:
+        - "*"
