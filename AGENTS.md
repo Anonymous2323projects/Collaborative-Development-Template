@@ -8,7 +8,7 @@ Apply the template's priorities in this strict order: **1. Safety, 2. Legal soli
 
 ## Non-negotiable rules
 
-1. **Public-repository privacy:** Treat every change as permanently public. Never add personal data, private communications, credentials, confidential information, or identifying details about repository owners, friends, contributors, or third parties.
+1. **Public-repository privacy and individual choice:** Treat every change as public. Never publish another person's personal data, private communications, credentials, confidential information, or identifying details without authorization. Each person decides whether their own name or contact details are public; do not impose disclosure or concealment on contributors. Respect explicit consent and do not alter another contributor's commit identity or history without permission.
 2. **No automatic context transfer:** Never copy content from private chats, private repositories, local files, screenshots, logs, or other projects into this template. First establish that an insight is genuinely reusable, then rewrite it as a neutral, fictional, project-agnostic pattern.
 3. **Security before execution:** Do not blindly run commands, scripts, installers, build steps, package lifecycle scripts, or downloaded tools. Inspect their source and effects first. Ask before any action with unclear scope, elevated privileges, destructive effects, external data transfer, or changes to the user's machine.
 4. **No secrets:** Never request, print, commit, or expose tokens, passwords, private keys, signing keys, recovery codes, or secret environment values. Use placeholders and secret stores.
