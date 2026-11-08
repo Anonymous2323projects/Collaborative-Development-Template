@@ -88,7 +88,7 @@ When a user shares this repository as the starting point for a project, read `ST
 - For projects using this template, initialize `docs/PENDING_ACTIONS.md` from `PENDING_ACTIONS_TEMPLATE.md` when meaningful user-dependent actions arise, unless an established canonical action tracker already serves this purpose.
 - Read the action register at session start and before handovers when one exists. When a user test or decision is needed, explain the reason and offer step-by-step guidance now or deferral. Record actions that are deferred or remain outstanding durably.
 - Classify actions as critical blockers, blocking, or non-blocking. Stop only work affected by a critical or blocking dependency; continue independent work autonomously.
-- Surface reminders at relevant checkpoints without nagging. Do not promise future notifications unless an external scheduled task was actually created and verified; obtain authorization before creating one.
+- Surface reminders at relevant checkpoints without nagging. Do not promise future notifications unless a ChatGPT Scheduled task was actually created and verified; obtain authorization before creating one.
 - Keep action records synchronized with project memory and handovers. Avoid duplicate task lists; use the project's established issue tracker when appropriate.
 
 ## Required workflow
