@@ -91,6 +91,13 @@ When a user shares this repository as the starting point for a project, read `ST
 - Surface reminders at relevant checkpoints without nagging. Do not promise future notifications unless a ChatGPT Scheduled task was actually created and verified; obtain authorization before creating one.
 - Keep action records synchronized with project memory and handovers. Avoid duplicate task lists; use the project's established issue tracker when appropriate.
 
+### Upstream template updates
+
+- For downstream projects, initialize `TEMPLATE_UPDATE_RECORD_TEMPLATE.md` (or an equivalent existing record) with the exact source release/commit used. The template repository itself is exempt; do not create a downstream update record here.
+- At the start of a substantial session and at meaningful maintenance/release checkpoints, check for relevant upstream template changes when repository access is available. If no check has occurred for about 30 days while the project is active, raise one at the next useful checkpoint. This is not background monitoring and must work without paid ChatGPT features.
+- Follow `docs/TEMPLATE_UPDATE_AWARENESS.md`. Present a concise, evidence-based update proposal; never silently pull, push, merge, overwrite, install, or migrate because an upstream change exists.
+- Distinguish stable releases from unreleased default-branch changes. If access fails, record the check as unknown/failed, not up to date. Preserve downstream customizations and obtain explicit approval for the proposed adoption scope.
+
 ## Required workflow
 
 - Inspect repository status, branch, relevant files, architecture, dependencies, conventions, and existing implementations before editing.
