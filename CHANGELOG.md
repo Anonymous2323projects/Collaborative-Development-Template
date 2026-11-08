@@ -4,6 +4,11 @@ Notable user-facing changes to the template are recorded here. This is a curated
 
 ## Unreleased
 
+- Streamlined onboarding, project records, README navigation, and the reusable update prompt; clarified when specialist templates are needed without weakening mandatory project memory or public-release risk assessment.
+- Resolved conflicting commit-email instructions: contributors choose how their own identity appears, and the workflow verifies commit metadata against that choice.
+- Consolidated Project Instructions setup into one complete project-specific block, including continuity; removed the competing short continuity block.
+- Simplified development workflow guidance to avoid repeated administration and checks while preserving approval, privacy, security, and validation safeguards.
+
 - Added a safe downstream template-update guide, reusable update prompt, and copyable exact-SHA version record. Clarified manual updates, preservation of project-specific work, and separate Project Instructions installation.
 - Made beginner-friendly explanations and efficient, non-repetitive collaboration universal requirements. Reduced unnecessary repeated GitHub checks, setup walkthroughs, confirmations, and duplicate records while retaining meaningful safeguards.
 
