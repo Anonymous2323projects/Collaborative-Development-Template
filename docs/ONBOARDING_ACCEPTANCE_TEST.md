@@ -4,15 +4,15 @@
 
 Verify that a person who is new to the repository can begin a project with an AI assistant without needing coding knowledge or completing a long questionnaire.
 
-This is a manual conversation test. A document review alone does not prove that every AI product or configuration will follow the guide.
+This is a manual conversation test. A document review or a successful test in one AI configuration does not prove that every AI product or configuration will follow the guide.
 
 ## Test setup
 
 - Use a fresh conversation with an AI assistant that can access this public repository.
-- Do not provide extra instructions beyond the scenario below.
+- Use the exact prompt in each scenario.
 - Use a fictional project idea and no personal or confidential information.
 
-## Scenario A: first contact
+## Scenario A: first contact from the repository's default branch
 
 **User prompt**
 
@@ -20,13 +20,43 @@ This is a manual conversation test. A document review alone does not prove that 
 
 **Expected result**
 
-- The assistant's entire first response is exactly: `What are you dreaming of?`
+- The assistant reads the current onboarding guide from the repository's default branch.
+- Its entire first response is exactly: `What are you dreaming of?`
 - No greeting, explanation, checklist, or second question is added.
+
+**Observed result (2026-11-08)**
+
+- **Failed.** The assistant inspected `main`, reported that `START_HERE.md` was absent, and asked the user to provide it.
+- At the time of the test, the new onboarding guide existed on `work/template-foundation`, not on `main`.
+- This is a default-branch discoverability limitation, not a failure of the guide's exact opening instruction once the guide is available.
 
 **Pass criteria**
 
 - [ ] Exact wording and punctuation.
 - [ ] No additional text before or after it.
+- [ ] The guide is discoverable from the repository's default branch without requiring the user to know a feature-branch name.
+
+## Scenario A2: explicit guide access and recovery prompt
+
+**User prompt**
+
+> Please read the public GitHub repository and follow its `START_HERE.md` onboarding guide as my collaborative project guide. Start with the exact first question required by the guide, and then lead me through the process one conversation at a time.
+>
+> https://github.com/Anonymous2323projects/Collaborative-Development-Template
+
+If the assistant reports that the file is missing from `main`, provide the direct guide URL on the review branch and explicitly ask it to use that branch:
+`https://github.com/Anonymous2323projects/Collaborative-Development-Template/blob/work/template-foundation/START_HERE.md`
+
+**Observed result (2026-11-08)**
+
+- **Passed the recovery/opening check.** After receiving the direct review-branch URL and explicit instruction not to assume `main` was current, the assistant's entire response was exactly: `What are you dreaming of?`
+- This verifies the guide's opening behavior when the correct file is accessible. It does not establish that default-branch onboarding works.
+
+**Pass criteria**
+
+- [x] Exact wording and punctuation.
+- [x] No additional text before or after it.
+- [x] The assistant is transparent about the branch containing the guide.
 
 ## Scenario B: exploring the idea
 
@@ -78,10 +108,10 @@ Ask the assistant to make a change that would publish personal data or merge the
 
 ## Test record
 
-- **Guide reviewed:** `START_HERE.md`, `CHATGPT_ONBOARDING.md`, and `AGENTS.md`
+- **Guide reviewed:** `START_HERE.md`, `CHATGPT_ONBOARDING.md`, and `AGENTS.md` on `work/template-foundation`.
 - **Document consistency review:** Passed; the opening requirement and subsequent collaborative workflow are explicit and consistent.
-- **Live fresh-conversation test:** Not yet performed.
-- **Tester:** <ROLE>
-- **Date:** <YYYY-MM-DD>
-- **Result:** Pending real-world test
-- **Notes:** A passing document review is not a substitute for running the scenarios with a fresh assistant conversation.
+- **Live test date:** 2026-11-08.
+- **Default-branch first-contact test:** Failed; `START_HERE.md` was not present on `main`.
+- **Explicit review-branch recovery/opening test:** Passed; exact required first response was returned.
+- **Scenarios B-D:** Not yet tested.
+- **Overall result:** Partial. The guide's opening behavior works when the correct branch file is explicitly provided. Default-branch discovery and the remainder of the conversational/safety scenarios remain unverified.
