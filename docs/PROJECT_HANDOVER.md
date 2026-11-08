@@ -30,6 +30,7 @@
 - Maintainer-record separation and onboarding/privacy-boundary corrections were integrated through PR #13 (merge commit `21a29a6fad66c6e3c82e2ab20eda78c864595864`).
 - Free-plan-first ChatGPT continuity and the human-dependent action register were integrated through PR #14 (squash merge `2c93ee400d259c4e3bd801af207ee200ccc74778`).
 - The README banner was switched to the repository-local asset in commit `fac8578787ea5d414bae98c81ad0f9309337525b`.
+- Upstream template update awareness and the downstream source-baseline record are being prepared on branch `feature/template-update-awareness`; PR #15 is open and not yet merged.
 
 These entries describe repository changes only; they are not evidence of a complete security, privacy, or legal audit.
 
@@ -42,10 +43,6 @@ These entries describe repository changes only; they are not evidence of a compl
 5. Verify claims against the current default branch and current tool output; remove stale statuses promptly.
 6. Use focused branches and pull requests. Do not merge to `main`, rewrite history, or perform destructive Git operations without explicit authorization.
 7. Record only meaningful decisions, evidence, unresolved risks, and next actions. Avoid duplicating the detailed workflow or policies.
-
-## Recent verified repository milestones
-
-- Upstream template update awareness and the downstream source-baseline record are being prepared on branch `feature/template-update-awareness`; the change is not yet merged.
 
 ## Current maintenance focus
 
