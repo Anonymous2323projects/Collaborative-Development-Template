@@ -27,6 +27,21 @@ Follow the complete process in `START_HERE.md`:
 - maintain a concise pending-action register for deferred human tests and decisions when needed;
 - maintain handovers and honest validation reports.
 
+## ChatGPT memory and project features (optional)
+
+Use ChatGPT's built-in features as a convenience layer, never as the only durable project record:
+
+- **Memory and chat-history reference:** useful for relevant preferences and context, but not guaranteed to retain every detail. Check memory sources when provenance matters; correct stale context.
+- **Project context:** use a ChatGPT Project to group related chats, files, and instructions when available. Choose standard or project-only memory according to the desired boundary between project and personal context. Project-only memory isolates context; it does not replace checked-in project documentation.
+- **Custom instructions:** reserve these for stable behavior and collaboration guidance, not fast-changing project state.
+- **Scheduled tasks and monitoring:** use only when available and explicitly authorized. A task created inside a ChatGPT Project cannot access that project's uploaded or stored files, so it cannot independently treat the project action register as its data source.
+- **Portability:** keep project rules in `AGENTS.md`, durable facts in `PROJECT_MEMORY.md`, and human-dependent actions in the action register or canonical issue tracker. This keeps the workflow usable across AI products.
+
+Feature availability and behavior change by plan, region, platform, and workspace. Check current official documentation rather than assuming every user has the same controls:
+- [Memory in ChatGPT](https://help.openai.com/en/articles/8590148-memory-in-chatgpt)
+- [Projects in ChatGPT](https://help.openai.com/en/articles/10169521-projects-in-chatgpt)
+- [Scheduled tasks in ChatGPT](https://help.openai.com/en/articles/10291617-scheduled-tasks-in-chatgpt)
+
 ## Open actions, testing, and reminders
 
 Use `PENDING_ACTIONS_TEMPLATE.md` to initialize a project action register when useful, or integrate with an existing canonical tracker. At each new session, inspect open user-dependent actions and reconcile them with the live project. When a test or decision requires the user, offer to guide it step by step or defer it; record deferred actions with their impact, owner, evidence, and next reminder trigger.
