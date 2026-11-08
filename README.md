@@ -27,8 +27,11 @@ The template is designed and maintained in this strict priority order:
 2. **Legal solidity** — identify and meet applicable legal, regulatory, privacy, consumer, intellectual-property, and licence obligations. Do not claim legal compliance without adequate evidence and qualified review where needed.
 3. **Usability** — make the safe and legally responsible path clear, understandable, accessible, and practical. Reduce friction without silently weakening safeguards or hiding material information.
 4. **Trust** — earn and preserve trust through honest communication, transparency, predictable behavior, respect for user choice, and evidence-backed claims.
+5. **Freedom** — preserve user autonomy, choice, ownership, portability, and control over their projects, data, tools, and workflows. Prefer open standards and interoperability; avoid unnecessary lock-in, restrictions, telemetry, or imposed technical and commercial choices.
 
-When these priorities conflict, evaluate them in this order. Usability improvements must not bypass necessary safety or legal controls. Trust is earned by consistently delivering on the first three priorities; it must never be manufactured through reassuring language or unsupported promises. Apply the priorities proportionately so that small projects receive practical guidance rather than unnecessary bureaucracy.
+Freedom operates within the necessary boundaries of safety and applicable law. Prefer the least restrictive effective safeguard, explain meaningful constraints, and preserve user choice wherever doing so does not create unacceptable harm or legal exposure.
+
+When these priorities conflict, evaluate them in this order. Usability improvements must not bypass necessary safety or legal controls. Trust is earned by consistently delivering on the first three priorities; it must never be manufactured through reassuring language or unsupported promises. Freedom is protected within necessary safety and legal boundaries, using the least restrictive effective safeguards and preserving user autonomy wherever possible. Apply the priorities proportionately so that small projects receive practical guidance rather than unnecessary bureaucracy.
 
 ## Important note about the GitHub link
 
