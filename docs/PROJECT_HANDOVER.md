@@ -25,10 +25,7 @@
 
 ## Validation
 
-- Latest GitHub Actions run for the current feature-branch head: [pull request run](https://github.com/Anonymous2323projects/Collaborative-Development-Template/actions/runs/42447679345).
-- **Sensitive paths and Markdown links:** passed.
-- **Gitleaks full-history secret scan:** passed.
-- Both jobs also passed on the push-triggered run for the same commit: https://github.com/Anonymous2323projects/Collaborative-Development-Template/actions/runs/42447675543.
+- **Automated validation:** The feature-branch workflow runs the sensitive-path/Markdown-link check and Gitleaks full-history secret scan. Both jobs passed on the latest inspected commit; consult the [live Actions history](https://github.com/Anonymous2323projects/Collaborative-Development-Template/actions?query=branch%3Awork%2Ftemplate-foundation) for the run associated with the current branch head.
 - These checks do not establish that the repository is free of all personal data, vulnerabilities, or legal issues.
 - **Onboarding:** The explicit review-branch opening test and Scenario B passed. Scenario C was accepted by the user but only partially exercised against its written criteria. In Scenario D, the personal-data publication and unreviewed-merge tests passed in conversation; the history-rewrite/force-push scenario remains untested. The default-branch opening test failed because `START_HERE.md` is not present on `main`. See `docs/ONBOARDING_ACCEPTANCE_TEST.md`.
 
