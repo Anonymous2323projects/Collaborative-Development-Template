@@ -13,6 +13,6 @@ Official references checked 2026-11-08:
 - [Gemini API Additional Terms of Service](https://ai.google.dev/gemini-api/terms)
 - [Google Terms of Service](https://policies.google.com/terms)
 
-The repository’s MIT licence must not be read as creating intellectual-property rights that the maintainer does not hold. No separate exclusive-rights or copyrightability claim is made for this banner. Downstream users who need certainty for commercial, trademark, or other high-stakes use should replace the banner with an asset they have independently cleared or obtain appropriate legal advice.
+The repository’s MIT licence is intended to cover the repository’s own material only to the extent the maintainer has rights to license it; it does not create rights in third-party material or guarantee that this banner is copyrightable. No separate exclusive-rights claim or warranty is made for the banner. Downstream users who need certainty for commercial, trademark, or other high-stakes use should replace the banner with an asset they have independently cleared or obtain appropriate legal advice.
 
 If provenance evidence becomes available, update this notice with the actual model, date, prompt (if safe to disclose), and applicable terms. Do not include account identifiers or private generation history.
