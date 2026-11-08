@@ -60,4 +60,4 @@ Foundation and practical starter pack under review. The onboarding guide is desi
 
 ## Licence
 
-No licence has been selected yet. Until a licence is added, all rights are reserved by default; public visibility does not itself grant permission to reuse or redistribute this repository.
+This project is licensed under the [MIT License](LICENSE). The licence applies to the project material covered by the repository; third-party components and contributions remain subject to their own applicable rights and notices.
