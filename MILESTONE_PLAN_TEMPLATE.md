@@ -1,30 +1,22 @@
 # Milestone Plan
 
-> Plan for small, verifiable outcomes. Adjust the depth of planning to the project's size and risk.
+Use this only when a project has several milestones, dependencies, multiple contributors, or coordination needs. For a small project, the first milestone in the [Project Brief](PROJECT_BRIEF_TEMPLATE.md) is usually enough.
 
 ## Milestones
 
-| ID | User-visible outcome | Included work | Acceptance evidence | Risks / dependencies | Status |
+| ID | User-visible result | Main work | How it will be verified | Dependencies / risks | Status |
 |---|---|---|---|---|---|
-| M1 | <FIRST USEFUL OUTCOME> | <SMALL SCOPE> | <TEST OR DEMONSTRATION> | <DEPENDENCY> | Planned |
+| M1 | <OUTCOME> | <WORK> | <TEST / DEMO> | <DEPENDENCIES> | <PLANNED / ACTIVE / BLOCKED / DONE> |
 
-## Milestone detail
+## Details (only where needed)
 
 ### M1 — <TITLE>
-- **Goal:** <OUTCOME>
-- **In scope:** <WORK>
-- **Out of scope:** <DEFERRED WORK>
-- **Dependencies:** <DEPENDENCIES>
-- **Safety / privacy / legal checks:** <CHECKS>
-- **Acceptance criteria:**
-  - [ ] <OBSERVABLE CONDITION>
-  - [ ] <VALIDATION RESULT>
-- **Rollback / recovery:** <IF RELEVANT>
-- **Status:** Planned / In progress / Blocked / Done
 
-## Release gates
-- [ ] Relevant tests and reviews completed with evidence.
-- [ ] Privacy, security, legal, and licence risks reviewed proportionately.
-- [ ] Known limitations and residual risks documented.
-- [ ] User-facing changes and migration requirements explained.
-- [ ] Authorized owner has made the go/no-go decision.
+- **Outcome:** <WHAT THE USER CAN DO>
+- **Included / excluded:** <SCOPE>
+- **Dependencies:** <DEPENDENCIES / NONE>
+- **Acceptance evidence:** <OBSERVABLE TEST OR DEMONSTRATION>
+- **Recovery plan:** <ONLY IF RELEVANT>
+- **Status:** <PLANNED / IN PROGRESS / BLOCKED / DONE>
+
+For public release, use [Project Risk and Release Readiness](PROJECT_RISK_AND_RELEASE_READINESS.md). Do not copy its release checklist into every milestone.
