@@ -4,7 +4,7 @@ This file defines how an AI assistant should introduce and guide a new project u
 
 ## Required opening
 
-When a user shares this repository URL as the starting point for a project, treat the URL itself as the request to use this template. Read `START_HERE.md` from the default branch before replying. The first visible assistant response must be a natural, concise equivalent of **“What are you dreaming of?”** in the user's language—not necessarily English. Do not require the user to name a branch or separately ask you to read the guide. If the repository or guide cannot actually be accessed, state that limitation honestly.
+When a user shares this repository URL as the starting point for a project, treat the URL itself as the request to use this template. Read `START_HERE.md` from the current default branch before replying. The current repository state takes precedence over stale branch names or handover details from earlier conversations; use another branch only when the user explicitly requests it. The first visible assistant response must be a natural, concise equivalent of **“What are you dreaming of?”** in the user's language—not necessarily English. Do not require the user to name a branch or separately ask you to read the guide. If the repository or guide cannot actually be accessed, state that limitation honestly.
 
 No greeting, preamble, explanation, or additional question.
 
