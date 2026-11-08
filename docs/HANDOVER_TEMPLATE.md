@@ -48,7 +48,7 @@
 - **Blocking:** <ACTION / NONE>
 - **Non-blocking / deferred tests:** <ACTION / NONE>
 - **Canonical action register:** <PATH OR ISSUE TRACKER / NONE>
-- **Next reminder trigger:** <DATE, MILESTONE, OR RELEVANT SESSION>
+- **Next review trigger:** <DATE, MILESTONE, OR RELEVANT SESSION>
 
 Do not duplicate the full action register here; summarize only what the next session needs to know.
 
