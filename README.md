@@ -10,6 +10,7 @@ The guide then helps you explore your idea, shape a project brief, choose an app
 
 - [Start here: AI project guide](START_HERE.md)
 - [ChatGPT onboarding guide](CHATGPT_ONBOARDING.md)
+- [Onboarding acceptance test](docs/ONBOARDING_ACCEPTANCE_TEST.md)
 - [Project brief template](PROJECT_BRIEF_TEMPLATE.md)
 - [Decision log template](DECISION_LOG_TEMPLATE.md)
 - [Risk register template](RISK_REGISTER_TEMPLATE.md)
@@ -18,6 +19,7 @@ The guide then helps you explore your idea, shape a project brief, choose an app
 - [Development workflow](docs/DEVELOPMENT_WORKFLOW.md)
 - [Review checklist](docs/REVIEW_CHECKLIST.md)
 - [Handover template](docs/HANDOVER_TEMPLATE.md)
+- [Current project handover](docs/PROJECT_HANDOVER.md)
 - [Incident response playbook](INCIDENT_RESPONSE.md)
 - [Security policy](SECURITY.md)
 - [Project risk and release readiness standard](PROJECT_RISK_AND_RELEASE_READINESS.md)
@@ -56,7 +58,7 @@ This repository is public. Never add personal, private, confidential, or identif
 
 ## Status
 
-Foundation and practical starter pack under review. The onboarding guide is designed to be reusable and should be adapted to each project's needs. Automated checks and the final onboarding test remain to be verified.
+Foundation and practical starter pack under review. The onboarding guide is designed to be reusable and should be adapted to each project's needs. Automated checks and the fresh-conversation onboarding test remain to be completed.
 
 ## Licence
 
