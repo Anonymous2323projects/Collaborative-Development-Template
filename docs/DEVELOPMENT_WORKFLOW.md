@@ -1,137 +1,102 @@
 # Collaborative Development Workflow
 
-This workflow is a starting point. Adapt it to the project's risk, team size, stack, and release model.
+Use this workflow as a practical guide, not a checklist to repeat mechanically. Adapt it to the project's size, risks, team, and release model.
 
 ## 1. Understand before changing
 
-- Read the README, contributor instructions, architecture notes, and current handover.
-- Inspect the working tree, active branch, recent commits, relevant implementation, dependencies, and established conventions.
-- Identify the user-visible goal, constraints, acceptance criteria, and non-goals.
-- Understand how existing modules, interfaces, data, settings, parameters, and controls relate to one another; do not treat meaningful values as arbitrary numbers or names.
+- Read the README, contributor instructions, relevant architecture notes, and latest handover.
+- Check the current branch, working-tree state, recent commits, relevant files, dependencies, and existing conventions.
+- Confirm the user-visible goal, constraints, acceptance criteria, and non-goals.
+- Trace effects across related modules, interfaces, data, settings, and controls before editing.
 - Separate verified facts from assumptions and open questions.
 
-## 2. Research before implementation: reuse before rebuild
+## 2. Research before implementation
 
-Before building equivalent functionality, investigate existing open-source projects, libraries, tools, and implementations. The AI should proactively discover plausible options; the user should not need to know what to search for.
+Before building equivalent functionality, look for suitable existing tools, libraries, and projects. The assistant should discover plausible options; the user should not need to know what to search for.
 
-For each serious candidate, assess proportionately:
-- licence, attribution, and compatibility with the project's intended use and distribution;
-- provenance, security posture, known vulnerabilities, trustworthiness, and permissions;
-- maintenance activity, release history, project health, and support expectations;
-- code quality, reliability, documentation, and relevant test evidence;
-- compatibility with the existing architecture and the meaning of the data or controls it will operate on;
-- direct and transitive dependencies, integration effort, limitations, operational impact, and long-term maintenance cost.
+For serious candidates, check the points that matter to this decision: licence, security and provenance, maintenance, reliability, compatibility, dependencies, integration effort, limitations, and long-term cost. Prefer reuse when it is a sound fit. Build independently when evidence shows that existing options are unsuitable or create greater risk or cost. Record material findings and sources; do not create a research report for trivial choices.
 
-Prefer integrating, adapting, or extending an established solution when it meets the requirement without creating disproportionate risk or complexity. Do not add dependencies indiscriminately. Build from scratch when research shows that available options are unsuitable, cannot reasonably be integrated, or introduce unacceptable legal, security, architectural, maintenance, or cost risks.
+## 3. Prepare for remote collaboration
 
-Record the important sources, versions, licence terms, what was verified, and the reasoning behind significant reuse-versus-build decisions. Distinguish evidence from inference and state material unknowns. For a small or obvious change, keep this research lightweight and proportionate.
+Do not delay discovery, design, or safe local work because GitHub is not ready. Before the first remote commit or push, follow [the Private GitHub Project Setup Guide](PRIVATE_GITHUB_SETUP.md).
 
-- Prefer primary documentation, source code, specifications, and maintained upstream repositories.
-- Record source URLs, versions, dates, licence terms, and what was actually verified.
-- Distinguish inspiration from direct reuse; preserve required notices and licence obligations.
-- Propose a small implementation plan with risks and validation steps.
+- Check whether a suitable repository already exists.
+- For a new GitHub project repository, use **Private** by default. Public visibility requires the user's informed, explicit choice.
+- Explain that commit author name and email may be visible in public commits. Let each contributor choose whether to use a public email or GitHub's `noreply` address.
+- If a contributor chooses `noreply`, help configure the exact address shown in their GitHub settings. Never guess it or ask them to share it in chat.
+- Check the actual commit metadata against the contributor's informed choice before pushing. Do not make email concealment a universal requirement.
+- Verify repository visibility and review files for secrets, personal data, and confidential material before remote publication.
+- Ask before account connections, permission changes, collaborator invitations, repository creation, or other external changes.
 
-## 3. Repository readiness before the first remote publication
-
-Do not block discovery, design, or safe local implementation on GitHub setup. When the project is ready for its first remote commit or push, follow [the Private GitHub Project Setup Guide](PRIVATE_GITHUB_SETUP.md).
-
-- Check whether the user has a GitHub account and whether an appropriate project repository already exists.
-- For a new project repository, default to **Private**. Public visibility requires the user's explicit, informed choice.
-- Guide the user through GitHub's **Keep my email addresses private** setting and, where available, **Block command line pushes that expose my email**.
-- Help the user configure the exact GitHub-provided `noreply` address for command-line commits; never guess the address or ask the user to paste it into chat.
-- Verify repository visibility and privacy setup before the first remote commit or push. Do not claim settings are enabled unless verified.
-- Ask before account connections, permissions, collaborator invitations, repository creation through a connected tool, or other external changes.
-- If the assistant cannot create a repository, guide the user through GitHub's interface one step at a time.
-
-This is a remote-publication gate, not a prerequisite for coding or local commits. Keep a new GitHub project private by default unless the user explicitly chooses otherwise.
+These checks protect remote publication; they are not a reason to block safe local development.
 
 ## 4. Implement safely
 
-- Work on a focused branch.
-- Keep changes small and reviewable.
-- On GitHub Free private repositories, branch protection is unavailable; treat pull-request review and explicit merge approval as manual workflow rules. Do not claim GitHub enforces them.
-- Preserve existing architecture and conventions; avoid parallel systems where an existing one can be extended appropriately.
-- Evaluate system-wide effects across modules, interfaces, workflows, dependencies, data, and existing behavior.
-- Avoid unrelated refactors and hidden behavior changes.
+- Work on a focused branch and keep changes reviewable.
+- On GitHub Free private repositories, branch protection may not be available; treat review and merge approval as manual rules unless enforcement is verified.
+- Preserve existing architecture and conventions. Avoid unrelated refactors and parallel systems.
 - Inspect commands and scripts before running them.
 - Do not install software, grant permissions, or change machine configuration without authorization.
 - Never put secrets in code, tests, logs, or examples.
 
 ## 5. Validate
 
-- Run formatting, linting, type checks, unit/integration tests, and builds where applicable.
-- Add regression tests for bug fixes.
+Choose checks based on the change and its risks. Reuse a passing result only when it applies to the exact code, configuration, and environment being assessed.
+
+- Run relevant tests, checks, builds, and accessibility or security reviews.
+- Add a regression test when fixing a demonstrated defect.
 - Review dependency and licence changes.
-- Inspect the complete diff for accidental changes, personal data, secrets, unsafe behavior, and unsupported claims.
-- Report exact commands and outcomes. Never imply that an unrun check passed.
+- Inspect the complete diff for accidental changes, secrets, personal data, unsafe behavior, and unsupported claims.
+- Report exactly what was and was not checked. A passing automated check is not proof of complete security or legal compliance.
 
 ## 6. Review and integrate
 
-- Open a pull request with a concise summary, rationale, risks, and test evidence.
-- Review behavior, security, privacy, accessibility, maintainability, and documentation.
-- Resolve review comments explicitly.
-- Merge only with the required approval.
+Summarize the change, reason, user impact, risks, and validation evidence. Use a pull request when review or collaboration is useful. Resolve review comments and merge only with the required approval. Never merge to a protected/default branch without explicit authorization.
 
-## 7. Upstream template update awareness
+## 7. Keep downstream template updates safe
 
-A repository created from a GitHub template is a snapshot; it does not automatically receive later changes. In downstream projects, record the source and applied release/tag or commit in `docs/PROJECT_MEMORY.md` when known. GitHub template creation may not preserve the source commit, so mark an unknown baseline honestly rather than guessing.
+A repository created from this template is a separate copy; it does not receive later changes automatically. Record the upstream source and exact applied release/tag or commit in `docs/PROJECT_MEMORY.md` when known. Mark an unknown baseline honestly.
 
-At substantial work sessions and meaningful maintenance/release checkpoints, check for relevant upstream changes when repository access is available; if an active project has gone about 30 days without a check, raise it at the next useful checkpoint. Distinguish published releases/tags from unreleased default-branch changes. Summarize relevance, risks, and local conflicts, then offer a focused, reviewable patch. Never silently apply, push, merge, overwrite, install, or migrate changes. A credible urgent security, safety, or legal concern warrants an evidence-based warning and narrow mitigation advice, not automatic changes. This is not background monitoring, cannot alert users while they are offline, and requires no paid automation. Actual software updater security remains covered by [the Update and Release Security Policy](../UPDATE_AND_RELEASE_SECURITY.md).
+At meaningful maintenance checkpoints, check for relevant upstream changes when repository access is available. If an active project has gone about 30 days without a check, raise it at the next useful checkpoint. Distinguish published releases from unreleased branch changes. Explain relevance and local conflicts, then offer a focused patch. Never silently apply, push, merge, overwrite, install, or migrate an update. Urgent safety, security, or legal concerns require an evidence-based warning and narrow mitigation advice—not bypassing approval. See [Update and Release Security](../UPDATE_AND_RELEASE_SECURITY.md) for updater design.
 
-**Template-repository exception:** this repository does not maintain a downstream template-update record; its continuity remains in the maintainer handover.
+## 8. Maintain project memory
 
-## 8. Persistent project memory
+Every downstream project must keep a durable `docs/PROJECT_MEMORY.md`, or document the equivalent canonical file already used by the project. Initialize it from [the project memory template](../PROJECT_MEMORY_TEMPLATE.md).
 
-**Scope exception:** This requirement is for projects that use the template. It does not apply to the Collaborative Development Template repository itself; do not create a `PROJECT_MEMORY.md` in the template repository. Its own continuity is maintained through the maintainer handover and development documentation.
+- Read it at the start of each work session and verify important facts against the live project.
+- Update it after meaningful changes to scope, decisions, architecture, verified work, research, risks, lessons, or next steps.
+- Keep it concise. Link to detailed decision, research, risk, and test records rather than copying them.
+- Label facts, user decisions, assumptions, experiments, and recommendations clearly.
+- Never store secrets, sensitive personal data, confidential third-party information, or raw chat transcripts.
+- If write access is unavailable, prepare the update and say clearly that it remains unsaved.
 
-Every project repository must maintain docs/PROJECT_MEMORY.md, initialized from the shared PROJECT_MEMORY_TEMPLATE.md during project setup. For an existing project with an equivalent canonical knowledge file, retain that file and document its location rather than creating a duplicate.
+**Template-repository exception:** the template itself is not a downstream project. Do not add `docs/PROJECT_MEMORY.md` here; use the private maintainer handover and records instead.
 
-- Read the memory at the start of each work session; cross-check critical facts against current code, configuration, tests, and Git state.
-- Update it throughout the project whenever durable context changes: vision, goals, constraints, decisions, architecture, verified implementation, research, risks, lessons, relevant user preferences, milestone status, or next actions.
-- Reconcile it before substantial handovers and after meaningful milestones. Do not wait until the end of a project.
-- Keep it compact and navigable. Put detailed decisions, evidence, experiments, and risks in their specialist logs and link to them.
-- Label facts, decisions, assumptions, experiments, and recommendations distinctly. Correct or remove outdated information.
-- Never store secrets, credentials, sensitive personal data, confidential third-party information, or raw chat transcripts. A private repository is not a secret store.
-- If write access is unavailable, prepare the update and explicitly report that it remains unsaved.
+## 9. Track human-dependent actions only when needed
 
-## 9. Human-dependent actions and reminders
+When progress genuinely depends on a user decision, test, account permission, or external action, explain why and what it unlocks. Offer step-by-step help or deferral.
 
-When progress depends on a user test, decision, account permission, external action, or real-world verification, do not leave the request buried in chat.
+If the action remains outstanding beyond the current interaction, record it in `docs/PENDING_ACTIONS.md` or the project's existing tracker. Do not create an empty register or duplicate an existing task list. Mark safety, privacy, security, legal, data-loss, and irreversible-risk checks as critical blockers. Pause only work affected by a blocker; continue independent work. A register does not send notifications by itself.
 
-- Offer two practical paths: work through the action together one step at a time, or defer it.
-- When deferred or still outstanding beyond the current guided interaction, record it in `docs/PENDING_ACTIONS.md` (initialized from `PENDING_ACTIONS_TEMPLATE.md`) or the project's existing canonical tracker.
-- Record the exact action, reason, affected work, priority, owner, status, evidence, due/revisit trigger, and when it was last surfaced.
-- Mark safety, privacy, security, legal, data-loss, and irreversible-risk checks as critical blockers. Pause the affected operation until verified.
-- For ordinary blockers, pause only dependent work and continue unrelated implementation, research, and documentation.
-- For non-blocking checks, proceed autonomously and raise them at a useful checkpoint or agreed interval.
-- At each new session and handover, reconcile the register with current code and evidence if one exists; do not create an empty register just to satisfy this check. Do not ask for tests already passed unless relevant conditions changed.
-- Scheduled ChatGPT tasks may deliver reminders when available and authorized, but they are optional. The action register remains authoritative. Never claim a future reminder exists without verified creation. Note that ChatGPT tasks created inside a Project cannot access that Project's uploaded/stored files.
+## 10. Handover and learning
 
-## 10. Handover and continuous learning
+When work is being transferred or a session is ending, record only what the next person or session needs:
 
-Record the current branch and commit, completed work, changed files, tests run, known limitations, unresolved questions, and the next safe action.
+- current branch and commit;
+- completed work and important changed files;
+- checks run and not run;
+- known risks, limitations, and unresolved decisions;
+- next safe action and any genuinely blocking human action.
 
-When useful, also preserve:
-- important user preferences and confirmed project decisions;
-- research findings and their sources;
-- technical facts verified from the actual system;
-- assumptions, experiments, results, and open questions;
-- joint insights that may improve the project or general collaboration methods.
+Put durable decisions, research, and risks in their canonical records and link to them. Do not duplicate their contents in every handover. Preserve reusable learning only after removing project-specific and private information.
 
-Documentation exists to preserve useful knowledge, not to create administration. Update the most relevant existing document, avoid duplication, and keep the record proportionate. If a lesson may benefit other projects, generalize and sanitize it, explain its wider value, and propose a Template improvement through normal review rather than changing the shared Template automatically.
+## 11. Avoid repeated work
 
-## 11. Keep the workflow efficient — no unnecessary repetition
+- Verify a setting or requirement once and reuse the evidence while it remains valid.
+- Do not repeat GitHub walkthroughs or ask again for a decision already made for the same scope.
+- Select tests based on the change; run broader checks at meaningful integration or release points.
+- Batch related reading, edits, and checks.
+- Recheck only when relevant code, configuration, environment, requirements, evidence, or risk has changed.
+- Explain why a repeat check is needed.
 
-The purpose of this workflow is to protect the project and help it progress, not to make the user perform the same administration repeatedly.
-
-- **One verification is enough while its evidence remains valid.** Record what was checked, the result, date, and relevant repository/commit/settings scope. Reuse it until a relevant change or new risk makes it unreliable.
-- **Do not repeat GitHub settings walkthroughs.** If repository visibility, email privacy, permissions, branch settings, or another control has already been verified, carry that result forward. Revisit it only if it changed, cannot be verified now, or a new operation makes it relevant.
-- **Do not rerun every test for every change.** Use checks already passed on the exact current commit. For a new commit, select tests based on what changed and what could be affected. Run the full suite at meaningful integration/release checkpoints or when the risk calls for it.
-- **Batch work.** Read related files together, make compatible documentation changes together, run relevant checks in one pass, and report the outcome once. Avoid unnecessary stop-start conversations.
-- **Do not ask twice.** Reuse decisions and permissions already given for the same scope. Ask again only when the scope, risk, cost, data exposure, or external effect changes materially.
-- **Maintain one source of truth.** Update the existing memory, handover, action register, or decision log. Do not copy the same checklist into several documents or create a new tracker for an existing one.
-- **Keep user-facing steps simple.** When the user must operate GitHub themselves, guide them one action at a time; however, do not make them repeat previously completed steps. If the assistant has authorized tool access, perform routine reversible work directly instead of asking the user to click through it.
-- **Explain every repeat request.** If a recheck is required, say what changed and what risk the check addresses. Do not call a check “required” merely because it appears in a generic checklist.
-
-Safety-critical verification is never skipped merely to save time. The aim is to eliminate duplicate effort, not to weaken protection or hide uncertainty.
-
+Efficiency must remove duplicate effort, not safety-critical verification.
