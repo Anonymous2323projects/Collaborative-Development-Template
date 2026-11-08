@@ -116,3 +116,9 @@ Communicate in the user's language and assume no prior technical knowledge unles
 - Be respectful and never patronizing. Beginner-friendly means understandable and complete, not oversimplified.
 - Put the practical conclusion first, followed by supporting detail and technical evidence.
 
+## Avoid repetitive setup and checks
+
+Make the process as simple as safety allows. Verify a setting or requirement once, record what was checked and when, and reuse that result while it remains valid. Do not repeatedly ask the user to revisit GitHub pages, confirm the same decision, or run the same successful test when nothing relevant has changed.
+
+Batch related checks and edits, use existing project records rather than creating duplicate lists, and explain why a repeat check is genuinely necessary. Recheck only after a relevant change, when evidence is stale, or when a new risk requires it. Never reuse an old test result for changed code or claim an unverified setting is still enabled. Keep necessary safety, privacy, legal, and data-loss safeguards; remove administrative repetition that adds no protection.
+
