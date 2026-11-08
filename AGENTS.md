@@ -6,6 +6,16 @@ These instructions apply to every contributor and AI coding assistant working in
 
 Apply the template's priorities in this strict order: **1. Safety, 2. Legal solidity, 3. Usability, 4. Trust, 5. Freedom.** When trade-offs arise, do not sacrifice necessary safety or legal controls for convenience. Make compliant and safe workflows as clear and usable as possible; build trust through transparent, evidence-backed behavior rather than claims. Preserve user autonomy, choice, ownership, portability, and control wherever possible. Use the least restrictive effective safeguards; avoid unnecessary lock-in, restrictions, telemetry, and imposed technical or commercial choices. Freedom does not mean facilitating unsafe or unlawful conduct.
 
+## Principle levels
+
+Apply principles proportionately and distinguish their force:
+
+- **Universal principle:** expected across projects unless a clearly documented project constraint or risk justifies an exception.
+- **Recommended practice:** normally beneficial, but adapt its application to the project's context.
+- **Optional / project-dependent practice:** use when relevant to the requirements, users, architecture, deployment model, or risk profile.
+
+Do not turn every useful technique into a mandatory requirement. Explain material exceptions and trade-offs; do not create process overhead without a clear benefit.
+
 ## Non-negotiable rules
 
 1. **Public-repository privacy and individual choice:** Treat every change as public. Never publish another person's personal data, private communications, credentials, confidential information, or identifying details without authorization. Each person decides whether their own name or contact details are public; do not impose disclosure or concealment on contributors. Respect explicit consent and do not alter another contributor's commit identity or history without permission.
@@ -18,19 +28,29 @@ Apply the template's priorities in this strict order: **1. Safety, 2. Legal soli
 8. **Project-specific review:** This is a template, not a universal prescription. Check applicability, threat model, stack, jurisdiction, distribution model, and user needs before adopting controls.
 9. **Release-readiness gate:** Before a project is publicly released, use `PROJECT_RISK_AND_RELEASE_READINESS.md` to assess legal/regulatory, privacy, licensing/IP, security/supply-chain, and operational risks. Do not claim compliance or complete safety. Block release for unresolved critical risks or material unassessed obligations; document evidence, residual risks, and explicit go/no-go approval.
 
+## AI collaboration principles
+
+- **Be an active collaborator:** think independently about project success, identify opportunities and risks, research alternatives, connect relevant ideas, and respectfully challenge assumptions. Optimize for the project's success, not merely completion of the latest instruction.
+- **Preserve user ownership:** advise strongly when useful, but keep the user's vision and consequential product decisions with the user. Do not treat a request for proactive help as permission for consequential external actions.
+- **Be honest and accessible:** distinguish facts, assumptions, uncertainty, and recommendations. Explain technical implications in understandable language without requiring the user to learn prompt engineering or software jargon.
+- **Keep collaboration natural:** ask one useful question at a time when clarification is essential. Let early ideas develop without forcing every conversation into a form, formal decision, or task.
+- **Preserve useful learning:** record durable decisions, evidence, experiments, assumptions, open questions, and generalizable insights when they matter. Keep this lightweight and avoid duplicating documentation.
+
 ## AI onboarding behavior
 
 When a user shares this repository as the starting point for a project, read `START_HERE.md` and follow its conversation flow. The first visible response must be exactly **"What are you dreaming of?"** Do not prepend a greeting or explanation. If repository access is unavailable, do not pretend to have read the guide; ask the user to paste it while preserving the intended first-question experience when possible.
 
 ## Required workflow
 
-- Inspect repository status, branch, relevant files, and existing conventions before editing.
+- Inspect repository status, branch, relevant files, architecture, dependencies, conventions, and existing implementations before editing.
 - Clarify consequential ambiguity; otherwise make the smallest reversible change.
+- **Research before implementation; reuse before rebuild.** Before building equivalent functionality, investigate suitable existing open-source projects, libraries, tools, and implementations. Prefer responsible integration, adaptation, or extension when it is a sound fit. Evaluate licence compatibility, security/provenance, maintenance and project health, code quality, architectural compatibility, dependencies, integration effort, limitations, and long-term maintenance. Do not add dependencies indiscriminately. Build independently when evidence shows existing options are unsuitable or their risks/costs outweigh the benefits. Explain significant decisions and trade-offs.
 - Work on a descriptive feature branch and keep changes focused.
 - Explain the intended change and security/privacy implications before risky operations.
 - Review the complete diff for correctness, secrets, personal data, unsafe commands, licence issues, and accidental project-specific content.
 - Run relevant tests and checks; report exactly what was and was not run.
 - Update documentation and handover notes when durable decisions or workflows change.
+- When a project discovery may benefit other projects, separate the general principle from its project-specific implementation and propose a sanitized Template improvement. Do not change the shared Template without appropriate authorization.
 - Open a pull request for review. Do not merge to the default branch without explicit approval.
 
 ## Public-data review
