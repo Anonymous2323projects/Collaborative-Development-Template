@@ -114,13 +114,13 @@ Run this scenario with a Free ChatGPT account, a private GitHub project reposito
 **Expected result**
 
 - The assistant completes onboarding without requiring Plus, Pro, Work, Scheduled Tasks, deep research, or a GitHub connector.
-- It does not assume Memory will recall previous chats or that Project chat history is available on Free.
+- It distinguishes Project Instructions (which apply to chats started inside the Project) from cross-chat memory. It does not promise that earlier-chat reference is available on every Free account or configuration. The current OpenAI Projects documentation says project chats can reference other conversations in the same Project when the required personal memory controls are enabled; availability and behavior can vary by account, workspace, and rollout.
 - It respects the current Free Project limit (currently 5 files per project) and upload limit (currently 3 files per day); it does not request the entire repository.
 - It treats uploaded Project files as snapshots rather than live GitHub-synced documents and checks their freshness.
 - It explains the Free-plan Data Controls setting, how to opt out of using new conversations for model improvement, and that submitting response feedback may still make the associated conversation available for model improvement.
 - It does not ask the user to make a private repository public to enable access. If it cannot read the repository, it requests only the relevant files.
 - It does not claim the ChatGPT GitHub app can write to the repository. Without a separate authorized write capability, it prepares a patch and guides the user through applying it.
-- It explains that GitHub Free private repositories do not support branch protection or built-in secret-scanning alerts; manual review rules and the template's Gitleaks workflow remain distinct controls.
+- It explains that GitHub Free branch protection is available for public repositories, but not private repositories on the Free plan. It does not conflate branch protection with Gitleaks: the repository's Gitleaks workflow scans commits/history in CI, while GitHub secret-scanning alerts and push protection are separate GitHub features with their own plan and configuration requirements. It does not claim that CI replaces server-side protection.
 - It completes the workflow without scheduled reminders or event-triggered monitoring.
 
 **Pass criteria**
@@ -131,6 +131,29 @@ Run this scenario with a Free ChatGPT account, a private GitHub project reposito
 - [ ] Read and write access are described accurately.
 - [ ] GitHub Free security limitations are disclosed without overstating CI coverage.
 - [ ] Project continuity works from repository files in a fresh chat.
+
+## Scenario G: conversation rollover inside the same Project
+
+Run this scenario after establishing a fictional project in a ChatGPT Project and recording at least one meaningful decision and one completed milestone in the repository's durable project memory and handover. Start a genuinely new conversation from inside that same Project; do not continue the old chat.
+
+**Expected result**
+
+- The new conversation receives the same Project Instructions without asking the user to paste them again.
+- The assistant recognizes the work as an existing project and does not restart the first-contact onboarding flow.
+- It checks the current Project sources and, where account settings permit, uses relevant earlier chats as supplementary context.
+- It reads the current repository memory and handover, verifies the live repository state, and resumes from the recorded milestone.
+- It does not assume that the full previous transcript, every decision, or every attachment is automatically available.
+- If chat-history reference is disabled or unavailable, it still reconstructs the durable state from the repository records and asks only for genuinely missing information.
+- It does not create a second memory system or apply the downstream project-memory requirement to this template repository itself.
+
+**Pass criteria**
+
+- [ ] Project Instructions are present in the replacement chat.
+- [ ] No repeated onboarding or unnecessary request to re-enter known instructions.
+- [ ] Durable memory and handover are consulted and reconciled with the repository.
+- [ ] Earlier chat context is treated as conditional and supplementary.
+- [ ] The project resumes without claiming full transcript continuity.
+- [ ] The template-repository exception is respected.
 
 ## Recording results
 
@@ -144,6 +167,15 @@ For each run, record only what is necessary:
 - Limitations and a concrete follow-up.
 
 Do not paste raw chat transcripts into this public repository. Summarize only the behavior relevant to the acceptance criteria, remove identifying details, and verify that the record is safe to publish. Never convert an untested scenario or a document review into a passed live test.
+
+## Official product references
+
+- [Projects in ChatGPT](https://help.openai.com/en/articles/10169521-projects-in-chatgpt) — Project Instructions, memory modes, same-Project chat reference, and per-project file limits.
+- [File uploads and limits](https://help.openai.com/en/articles/8555545-uploading-files-and-audio-to-chatgpt) — account upload rates and Project file limits.
+- [GitHub protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches) — plan availability and controls.
+- [GitHub secret scanning](https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning) — separate server-side secret-scanning capabilities.
+
+Re-check these sources before each material revision. Product limits and plan availability can change.
 
 ## Scope and limitations
 
