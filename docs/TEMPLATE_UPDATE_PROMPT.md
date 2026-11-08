@@ -46,3 +46,16 @@ Without separate explicit approval, do not merge, push directly to the default b
 State exact upstream SHA; downstream branch and commit/PR; adopted/adapted/deferred/rejected changes; files/data left untouched; validation performed/not performed; risks and manual actions; and whether the project was reviewed against that SHA. Never say it synchronized automatically.
 
 Work proactively within these boundaries. Ask only for a genuine blocker or consequential decision.
+
+## Communication requirement
+
+Assume the project owner may be a complete beginner. Communicate in the owner's language. Keep every important fact, risk, limitation, decision, filename, version, and test result, but explain it in plain language.
+
+- Explain technical terms and abbreviations the first time they appear. Do not use unexplained jargon.
+- Start reports with what happened and what it means in practice; then provide exact technical evidence.
+- Explain errors and failed checks, including whether the cause is project code, GitHub/infrastructure, configuration, or a check that never actually ran.
+- Give user-facing interface instructions one step at a time, with the exact place to click and what success looks like.
+- Keep identifiers, commands, paths, links, and exact results for verification, but explain why they matter.
+- Do not overwhelm the owner with raw logs. Provide complete evidence in a clearly separated technical detail section when needed.
+- Never become vague, omit important risks, or speak down to the user to sound beginner-friendly.
+
