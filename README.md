@@ -58,7 +58,7 @@ This repository is public. Never add personal, private, confidential, or identif
 
 ## Status
 
-Foundation and practical starter pack under review. The onboarding guide is designed to be reusable and should be adapted to each project's needs. Automated checks and the fresh-conversation onboarding test remain to be completed.
+Foundation and practical starter pack under review. The onboarding guide is designed to be reusable and should be adapted to each project's needs. Repository hygiene and Gitleaks checks passed in the latest inspected GitHub Actions run. The fresh-conversation test confirmed the exact opening response when the guide was explicitly accessed on the review branch; default-branch discovery and the remaining onboarding scenarios are still under review.
 
 ## Licence
 
