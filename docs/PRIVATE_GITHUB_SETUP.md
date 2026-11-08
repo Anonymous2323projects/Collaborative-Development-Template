@@ -24,7 +24,7 @@ A Git commit can contain the author's name and email address. Explain this befor
 
 If the contributor chooses `noreply`, help them configure the exact address shown in their own GitHub settings for command-line Git or their chosen editor. Do not guess or construct an address, and do not ask them to paste it into chat. GitHub's **Keep my email addresses private** setting controls web-based commits; command-line Git must also be configured with the chosen address. The optional **Block command line pushes that expose my email** setting can provide an additional safeguard, but it does not configure Git.
 
-Before the first push, check the actual author email in the commit metadata and compare it with the contributor's choice. Prefer a redacted confirmation that does not reveal the address.
+Before the first push, check the author details attached to the saved change (name and email) and compare them with the contributor's choice. The contributor can confirm the result without sharing the full address in chat.
 
 **Important limits:**
 - A `noreply` address is not anonymity. A username, author name, code, or other public activity may still identify someone.
@@ -54,7 +54,7 @@ If a connected tool can create a repository, explain the intended owner, name, v
 
 - Confirm the correct repository and intended visibility.
 - Confirm the contributor's chosen commit identity is configured.
-- Check the actual commit metadata against that choice.
+- Check the author details attached to the saved change (name and email) against that choice.
 - Review files and commit contents for secrets, personal data, confidential information, and unintended publication.
 - Check collaborator access and explain any external permissions being requested.
 - Explain what was verified and what remains unknown.
