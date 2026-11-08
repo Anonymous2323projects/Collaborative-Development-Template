@@ -6,7 +6,7 @@ This repository is a public GitHub Template Repository. File changes alone canno
 
 ## Verified baseline
 
-Last checked against GitHub repository metadata on 2026-11-08:
+Last checked against GitHub repository metadata and branch/PR inventory on 2026-11-08:
 
 - [x] Repository is public.
 - [x] Default branch is `main`.
