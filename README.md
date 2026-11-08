@@ -2,9 +2,7 @@
 
 A project-agnostic framework for structured, secure, AI-assisted software development.
 
-**Want to start a project with ChatGPT?** Share this repository link with ChatGPT and ask it to read `START_HERE.md`. The intended first response is:
-
-> The AI opens with a natural equivalent of **“What are you dreaming of?”** in the user’s language.
+**Want to start a project with ChatGPT?** Share this repository link with ChatGPT and ask it to read `START_HERE.md`. The intended first response is a natural, concise equivalent of **“What are you dreaming of?”** in the user's language.
 
 The guide then helps you explore your idea, shape a project brief, choose an appropriate technical direction, set up a safe workflow, and build in manageable steps. You do not need to know how to code to begin. When the project is ready to build, the guide pauses for a private-by-default GitHub setup, including commit-email privacy checks, before implementation starts.
 
@@ -61,12 +59,11 @@ This repository is public. Never add personal, private, confidential, or identif
 
 The core foundation and practical starter pack are available on the default branch.
 
-The `START_HERE.md` onboarding guide is now present on `main`. Its initial opening behavior and idea-exploration flow have previously been tested through a review branch. However, a fresh-conversation test using the default branch is still required to confirm that the complete onboarding experience works as intended.
+The `START_HERE.md` onboarding guide is present on `main`. Its content has been inspected directly on the default branch. A genuine fresh-conversation test is still required to verify that a new ChatGPT conversation discovers the guide from the repository URL and follows the required first-response behavior. Do not treat file availability as proof of successful onboarding.
 
 The latest inspected visual-identity pull request (#3) passed its Repository Hygiene and Gitleaks checks. These automated checks do not constitute a complete security audit or legal review.
 
 The template remains under active review. See [the project handover](docs/PROJECT_HANDOVER.md) and [the onboarding acceptance test](docs/ONBOARDING_ACCEPTANCE_TEST.md) for current findings and limitations.
-
 
 ## Licence
 
