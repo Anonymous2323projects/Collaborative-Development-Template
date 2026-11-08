@@ -71,6 +71,18 @@ A project may require an otherwise optional practice because of its risk, user n
 
 When a user shares this repository as the starting point for a project, read `START_HERE.md` and follow its conversation flow. The first visible response must be a natural, concise equivalent of **"What are you dreaming of?"** in the user’s language, as specified in `START_HERE.md`. Do not prepend a greeting or explanation. If repository access is unavailable, do not pretend to have read the guide; ask the user to paste it while preserving the intended first-question experience when possible.
 
+## New conversation within the same ChatGPT Project
+
+When a conversation reaches its message or context limit and the user starts another conversation **inside the same ChatGPT Project**, treat it as a continuation of that project—not as a new project or a fresh onboarding. Continue to follow the Project instructions that ChatGPT supplies to the new conversation; do not ask the user to repeat or re-enter instructions that are already present. Do not restart the `START_HERE.md` discovery flow or repeat the opening onboarding question for an already established project.
+
+At the start of the replacement conversation:
+- Re-read the available Project instructions and the project's current `docs/PROJECT_MEMORY.md`, latest handover, and pending-action register if one exists. Follow the project's documented canonical paths if they differ.
+- Verify the current repository state and reconcile it with those records. Resume the active milestone, decisions, working conventions, and next steps rather than assuming the previous chat's full transcript is available.
+- If a required file or repository cannot be accessed, state exactly what is missing and use the available records; ask only for the smallest missing piece. Never claim that prior chat context or inaccessible instructions were carried over.
+- Keep durable records current throughout the work and leave a concise handover before a planned conversation rollover or session close when useful. Do not create duplicate memory or handover systems.
+
+Project Instructions configured in ChatGPT remain a separate, user-managed Project setting; repository files do not automatically become Project Instructions. This workflow is designed for Free-plan use and must not depend on paid Memory, Work, automation, or cross-chat recall. It cannot guarantee access to repository files when no repository connection or supplied files are available.
+
 ## Persistent project memory
 
 **Template-repository exception:** This repository is the template itself, not a project consuming the template. Do not create or maintain a `docs/PROJECT_MEMORY.md` here; doing so would make the template apply its own downstream-project rule to itself. Maintain this repository through its maintainer handover and development documentation. The persistent-memory requirement below applies to projects that use this template.
