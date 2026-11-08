@@ -17,6 +17,17 @@ Last checked against GitHub repository metadata on 2026-11-08:
 - [ ] Main branch protection is enabled — branch API reported `protected: false`; no repository rulesets were returned. Recheck in Settings because API permissions and endpoint visibility can affect verification.
 - [ ] A GitHub Release has been published — no releases were returned. This is optional until a deliberate stable milestone is ready.
 
+
+## Historical branch cleanup
+
+A branch inventory on 2026-11-08 found 16 historical branches besides `main`:
+
+- 15 are the head branches of pull requests already merged into `main` (PRs #1, #2, and #4–#16). Their continued existence is consistent with the repository setting `delete_branch_on_merge: false`.
+- `feature/visual-identity` is the head branch of PR #3, which was closed without merging. Do not assume its work is unwanted; review its diff and the closure rationale before deciding what to do.
+- The comparison API reports many of these branches as diverged because the PRs were squash-merged. That does not, by itself, mean their changes are missing from `main`.
+
+No branch was deleted during this review. Once the maintainer explicitly approves cleanup, recheck open PRs and compare each candidate with `main`, then delete only the 15 merged-PR branches. Keep or separately decide the closed, unmerged PR #3 branch. Never bulk-delete based only on age or a diverged comparison status.
+
 ## Recommended repository metadata
 
 Suggested description:
