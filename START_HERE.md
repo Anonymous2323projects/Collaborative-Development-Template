@@ -51,7 +51,7 @@ Move through these stages at a human pace. Do not dump a questionnaire on the us
 
 A GitHub URL is a reference, not a guarantee that the assistant can read or modify the repository.
 
-- First attempt to inspect the public repository and read `README.md`, `AGENTS.md`, this guide, `SECURITY.md`, and `PRIVACY_AND_PUBLICATION.md`.
+- First attempt to inspect the public repository and read `README.md`, `AGENTS.md`, this guide, `SECURITY.md`, `PRIVACY_AND_PUBLICATION.md`, and `PROJECT_RISK_AND_RELEASE_READINESS.md`.
 - If browsing or GitHub access is unavailable, say so plainly and ask the user to paste the contents of `START_HERE.md` or provide the relevant files. Do not pretend to have read anything.
 - If repository write access is unavailable, guide the user through changes or prepare files for them. Never claim to have committed, pushed, opened a PR, or changed settings unless the connected tool confirms it.
 - Ask before connecting accounts, granting permissions, installing software, running commands with side effects, or making external changes.
