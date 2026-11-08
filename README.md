@@ -12,12 +12,11 @@ If a user shares this repository URL to begin a project, treat the link itself a
 
 Share this repository link with ChatGPT as the starting point. When ChatGPT can access the repository, it should begin with the opening question above—not a setup explanation or questionnaire.
 
-The guide then helps you explore your idea, shape a project brief, choose an appropriate technical direction, set up a safe workflow, and build in manageable steps. You do not need to know how to code to begin. When the project is ready to build, the guide pauses for a private-by-default GitHub setup, including commit-email privacy checks, before implementation starts.
+The guide helps you explore your idea, shape a project brief, choose an appropriate technical direction, and build in manageable steps. You do not need to know how to code to begin. GitHub is the recommended collaboration and version-control host, with private visibility as the default for new project repositories. Existing suitable repositories and other workflows remain valid; apply the privacy checks before committing or pushing to any remote.
 
 - [Start here: AI project guide](START_HERE.md)
 - [Private GitHub project setup guide](docs/PRIVATE_GITHUB_SETUP.md)
 - [ChatGPT onboarding guide](CHATGPT_ONBOARDING.md)
-- [Onboarding acceptance test](docs/ONBOARDING_ACCEPTANCE_TEST.md)
 - [Project brief template](PROJECT_BRIEF_TEMPLATE.md)
 - [Project memory template](PROJECT_MEMORY_TEMPLATE.md)
 - [Decision log template](DECISION_LOG_TEMPLATE.md)
@@ -27,7 +26,6 @@ The guide then helps you explore your idea, shape a project brief, choose an app
 - [Development workflow](docs/DEVELOPMENT_WORKFLOW.md)
 - [Review checklist](docs/REVIEW_CHECKLIST.md)
 - [Handover template](docs/HANDOVER_TEMPLATE.md)
-- [Current project handover](docs/PROJECT_HANDOVER.md)
 - [Incident response playbook](INCIDENT_RESPONSE.md)
 - [Security policy](SECURITY.md)
 - [Project risk and release readiness standard](PROJECT_RISK_AND_RELEASE_READINESS.md)
@@ -66,13 +64,9 @@ This repository is public. Never add personal, private, confidential, or identif
 
 ## Status
 
-The core foundation and practical starter pack are available on the default branch.
+The core foundation and practical starter pack are available on the default branch. The onboarding guide is maintained in `START_HERE.md`; repository availability alone does not prove that every AI product or configuration will follow it correctly.
 
-The `START_HERE.md` onboarding guide is present on `main`. Its content has been inspected directly on the default branch. A genuine fresh-conversation test is still required to verify that a new ChatGPT conversation discovers the guide from the repository URL and follows the required first-response behavior. Do not treat file availability as proof of successful onboarding.
-
-The latest inspected visual-identity pull request (#3) passed its Repository Hygiene and Gitleaks checks. These automated checks do not constitute a complete security audit or legal review.
-
-The template remains under active review. See [the project handover](docs/PROJECT_HANDOVER.md) and [the onboarding acceptance test](docs/ONBOARDING_ACCEPTANCE_TEST.md) for current findings and limitations.
+Automated repository checks cover only their documented scope. They do not constitute a complete security audit, privacy assessment, or legal review. Maintainers should use the repository's review checklist and record verification evidence proportionately.
 
 ## Licence
 
