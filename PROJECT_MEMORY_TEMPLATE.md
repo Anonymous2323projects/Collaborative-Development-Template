@@ -58,10 +58,12 @@ Keep detailed research in the research log. Distinguish evidence from inference.
 
 Human-dependent tests, decisions, and access requests belong in the canonical pending-action register when one exists; do not duplicate that list here.
 
-## Session update record
-| Date | Session / change | Memory updated |
+## Meaningful memory change history
+Record only sessions that changed durable project knowledge; do not log every conversation.
+
+| Date | Durable change | Evidence / source |
 |---|---|---|
-| <DATE> | <SHORT SUMMARY> | <YES / NO — WHY> |
+| <DATE> | <SHORT SUMMARY> | <ISSUE / PR / COMMIT / NONE> |
 
 ---
 
