@@ -173,7 +173,7 @@ Do not paste raw chat transcripts into this public repository. Summarize only th
 - [Projects in ChatGPT](https://help.openai.com/en/articles/10169521-projects-in-chatgpt) — Project Instructions, memory modes, same-Project chat reference, and per-project file limits.
 - [File uploads and limits](https://help.openai.com/en/articles/8555545-uploading-files-and-audio-to-chatgpt) — account upload rates and Project file limits.
 - [GitHub protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches) — plan availability and controls.
-- [GitHub secret scanning](https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning) — separate server-side secret-scanning capabilities.
+- [GitHub secret scanning](https://docs.github.com/en/code-security/concepts/secret-security/about-alerts) — separate server-side secret-scanning capabilities.
 
 Re-check these sources before each material revision. Product limits and plan availability can change.
 
