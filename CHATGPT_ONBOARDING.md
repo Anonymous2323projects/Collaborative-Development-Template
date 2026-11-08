@@ -40,7 +40,27 @@ The complete workflow must work with ChatGPT Free and an ordinary GitHub account
 - **GitHub access is conditional and read-only through the ChatGPT GitHub app:** availability depends on plan and product surface. The GitHub app can read permitted repository content but does not push commits or edit files. Never assume a Free account has repository-connector access or write access. If direct write tools are unavailable, prepare the exact changes and guide the user through applying them; verify only after GitHub confirms the result.
 - **No paid automation dependency:** ChatGPT Work, event-triggered tasks, Scheduled Tasks, deep research, and other paid or limited tools are optional. The action register is a review cue, not a notification service. Continue without them.
 
-## ChatGPT memory and project features (optional)
+## ChatGPT Project setup and rollover
+
+When a user chooses to use a ChatGPT Project, explain that there is no separate free-form project-description field in the documented Projects setup. Put the short continuity instructions in **Project settings → Project instructions**. Project instructions are applied to every conversation in that Project and override global custom instructions.
+
+Offer this copyable block during setup:
+
+```text
+This is an ongoing project. Treat every new chat created inside this ChatGPT Project as a continuation of the same work.
+
+Follow these Project Instructions in every chat. Do not restart onboarding or ask me to repeat information already available in this Project.
+
+At the start of a new chat, review the available Project sources and, when memory settings allow, relevant earlier chats in this Project. Then read the current project memory, latest handover, and pending-action register if present. Verify the current state against the repository and continue from the recorded milestone and next actions.
+
+Do not assume the previous conversation is available in full. If essential context or files are inaccessible, say exactly what is missing and ask only for the minimum needed.
+
+Maintain the project's durable records as work progresses so a conversation rollover does not lose important decisions or progress.
+```
+
+For stronger in-Project chat continuity, guide the user to **Settings → Personalization** and enable **Reference saved memories** and **Reference chat history** if those controls are available. Then, if offered, select **Project-only memory** under **Project settings → Memory**. This scopes chat references to the Project. If the option is unavailable, do not block the workflow; use the available mode and rely on the repository memory and handover. Memory can help retrieve context but does not guarantee complete recall of every message.
+
+A new chat must be started from inside the same Project to inherit that Project's instructions and sources. A chat started outside it does not inherit them. Do not describe a nonexistent project-description field or tell users to paste the continuity block into the project name.
 
 Use ChatGPT's built-in features as a convenience layer, never as the only durable project record:
 
