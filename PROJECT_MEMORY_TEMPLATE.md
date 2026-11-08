@@ -52,9 +52,11 @@ Keep detailed research in the research log. Distinguish evidence from inference.
 - Canonical pending-action register: <PATH / ISSUE TRACKER / NONE>
 - Latest handover: <PATH / DATE / NONE>
 
-## Next actions
-1. <MOST USEFUL NEXT STEP>
-2. <FOLLOWING STEP>
+## Next AI-owned steps
+1. <MOST USEFUL NEXT STEP THE ASSISTANT CAN TAKE>
+2. <FOLLOWING INDEPENDENT STEP>
+
+Human-dependent tests, decisions, and access requests belong in the canonical pending-action register when one exists; do not duplicate that list here.
 
 ## Session update record
 | Date | Session / change | Memory updated |
