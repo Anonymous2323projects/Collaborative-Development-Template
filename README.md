@@ -19,6 +19,17 @@ The guide then helps you explore your idea, shape a project brief, choose an app
 - [Contributor guide](CONTRIBUTING.md)
 - [AI and contributor repository instructions](AGENTS.md)
 
+## The template's four priorities
+
+The template is designed and maintained in this strict priority order:
+
+1. **Safety** — protect users, contributors, their data, their devices, and the integrity of the project. Prevent avoidable harm, malicious code, unsafe dependencies, and insecure release practices.
+2. **Legal solidity** — identify and meet applicable legal, regulatory, privacy, consumer, intellectual-property, and licence obligations. Do not claim legal compliance without adequate evidence and qualified review where needed.
+3. **Usability** — make the safe and legally responsible path clear, understandable, accessible, and practical. Reduce friction without silently weakening safeguards or hiding material information.
+4. **Trust** — earn and preserve trust through honest communication, transparency, predictable behavior, respect for user choice, and evidence-backed claims.
+
+When these priorities conflict, evaluate them in this order. Usability improvements must not bypass necessary safety or legal controls. Trust is earned by consistently delivering on the first three priorities; it must never be manufactured through reassuring language or unsupported promises. Apply the priorities proportionately so that small projects receive practical guidance rather than unnecessary bureaucracy.
+
 ## Important note about the GitHub link
 
 Sharing a repository URL does not guarantee that every ChatGPT configuration can browse or modify GitHub. The assistant must be honest about its access. If it cannot read the repository, provide the contents of `START_HERE.md` or paste the fallback instruction from that guide. Repository changes require an available, authorized GitHub connection or actions by the user.
