@@ -133,6 +133,8 @@ This is a lightweight continuous-improvement practice, not a review task after e
 
 ### Persistent project memory — required for every project
 
+**Explicit exception:** The Collaborative Development Template repository itself is excluded. It must not create or maintain a `PROJECT_MEMORY.md` under this requirement; its own continuity remains in its existing handover, research log, and development documentation. This requirement applies to downstream projects using the template.
+
 Every project repository must have a durable docs/PROJECT_MEMORY.md, created from the shared PROJECT_MEMORY_TEMPLATE.md when the project repository is initialized. If the project already has an established documentation structure, use its equivalent canonical location and record that location in the handover.
 
 The AI must:
