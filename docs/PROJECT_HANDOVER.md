@@ -43,7 +43,7 @@ These entries describe repository changes only; they are not evidence of a compl
 
 ## Current maintenance focus
 
-- Verify that GitHub's repository-level **Template repository** setting is enabled before advertising the repository's “Use this template” workflow; the API currently reports `is_template: false`.
+- Enable GitHub's repository-level **Template repository** setting before advertising the “Use this template” workflow. Current verified API state: `is_template: false`. A maintainer must open **Settings → General → Template repository** and enable **Template repository**; verify afterward that the repository API reports `is_template: true`. The available GitHub connection cannot change this repository setting.
 - Complete review and merge decision for PR #14; it adds Free-plan-first ChatGPT continuity and the human-dependent action register.
 - Keep README and onboarding links aligned with the actual starter-pack contents.
 - Keep onboarding acceptance criteria generic and maintainable; record any future test results separately and only in sanitized form.
