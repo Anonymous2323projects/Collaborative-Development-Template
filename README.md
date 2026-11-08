@@ -2,7 +2,7 @@
 
 ![Collaborative Development Template — manifesto banner](assets/manifesto-banner.png)
 
-A project-agnostic framework for structured, secure, AI-assisted software development.
+A ChatGPT-first framework for structured, secure, collaborative software development, with GitHub as the durable project record.
 
 ## For AI assistants
 
