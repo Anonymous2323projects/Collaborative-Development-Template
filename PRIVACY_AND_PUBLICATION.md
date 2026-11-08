@@ -39,7 +39,9 @@ Use automated secret/PII detection as a safety net, not as a substitute for huma
 
 ## Incident response
 
-If sensitive information is exposed:
+For containment, credential rotation, evidence preservation, Git-history remediation, privacy assessment, communication, and recovery, follow the [Incident Response Playbook](INCIDENT_RESPONSE.md).
+
+At minimum, if sensitive information is exposed:
 1. Stop further publication and notify the maintainer privately.
 2. Revoke and rotate exposed credentials immediately; deleting a secret from a file does not invalidate it.
 3. Assess personal-data exposure, affected people, applicable notification duties, and any contractual or legal obligations.
