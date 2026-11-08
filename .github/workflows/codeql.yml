@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   analyze:
-    name: Analyze Python
+    name: Analyze Python and GitHub Actions
     runs-on: ubuntu-latest
     permissions:
       actions: read
