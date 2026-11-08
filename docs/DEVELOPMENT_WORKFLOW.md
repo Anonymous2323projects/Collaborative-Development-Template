@@ -31,19 +31,19 @@ Record the important sources, versions, licence terms, what was verified, and th
 - Distinguish inspiration from direct reuse; preserve required notices and licence obligations.
 - Propose a small implementation plan with risks and validation steps.
 
-## 3. Project bootstrap gate: private GitHub setup before the first build
+## 3. Repository readiness before the first remote publication
 
-When the project brief, initial scope, technical direction, and first milestone are clear enough to begin implementation, pause before coding. Follow [the Private GitHub Project Setup Guide](PRIVATE_GITHUB_SETUP.md).
+Do not block discovery, design, or safe local implementation on GitHub setup. When the project is ready for its first remote commit or push, follow [the Private GitHub Project Setup Guide](PRIVATE_GITHUB_SETUP.md).
 
 - Check whether the user has a GitHub account and whether an appropriate project repository already exists.
 - For a new project repository, default to **Private**. Public visibility requires the user's explicit, informed choice.
 - Guide the user through GitHub's **Keep my email addresses private** setting and, where available, **Block command line pushes that expose my email**.
 - Help the user configure the exact GitHub-provided `noreply` address for command-line commits; never guess the address or ask the user to paste it into chat.
-- Verify repository visibility and privacy setup before the first commit or push. Do not claim settings are enabled unless verified.
+- Verify repository visibility and privacy setup before the first remote commit or push. Do not claim settings are enabled unless verified.
 - Ask before account connections, permissions, collaborator invitations, repository creation through a connected tool, or other external changes.
 - If the assistant cannot create a repository, guide the user through GitHub's interface one step at a time.
 
-This is a deliberate transition gate, not a demand to create a repository during early brainstorming. Keep the user's project private while it is being developed unless the user explicitly chooses otherwise.
+This is a remote-publication gate, not a prerequisite for coding or local commits. Keep a new GitHub project private by default unless the user explicitly chooses otherwise.
 
 ## 4. Implement safely
 
