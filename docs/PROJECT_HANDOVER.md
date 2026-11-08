@@ -16,7 +16,8 @@
 | #2 | Private GitHub project setup gate | Merged |
 | #3 | Bolder independent visual identity for README | Closed without merging — banner deferred |
 | #4 | Update project handover and onboarding status | Merged |
-| #5 | Align handover with deferred banner decision | Open — documentation correction |
+| #5 | Align handover with deferred banner decision | Merged |
+| #6 | Restore direct repository-link onboarding | Merged |
 
 PR #3 was closed without merging at the owner's direction. No proposed banner or visual assets from that PR are included in `main`. The README intentionally remains banner-free until a future design is approved.
 
@@ -90,15 +91,14 @@ The banner is intentionally deferred. PR #3 was closed without merging, and the 
 
 ### Onboarding
 
-The fresh-conversation default-branch test remains outstanding.
+PR #6 restores explicit URL-first onboarding instructions in the README and ChatGPT onboarding guide. A URL-only retest still failed when the assistant followed stale `work/template-foundation` context instead of the current default branch. The guide now explicitly establishes the current default branch as authoritative unless the user requests another branch. A clean test outside any Project context remains outstanding.
 
 ## 6. Next actions
 
-1. Perform a fresh-conversation onboarding test using the public `main` branch.
-2. Update the acceptance-test record with the actual result.
-3. Complete the outstanding targeted privacy and publication review.
-4. Decide whether historical commit metadata requires remediation.
-5. Present the final review findings and risks to the repository owner.
+1. Repeat the URL-only onboarding test in a genuinely independent conversation outside the existing Project context.
+2. Complete the outstanding targeted privacy and publication review.
+3. Decide whether historical commit metadata requires remediation.
+4. Present the final review findings and risks to the repository owner.
 
 ## 7. Approval boundaries
 
