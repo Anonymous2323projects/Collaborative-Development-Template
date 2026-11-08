@@ -50,7 +50,7 @@ Keep detailed research in the research log. Distinguish evidence from inference.
 
 ## Continuity references
 - Template source and applied release/tag or commit: <SOURCE / REF / UNKNOWN / NOT APPLICABLE>
-- Last upstream template check: <DATE + CHECKED RELEASE/COMMIT / NEVER>
+- Last upstream template check: <DATE + CHECKED RELEASE/COMMIT + RESULT / NEVER>
 - Relevant update decisions: <MEMORY / DECISION LOG / PR REFERENCES / NONE>
 - Canonical pending-action register: <PATH / ISSUE TRACKER / NONE>
 - Latest handover: <PATH / DATE / NONE>
