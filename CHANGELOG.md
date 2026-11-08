@@ -4,6 +4,10 @@ Notable user-facing changes to the template are recorded here. This is a curated
 
 ## Unreleased
 
+- Added project-specific OpenAI Model Spec alignment, instruction-hierarchy and prompt-injection safeguards, plus updated shared-Project privacy wording.
+- Added unit tests for repository hygiene helpers and CodeQL analysis for the Python maintenance script.
+- Documented the reported Google AI Studio free-plan origin and limitations of the manifesto banner's rights/provenance evidence.
+
 - Updated ChatGPT Free and Project-memory guidance against current OpenAI documentation, including conditional same-Project chat reference and the fresh-conversation rollover acceptance scenario.
 - Added lightweight community governance and a project-specific Code of Conduct.
 - Expanded repository hygiene checks to validate local Markdown heading fragments and GitHub Actions workflow safety conventions.
