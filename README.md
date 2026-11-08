@@ -36,6 +36,8 @@ The guide helps you explore your idea, shape a project brief, choose an appropri
 - [Code of conduct](CODE_OF_CONDUCT.md)
 - [Maintainer governance](GOVERNANCE.md)
 - [Changelog](CHANGELOG.md)
+- [AI safety and Model Spec alignment](AI_SAFETY_AND_MODEL_SPEC.md)
+- [Asset provenance and notices](assets/README.md)
 - [AI and contributor repository instructions](AGENTS.md)
 
 ## The template's five priorities
