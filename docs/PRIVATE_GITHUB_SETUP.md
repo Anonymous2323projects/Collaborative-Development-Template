@@ -100,7 +100,7 @@ Once the repository is ready, establish the project-specific branch, review, tes
 
 - Detect the transition to remote collaboration or publication proactively; the user should not have to know which privacy checks are needed.
 - Reassure the user that setup is straightforward and manageable: say, in the user’s language, that the setup is straightforward and that you will guide them step by step.
-- Present the setup as a normal first step, not as a technical hurdle. The user does not need prior GitHub or programming experience.
+- Present the privacy checks as a normal, manageable part of remote publication, not as a technical hurdle. The user does not need prior GitHub or programming experience.
 - Explain why these checks matter before remote publication.
 - Ask one simple question or give one small action at a time.
 - Use plain language and explain unfamiliar terms.
