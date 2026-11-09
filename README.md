@@ -16,7 +16,7 @@ You do not need programming experience to begin. The guide helps you explore the
 
 Private is the strong default, not a requirement for every project. You do not need a second private repository for a normal project whose workspace is already private. If you choose to publish the project code, keep private conversations and project records out of that public repository and review the [privacy guide](PRIVACY_AND_PUBLICATION.md) first.
 
-For new GitHub project repositories, Private is the default recommendation. An existing suitable repository or a local/alternative-host workflow is also valid. Before the first remote push, explain publication risks and let each contributor choose how their own commit name and email appear.
+An existing suitable repository or a local/alternative-host workflow is also valid. Before the first remote push, explain publication risks and let each contributor choose how their own commit name and email appear.
 
 ## Find what you need
 
@@ -49,6 +49,8 @@ Use these when the project needs them; they are not all required for every proje
 - [Independent agent review](docs/INDEPENDENT_AGENT_REVIEW.md)
 
 ### Safety, privacy, and release
+
+- [Important notice and disclaimer](DISCLAIMER.md)
 
 These policies cover different responsibilities. Read the relevant one when the work reaches that area. **The risk and release-readiness assessment is required before public release.**
 
