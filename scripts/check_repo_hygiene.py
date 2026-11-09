@@ -128,6 +128,13 @@ def workflow_policy_errors(path: Path, content: str) -> list[str]:
         errors.append(f"{path}: permissions: write-all is not allowed")
     if re.search(r"^\s*pull_request_target\s*:", content, re.MULTILINE):
         errors.append(f"{path}: pull_request_target requires a separate security design review and is disallowed by default")
+    if re.search(r"^\\s*statuses:\\s*write\\s*$", content, re.MULTILINE):
+        trusted_path = path.as_posix() == ".github/workflows/merge-authorization.yml"
+        issue_comment_only = bool(re.search(r"^on:\\s*\\n\\s+issue_comment:", content, re.MULTILINE))
+        uses_default_branch = "github.event.repository.default_branch" in content
+        does_not_persist_credentials = "persist-credentials: false" in content
+        if not trusted_path or not issue_comment_only or not uses_default_branch or not does_not_persist_credentials:
+            errors.append(f"{path}: statuses: write is restricted to the trusted default-branch issue_comment authorization workflow")
     return errors
 
 def main() -> int:
