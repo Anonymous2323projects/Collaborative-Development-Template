@@ -147,6 +147,17 @@ class AuthorizationPolicyTests(unittest.TestCase):
         with patch.object(auth, "api_request", return_value=changed):
             self.assertEqual(auth.reject_policy_changes("owner", "repo", 12, "read-token"), [])
 
+    def test_ordinary_authorization_rejects_protected_policy_changes(self):
+        with self.assertRaisesRegex(auth.AuthorizationError, "use /authorize-policy-change"):
+            auth.enforce_policy_change_command("authorize-merge", ["GOVERNANCE.md"])
+
+    def test_policy_change_command_requires_protected_policy_changes(self):
+        with self.assertRaisesRegex(auth.AuthorizationError, "use /authorize-merge"):
+            auth.enforce_policy_change_command("authorize-policy-change", [])
+
+    def test_policy_change_command_accepts_protected_paths_for_deeper_evidence_review(self):
+        auth.enforce_policy_change_command("authorize-policy-change", ["GOVERNANCE.md"])
+
     def test_policy_change_record_requires_exact_paths_base_and_approval(self):
         record = f"""## Protected policy change review
 - Changed policy paths: .github/workflows/policy.yml, GOVERNANCE.md
