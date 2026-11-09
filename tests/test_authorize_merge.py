@@ -151,12 +151,17 @@ class AuthorizationPolicyTests(unittest.TestCase):
                 "previous_filename": ".github/workflows/merge-authorization.yml",
                 "status": "renamed",
             },
+            {
+                "filename": "docs/owners.md",
+                "previous_filename": "CODEOWNERS",
+                "status": "renamed",
+            },
         ]
         with patch.object(auth, "api_request", return_value=changed):
             protected = auth.reject_policy_changes("owner", "repo", 12, "read-token")
         self.assertEqual(
             protected,
-            [".github/workflows/merge-authorization.yml", "scripts/authorize_merge.py"],
+            [".github/workflows/merge-authorization.yml", "CODEOWNERS", "scripts/authorize_merge.py"],
         )
 
     def test_ordinary_source_and_documentation_changes_do_not_trigger_policy_block(self):
