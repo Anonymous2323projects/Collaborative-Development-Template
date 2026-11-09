@@ -23,6 +23,8 @@ Do not describe a project as "100% safe", "fully secure", or "legally compliant"
 
 ## Five-lens review before consequential decisions
 
+For the complete research, hazard-analysis, systemic-recurrence, documentation-parity, and technical-enforcement method, use [Change, Review, and Merge Assurance](MERGE_AND_CHANGE_ASSURANCE.md). This risk standard defines the perspectives; the assurance standard defines how evidence and technical gates are applied.
+
 For meaningful changes, especially those with lasting effects, assess the proposal from all five priority perspectives. Use these as disciplined review lenses; do not imply that separate human specialists or legal professionals were actually consulted.
 
 1. **Safety and security perspective:** Could this harm a person, expose a system, cause data loss, weaken protections, or create a route for misuse? What safeguards and recovery steps are needed?
@@ -99,6 +101,10 @@ Tailor the depth of review to the project's features, audience, jurisdiction, ar
 - Identify foreseeable misuse, data loss, security abuse, and failure modes.
 - Provide clear release notes, known issues, support/reporting channels, and incident response.
 - Confirm that user-facing claims match tested behavior.
+
+## Systemic recurrence after a failure or near miss
+
+When a material risk-control failure, contradictory procedure, unsafe merge, or missed security concern is discovered, treat it as a possible system-level defect. Search related policies, workflows, repository settings, code, tests, handovers, and user documentation; identify the common cause; update all affected procedures and technical controls; add regression tests; and re-run the five-perspective assessment. Record scope and evidence. See [Change, Review, and Merge Assurance](MERGE_AND_CHANGE_ASSURANCE.md).
 
 ## Risk register
 
