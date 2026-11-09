@@ -16,9 +16,9 @@ Thanks for helping improve this ChatGPT-first development template.
 3. Make the smallest coherent change.
 4. Review the complete diff for privacy, security, correctness, clarity, and licence concerns.
 5. Run relevant checks and state what was not tested.
-6. Open a pull request with context, risks, and validation evidence.
+6. Open a pull request with context, risks, and validation evidence. For substantive changes, include `reviews/PR-<number>.md` based on [the assurance-record template](docs/PR_ASSURANCE_RECORD_TEMPLATE.md).
 
-Do not merge your own or another contributor's changes without the required review and authorization.
+Do not merge your own or another contributor's changes without the required technical checks and explicit maintainer authorization. See [Change, Review, and Merge Assurance](MERGE_AND_CHANGE_ASSURANCE.md). A successful CI run alone is not authorization.
 
 ## Contributions and licensing
 
