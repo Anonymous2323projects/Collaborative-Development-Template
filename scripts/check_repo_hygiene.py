@@ -199,6 +199,10 @@ def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
         "MERGE_AUTH_TOKEN: " + "$" + "{{ steps.status-token.outputs.token }}",
         "MERGE_AUTH_APP_PRIVATE_KEY",
         "MERGE_AUTH_APP_CLIENT_ID",
+        "client-id: " + "$" + "{{ vars.MERGE_AUTH_APP_CLIENT_ID }}",
+        "private-key: " + "$" + "{{ secrets.MERGE_AUTH_APP_PRIVATE_KEY }}",
+        "owner: " + "$" + "{{ github.repository_owner }}",
+        "repositories: " + "$" + "{{ github.event.repository.name }}",
         "permission-statuses: write",
         "skip-token-revoke: false",
     )
