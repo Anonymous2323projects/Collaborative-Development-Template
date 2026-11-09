@@ -40,6 +40,8 @@ Tailor the depth of review to the project's features, audience, jurisdiction, ar
 - Establish purpose, lawful basis where required, minimization, retention, access controls, security, user rights, and processor/vendor responsibilities.
 - Review cookies, local storage, device identifiers, analytics, and cross-border transfers where applicable.
 - Make notices and consent mechanisms match actual product behavior. Do not claim "no data collected" without verifying all network and local data flows.
+- For projects using GitHub and ChatGPT Projects, assess repository visibility, collaborator/app access, Project sharing, project memory behavior, and account data controls separately. Do not treat one privacy setting as a substitute for the others.
+- Ensure user-facing disclaimers explain realistic risks and user-controlled settings without suggesting that users waive mandatory rights or that the maintainer has excluded every possible responsibility.
 - Avoid collecting data that the product does not need.
 
 ### 3. Intellectual property and open-source licensing
