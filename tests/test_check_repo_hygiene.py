@@ -91,6 +91,8 @@ jobs:
         with:
           permission-statuses: write
           skip-token-revoke: false
+          app-id: APP_CLIENT_ID_EXPR
+          private-key: APP_PRIVATE_KEY_EXPR
       - name: validate
         if: steps.preflight.outputs.authorized == 'true'
         env:
@@ -100,6 +102,8 @@ jobs:
         content = content.replace("DEFAULT_BRANCH_EXPR", "$" + "{{ github.event.repository.default_branch }}")
         content = content.replace("GITHUB_TOKEN_EXPR", "$" + "{{ secrets.GITHUB_TOKEN }}")
         content = content.replace("MERGE_TOKEN_EXPR", "$" + "{{ steps.status-token.outputs.token }}")
+        content = content.replace("APP_CLIENT_ID_EXPR", "$" + "{{ vars.MERGE_AUTH_APP_CLIENT_ID }}")
+        content = content.replace("APP_PRIVATE_KEY_EXPR", "$" + "{{ secrets.MERGE_AUTH_APP_PRIVATE_KEY }}")
         self.assertEqual(
             hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content),
             [],
@@ -171,6 +175,17 @@ jobs:
         content = content.replace("MERGE_TOKEN_EXPR", "$" + "{{ steps.status-token.outputs.token }}")
         errors = hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content)
         self.assertTrue(any("must trigger only on issue_comment" in error for error in errors))
+
+    def test_app_credentials_cannot_be_referenced_by_other_workflows(self):
+        content = """permissions:
+  contents: read
+jobs:
+  check:
+    steps:
+      - run: echo MERGE_AUTH_APP_PRIVATE_KEY
+"""
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/untrusted.yml"), content)
+        self.assertTrue(any("only the trusted authorization workflow may reference the merge App credentials" in error for error in errors))
 
     def test_pull_request_target_is_rejected_by_default(self):
         content = """permissions:
