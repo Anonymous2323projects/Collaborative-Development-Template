@@ -81,14 +81,16 @@ class AuthorizationPolicyTests(unittest.TestCase):
 
     def test_only_full_sha_command_is_accepted(self):
         self.assertIsNotNone(auth.COMMAND_RE.fullmatch("/authorize-merge " + "a" * 40))
+        self.assertIsNotNone(auth.COMMAND_RE.fullmatch("/authorize-policy-change " + "c" * 40))
         self.assertIsNotNone(auth.COMMAND_RE.fullmatch("/revoke-merge " + "b" * 40))
         self.assertIsNone(auth.COMMAND_RE.fullmatch("/authorize-merge abc"))
 
     def test_exact_head_evidence_is_fetched_as_inert_api_data(self):
         with patch.object(auth, "api_request", side_effect=[commit_response(), content_response()]) as api, \
              patch.object(auth, "validate_record", return_value=[]) as validator:
-            parent = auth.verify_evidence("owner", "repo", 12, valid_pr(), "read-token")
+            parent, record = auth.verify_evidence("owner", "repo", 12, valid_pr(), "read-token")
         self.assertEqual(parent, PARENT)
+        self.assertEqual(record, "evidence record")
         self.assertEqual(api.call_count, 2)
         self.assertEqual(api.call_args_list[0].args, ("GET", f"/repos/owner/repo/commits/{HEAD}", "read-token"))
         self.assertIn(f"ref={HEAD}", api.call_args_list[1].args[1])
@@ -133,8 +135,8 @@ class AuthorizationPolicyTests(unittest.TestCase):
             {"filename": ".gitleaks.toml"},
         ]
         with patch.object(auth, "api_request", return_value=changed):
-            with self.assertRaisesRegex(auth.AuthorizationError, "separate manual owner-reviewed policy-change procedure"):
-                auth.reject_policy_changes("owner", "repo", 12, "read-token")
+            protected = auth.reject_policy_changes("owner", "repo", 12, "read-token")
+        self.assertEqual(protected, sorted(item["filename"] for item in changed))
 
     def test_ordinary_source_and_documentation_changes_do_not_trigger_policy_block(self):
         changed = [
@@ -143,7 +145,53 @@ class AuthorizationPolicyTests(unittest.TestCase):
             {"filename": "docs/USER_GUIDE.md"},
         ]
         with patch.object(auth, "api_request", return_value=changed):
-            auth.reject_policy_changes("owner", "repo", 12, "read-token")
+            self.assertEqual(auth.reject_policy_changes("owner", "repo", 12, "read-token"), [])
+
+    def test_policy_change_record_requires_exact_paths_base_and_approval(self):
+        record = f"""## Protected policy change review
+- Changed policy paths: .github/workflows/policy.yml, GOVERNANCE.md
+- Base SHA: {BASE}
+- Reason for change: Close a documented workflow trust-boundary gap.
+- Adversarial tests: Fork and same-repository PR cases plus validator-tampering tests.
+- Rollback/recovery: Revert the dedicated policy commit and restore the previous ruleset.
+- Independent review reference: issue #7 review report and exact-head test run.
+- Owner decision: APPROVED
+"""
+        auth.validate_policy_change_record(
+            record,
+            [".github/workflows/policy.yml", "GOVERNANCE.md"],
+            BASE,
+        )
+
+    def test_policy_change_record_rejects_missing_paths_or_unapproved_owner_decision(self):
+        record = f"""## Protected policy change review
+- Changed policy paths: GOVERNANCE.md
+- Base SHA: {BASE}
+- Reason for change: Update governance.
+- Adversarial tests: Tests run.
+- Rollback/recovery: Revert.
+- Independent review reference: report #1.
+- Owner decision: PENDING
+"""
+        with self.assertRaisesRegex(auth.AuthorizationError, "must list every protected path"):
+            auth.validate_policy_change_record(record, ["GOVERNANCE.md", "SECURITY.md"], BASE)
+
+        record = record.replace("GOVERNANCE.md", "GOVERNANCE.md, SECURITY.md")
+        record = record.replace("Owner decision: PENDING", "Owner decision: APPROVED")
+        auth.validate_policy_change_record(record, ["GOVERNANCE.md", "SECURITY.md"], BASE)
+
+    def test_policy_change_record_rejects_stale_base_sha(self):
+        record = f"""## Protected policy change review
+- Changed policy paths: GOVERNANCE.md
+- Base SHA: {"d" * 40}
+- Reason for change: Update governance.
+- Adversarial tests: Tests run.
+- Rollback/recovery: Revert.
+- Independent review reference: report #1.
+- Owner decision: APPROVED
+"""
+        with self.assertRaisesRegex(auth.AuthorizationError, "base SHA does not match"):
+            auth.validate_policy_change_record(record, ["GOVERNANCE.md"], BASE)
 
     def test_incomplete_pr_file_listing_fails_closed(self):
         with patch.object(auth, "api_request", return_value=[{"filename": f"file-{i}.txt"} for i in range(100)]):
@@ -200,6 +248,7 @@ class AuthorizationPolicyTests(unittest.TestCase):
         self.assertIn("ref: " + "$" + "{{ github.event.repository.default_branch }}", workflow)
         self.assertIn("name: merge-authorizer", workflow)
         self.assertIn("run: python3 scripts/authorize_merge.py --preflight", workflow)
+        self.assertIn("/authorize-policy-change ", workflow)
         self.assertIn("if: steps.preflight.outputs.authorized == 'true'", workflow)
         self.assertLess(workflow.index("--preflight"), workflow.index("actions/create-github-app-token"))
         self.assertIn("actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510", workflow)
