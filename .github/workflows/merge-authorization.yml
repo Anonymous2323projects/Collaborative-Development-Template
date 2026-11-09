@@ -4,28 +4,47 @@ on:
   issue_comment:
     types: [created]
 
+# GITHUB_TOKEN is read-only. The separate status App token is minted only
+# inside the merge-authorizer environment, which must be restricted to main.
 permissions:
   contents: read
   pull-requests: read
-  statuses: write
 
 concurrency:
-  group: merge-authorization-${{ github.event.issue.number }}
+  group: merge-authorization-\${{ github.event.issue.number }}
   cancel-in-progress: false
 
 jobs:
   authorize:
-    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/authorize-merge ') || github.event.issue.pull_request && startsWith(github.event.comment.body, '/revoke-merge ')
+    if: >-
+      github.event.issue.pull_request &&
+      (startsWith(github.event.comment.body, '/authorize-merge ') ||
+       startsWith(github.event.comment.body, '/revoke-merge '))
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: merge-authorizer
     steps:
       - name: Check out trusted default-branch policy code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.event.repository.default_branch }}
+          ref: \${{ github.event.repository.default_branch }}
           persist-credentials: false
-      - name: Verify maintainer and exact PR head, then set commit status
+
+      - name: Create repository-scoped status App token
+        id: status-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: \${{ vars.MERGE_AUTH_APP_CLIENT_ID }}
+          private-key: \${{ secrets.MERGE_AUTH_APP_PRIVATE_KEY }}
+          owner: \${{ github.repository_owner }}
+          repositories: \${{ github.event.repository.name }}
+          permission-statuses: write
+
+      - name: Validate evidence and owner authorization for the exact PR head
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_EVENT_PATH: ${{ github.event_path }}
-          MERGE_AUTHORIZER_LOGINS: ${{ vars.MERGE_AUTHORIZER_LOGINS }}
+          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
+          MERGE_AUTH_TOKEN: \${{ steps.status-token.outputs.token }}
+          GITHUB_EVENT_PATH: \${{ github.event_path }}
+          MERGE_AUTHORIZER_LOGINS: \${{ vars.MERGE_AUTHORIZER_LOGINS }}
         run: python3 scripts/authorize_merge.py
