@@ -41,16 +41,17 @@ class GateError(ValueError):
     pass
 
 def section(text: str, heading: str) -> str:
+    level = len(heading) - len(heading.lstrip("#"))
     match = re.search(
-        rf"^{re.escape(heading)}\s*$([\s\S]*?)(?=^#{{1,2}}\s|\Z)",
+        rf"^{re.escape(heading)}\\s*$([\\s\\S]*?)(?=^#{{1,{level}}}\\s|\\Z)",
         text,
         re.MULTILINE,
     )
     return match.group(1).strip() if match else ""
 
 def field(text: str, name: str) -> str:
-    match = re.search(rf"^-\s*{re.escape(name)}:\s*(.*?)\s*$", text, re.MULTILINE)
-    return match.group(1).strip() if match else ""
+    matches = re.findall(rf"^-\\s*{re.escape(name)}:\\s*(.*?)\\s*$", text, re.MULTILINE)
+    return matches[0].strip() if len(matches) == 1 else ""
 
 def non_placeholder(value: str) -> bool:
     if not value:
@@ -77,8 +78,9 @@ def host_is_in(hosts: set[str], domain: str) -> bool:
 def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, reviewed_code_sha: str) -> list[str]:
     errors: list[str] = []
     for heading in REQUIRED_SECTIONS:
-        if not section(text, heading):
-            errors.append(f"Missing required section: {heading}")
+        occurrences = re.findall(rf"^{re.escape(heading)}\\s*$", text, re.MULTILINE)
+        if len(occurrences) != 1:
+            errors.append(f"Required section must appear exactly once: {heading}")
 
     identity = section(text, "## Change identity")
     expected = {
@@ -98,9 +100,11 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
 
     for lens in LENSES:
         heading = f"### {lens}"
-        body = section(section(text, "## Five-perspective assessment"), heading)
-        if not body:
-            errors.append(f"Missing assessment for: {lens}")
+        perspective_section = section(text, "## Five-perspective assessment")
+        lens_occurrences = re.findall(rf"^{re.escape(heading)}\\s*$", perspective_section, re.MULTILINE)
+        body = section(perspective_section, heading)
+        if len(lens_occurrences) != 1 or not body:
+            errors.append(f"Assessment heading must appear exactly once for: {lens}")
             continue
         assessment = field(body, "Assessment")
         if assessment not in ASSESSMENTS:
