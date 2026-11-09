@@ -118,7 +118,7 @@
 - Critical blockers: [NONE or describe blockers]
 - Required user/owner decision:
 - Merge authorization state: AWAITING EXPLICIT OWNER AUTHORIZATION
-- Bootstrap change? NO / YES
+- Bootstrap change?: NO / YES
 - Gate that cannot yet apply (or NOT APPLICABLE):
 - Existing live controls and compensating manual controls (or NOT APPLICABLE):
 - Manual owner approval evidence/state (or NOT APPLICABLE):
