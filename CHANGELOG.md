@@ -4,6 +4,8 @@ Notable user-facing changes to the template are recorded here. This is a curated
 
 ## Unreleased
 
+- Tightened PR assurance evidence: high-impact merges require a verified pre-merge recovery snapshot, and bootstrap exceptions require explicit compensating controls, owner state, deadline, post-merge owner, and stop/rollback conditions.
+
 - Added a project-wide change-assurance standard with risk-based research, system-level hazard analysis, five separate review perspectives, documentation-to-implementation traceability, systemic recurrence review, and an efficiency audit.
 - Added a PR-specific fail-closed evidence validator and exact-head maintainer authorization workflow. The validator binds the assurance record to the reviewed code commit and requires a separate evidence-only final commit to avoid self-referential SHA claims.
 - Updated contributor, governance, development, security, review, risk, and downstream-update guidance to require evidence-backed procedures and verified technical enforcement. The corresponding GitHub ruleset still requires configuration of the new check contexts before these gates are fully enforced.
