@@ -259,10 +259,10 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
                 errors.append(f"Non-bootstrap change must mark '{label}' as NOT APPLICABLE.")
         if bootstrap == "YES":
             deadline = field(approval, "Bootstrap deadline/expiry")
-            if not re.search(r"\\b20\\d{2}-\\d{2}-\\d{2}\\b|\\bwithin\\s+\\d+\\s+(?:hours?|days?)\\b", deadline, re.IGNORECASE):
+            if not re.search(r"\b20\\d{2}-\\d{2}-\\d{2}\\b|\\bwithin\\s+\\d+\\s+(?:hours?|days?)\\b", deadline, re.IGNORECASE):
                 errors.append("Bootstrap exception must have a concrete date or bounded duration.")
             approval_state = field(approval, "Manual owner approval evidence/state")
-            if not re.search(r"\\b(?:pending|approved|approval)\\b", approval_state, re.IGNORECASE):
+            if not re.search(r"\b(?:pending|approved|approval)\\b", approval_state, re.IGNORECASE):
                 errors.append("Bootstrap exception must state the manual owner-approval state.")
     return errors
 
