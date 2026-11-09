@@ -321,6 +321,7 @@ class AuthorizationPolicyTests(unittest.TestCase):
         self.assertLess(workflow.index("--preflight"), workflow.index("actions/create-github-app-token"))
         self.assertIn("actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510", workflow)
         self.assertIn("permission-statuses: write", workflow)
+        self.assertIn("skip-token-revoke: false", workflow)
         self.assertIn("MERGE_AUTH_TOKEN:", workflow)
         self.assertNotIn("statuses: write", workflow.split("jobs:", 1)[0])
         self.assertNotIn("github.event.pull_request.head.sha", workflow)
