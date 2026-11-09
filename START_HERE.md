@@ -2,6 +2,8 @@
 
 This template helps you turn an idea into a secure, maintainable project with ChatGPT as a practical collaborator. You do not need programming experience to begin.
 
+Before using it, read the short [Important Notice and Disclaimer](DISCLAIMER.md).
+
 ## 1. Protect your project before adding private information
 
 This repository is the **public starter template**. When you create your own project from it, GitHub creates a separate repository for your project. That new repository is where your project files and notes will live.
