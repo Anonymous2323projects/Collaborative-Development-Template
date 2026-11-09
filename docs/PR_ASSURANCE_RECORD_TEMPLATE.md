@@ -110,7 +110,7 @@
 - Adversarial tests: [specific tests and results]
 - Rollback/recovery: [concrete recovery steps]
 - Independent review reference: [link or durable review identifier]
-- Owner decision: NOT APPLICABLE / APPROVED
+- Owner decision: NOT APPLICABLE
 
 ## Residual risk and approval
 
