@@ -124,6 +124,7 @@ class AuthorizationPolicyTests(unittest.TestCase):
             {"filename": ".github/workflows/new-workflow.yml"},
             {"filename": "scripts/authorize_merge.py"},
             {"filename": "MERGE_AND_CHANGE_ASSURANCE.md"},
+            {"filename": ".gitleaks.toml"},
         ]
         with patch.object(auth, "api_request", return_value=changed):
             with self.assertRaisesRegex(auth.AuthorizationError, "separate manual owner-reviewed policy-change procedure"):
