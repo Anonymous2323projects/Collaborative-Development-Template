@@ -26,6 +26,8 @@ Do not assume a report channel is configured until it has been checked in reposi
 
 ## Automated checks in this template
 
+Substantive pull requests also run a PR-specific assurance-record validator. A separate issue-comment workflow can create an exact-head maintainer authorization status after checking the authorized actor, PR state, target branch, exact SHA, and unresolved review threads. These controls require the corresponding status contexts to be configured as required in the live repository ruleset; a workflow existing in the repository is not sufficient. The validator checks structure and identity, not the truth or quality of the review. Verify the live ruleset and workflow runs before relying on the gate.
+
 The public repository uses GitHub CodeQL for Python and GitHub Actions workflow analysis, Gitleaks for secret-pattern scanning, repository-hygiene checks, and unit tests for the hygiene helper functions. Review each workflow's current triggers, permissions, pinned action revisions, and query scope before relying on it. A successful run means only that those configured checks completed without reporting a failure; it is not a full security review.
 
 ## Important limitations
