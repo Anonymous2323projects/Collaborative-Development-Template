@@ -214,6 +214,40 @@ def publish_status(
     api_request("POST", f"/repos/{owner}/{repo}/statuses/{sha}", token, payload)
 
 
+def write_preflight_output(authorized: bool) -> None:
+    output_path = os.getenv("GITHUB_OUTPUT")
+    if output_path:
+        with open(output_path, "a", encoding="utf-8") as handle:
+            handle.write(f"authorized={'true' if authorized else 'false'}\n")
+
+
+def preflight() -> int:
+    """Check the comment author before the workflow loads the App private key."""
+    try:
+        with open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8") as handle:
+            event = json.load(handle)
+        issue = event.get("issue", {})
+        comment = event.get("comment", {})
+        if not issue.get("pull_request") or not COMMAND_RE.fullmatch(comment.get("body", "").strip()):
+            write_preflight_output(False)
+            print("No valid PR authorization command; no status App token will be created.")
+            return 0
+        allowed = authorized_logins(
+            event["repository"],
+            os.getenv("MERGE_AUTHORIZER_LOGINS", ""),
+        )
+        actor = comment.get("user", {}).get("login", "").lower()
+        authorized = actor in allowed
+        write_preflight_output(authorized)
+        if not authorized:
+            print("Comment author is not an authorized maintainer; no status App token will be created.")
+        return 0
+    except (AuthorizationError, KeyError, TypeError, ValueError, OSError) as exc:
+        write_preflight_output(False)
+        print(f"Authorization preflight failed closed: {exc}", file=sys.stderr)
+        return 0
+
+
 def main() -> int:
     event_path = os.environ["GITHUB_EVENT_PATH"]
     read_token = os.environ["GITHUB_TOKEN"]
@@ -300,6 +334,8 @@ def main() -> int:
 
 if __name__ == "__main__":
     try:
+        if "--preflight" in sys.argv[1:]:
+            raise SystemExit(preflight())
         raise SystemExit(main())
     except (AuthorizationError, KeyError, TypeError, ValueError, OSError) as exc:
         print(f"Authorization gate failed closed: {exc}", file=sys.stderr)
