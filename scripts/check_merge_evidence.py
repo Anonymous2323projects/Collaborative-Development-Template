@@ -167,8 +167,8 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
     if field(approval, "Merge authorization state") != "AWAITING EXPLICIT OWNER AUTHORIZATION":
         errors.append("Merge authorization must remain awaiting the separate exact-head owner gate.")
     blockers = field(approval, "Critical blockers")
-    if not blockers or blockers.strip().startswith("[") or blockers.strip().lower() in {"todo", "tbd", "?", "—", "-", "none / list"}:
-        errors.append("Record critical blockers explicitly (write NONE when there are none).")
+    if not blockers or blockers.strip().startswith("[") or blockers.strip().upper() != "NONE":
+        errors.append(f"Critical blockers remain or are not explicitly cleared: {blockers or 'not recorded'}.")
     return errors
 
 def main(argv: list[str]) -> int:
