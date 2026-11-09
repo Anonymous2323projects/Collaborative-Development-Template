@@ -236,7 +236,7 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
     backup_evidence = field(approval, "Any backup/recovery evidence required and verified")
     if risk in {"HIGH", "CRITICAL"} and (
         not re.search(r"\b(?:verified|checked|confirmed)\b", backup_evidence, re.IGNORECASE)
-        not re.search(r"\b(?:verified|checked|confirmed)\b", backup_evidence, re.IGNORECASE)
+        or not re.search(r"\b(?:snapshot|backup)\b", backup_evidence, re.IGNORECASE)
     ):
         errors.append("HIGH/CRITICAL changes require evidence of a verified recoverable pre-merge snapshot or backup.")
 
