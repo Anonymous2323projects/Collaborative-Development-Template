@@ -75,7 +75,7 @@ def valid_record():
 - Critical blockers: NONE
 - Required user/owner decision: explicit authorization of the exact PR head
 - Merge authorization state: AWAITING EXPLICIT OWNER AUTHORIZATION
-- Bootstrap change? NO
+- Bootstrap change?: NO
 - Gate that cannot yet apply: NOT APPLICABLE
 - Existing live controls and compensating manual controls: NOT APPLICABLE
 - Manual owner approval evidence/state: NOT APPLICABLE
@@ -151,8 +151,8 @@ class MergeEvidenceTests(unittest.TestCase):
 
     def test_bootstrap_exception_requires_complete_time_bound_controls(self):
         record = valid_record().replace(
-            "- Bootstrap change? NO",
-            "- Bootstrap change? YES",
+            "- Bootstrap change?: NO",
+            "- Bootstrap change?: YES",
         )
         replacements = {
             "Gate that cannot yet apply: NOT APPLICABLE": "Gate that cannot yet apply: the exact-head App status cannot run until the trusted workflow is on the default branch",
@@ -169,8 +169,8 @@ class MergeEvidenceTests(unittest.TestCase):
 
     def test_bootstrap_exception_without_deadline_fails_closed(self):
         record = valid_record().replace(
-            "- Bootstrap change? NO",
-            "- Bootstrap change? YES",
+            "- Bootstrap change?: NO",
+            "- Bootstrap change?: YES",
         ).replace(
             "Bootstrap deadline/expiry: NOT APPLICABLE",
             "Bootstrap deadline/expiry: when convenient",
