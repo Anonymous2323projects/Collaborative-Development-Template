@@ -23,7 +23,7 @@ The template's checks and instructions reduce avoidable risks; they cannot remov
 
 ## Responsibility and legal rights
 
-You are responsible for using the template thoughtfully and for checking the settings and permissions under your control. The people maintaining this template are not responsible for choices or disclosures made independently by users, or for every outcome of projects built with it. However, nothing in this notice excludes or limits responsibility where applicable law does not allow that, or removes any mandatory rights you may have.
+You are responsible for using the template thoughtfully and for checking the settings and permissions under your control. This notice is general information, not a contract, licence, privacy notice, or complete set of terms for a project that uses the template. It does not waive mandatory rights or attempt to exclude responsibility where applicable law does not allow that. Any project that is distributed, offered to users, or used commercially may need its own terms, notices, and legal review appropriate to its activities and locations.
 
 If you discover a security or privacy problem in the template itself, report it privately using the contact route described in [SECURITY.md](SECURITY.md). Do not publish sensitive details in a public issue.
 
