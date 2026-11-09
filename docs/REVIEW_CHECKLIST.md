@@ -23,7 +23,8 @@ Use this checklist for routine changes. For substantive changes, the complete me
 - [ ] Residual risks and recovery steps are documented.
 
 ## Merge and release
-- [ ] Required GitHub rulesets and status checks are verified live, not inferred from workflow files.
+- [ ] For ordinary PRs, required GitHub rulesets and status checks are verified live, not inferred from workflow files.
+- [ ] If this is the bootstrap PR introducing the gate, record the existing enforcement gap and exact-head manual owner approval; verify the new ruleset and adversarial acceptance tests after merge before claiming technical enforcement.
 - [ ] Required checks are successful on the current exact PR head.
 - [ ] Review threads are resolved and exact-head owner authorization is present where configured.
 - [ ] The owner has explicitly authorized the merge/release where required.
