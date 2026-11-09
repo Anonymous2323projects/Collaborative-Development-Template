@@ -180,7 +180,7 @@ def assurance_document_errors(root: Path = ROOT) -> list[str]:
             errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: cannot read canonical standard: {exc}")
         else:
             for section in REQUIRED_ASSURANCE_SECTIONS:
-                pattern = rf"^## {re.escape(section)}\\s*$"
+                pattern = rf"^## {re.escape(section)}\s*$"
                 if not re.search(pattern, content, re.MULTILINE):
                     errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: required core section is missing: {section}")
     for path, reference in ASSURANCE_REFERENCES.items():
