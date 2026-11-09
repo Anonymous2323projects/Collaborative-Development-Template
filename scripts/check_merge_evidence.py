@@ -50,8 +50,17 @@ def section(text: str, heading: str) -> str:
     )
     return match.group(1).strip() if match else ""
 
+def strip_html_comments(text: str) -> str:
+    """Remove HTML comments because GitHub does not render their contents."""
+    return re.sub(
+        r"<!--[\s\S]*?(?:-->|$)",
+        lambda match: "".join("\n" if char == "\n" else "" for char in match.group(0)),
+        text,
+    )
+
+
 def strip_fenced_code_blocks(text: str) -> str:
-    """Remove fenced code blocks so examples cannot satisfy Markdown fields."""
+    """Remove fenced examples and rendered-invisible HTML comments."""
     output: list[str] = []
     fence_char: str | None = None
     fence_length = 0
@@ -77,7 +86,7 @@ def strip_fenced_code_blocks(text: str) -> str:
             output.append(line)
         else:
             output.append("\n" if line.endswith("\n") else "")
-    return "".join(output)
+    return strip_html_comments("".join(output))
 
 def field(text: str, name: str) -> str:
     matches = re.findall(rf"^-\s*{re.escape(name)}:\s*(.*?)\s*$", text, re.MULTILINE)

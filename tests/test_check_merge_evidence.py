@@ -103,6 +103,15 @@ class MergeEvidenceTests(unittest.TestCase):
         errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("Safety and security: evidence is required" in error for error in errors))
 
+    def test_html_comment_fields_cannot_satisfy_missing_evidence(self):
+        record = valid_record().replace(
+            "- Evidence: tests and source review recorded in this PR\n",
+            "<!--\n- Evidence: hidden evidence\n-->\n",
+            1,
+        )
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("Safety and security: evidence is required" in error for error in errors))
+
     def test_unclosed_fence_fails_closed(self):
         errors = gate.validate_record("```markdown\n" + valid_record(), 12, "main", BASE, REVIEWED)
         self.assertTrue(any("Required section" in error for error in errors))

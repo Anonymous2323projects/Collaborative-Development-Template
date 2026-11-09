@@ -37,6 +37,15 @@ def sensitive_path(path: Path) -> bool:
         return True
     return name in {"id_rsa", "id_ed25519", "id_ecdsa"}
 
+def strip_html_comments(text: str) -> str:
+    """Remove HTML comments because GitHub does not render their contents."""
+    return re.sub(
+        r"<!--[\s\S]*?(?:-->|$)",
+        lambda match: "".join("\n" if char == "\n" else "" for char in match.group(0)),
+        text,
+    )
+
+
 def strip_fenced_code(content: str) -> str:
     output = []
     fence_char = None
@@ -54,7 +63,7 @@ def strip_fenced_code(content: str) -> str:
                 output.append("")
                 continue
         output.append(line if fence_char is None else "")
-    return "\n".join(output)
+    return strip_html_comments("\n".join(output))
 
 def github_slug(heading: str) -> str:
     value = html.unescape(heading).strip().lower()

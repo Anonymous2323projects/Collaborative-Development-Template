@@ -243,6 +243,24 @@ class AuthorizationPolicyTests(unittest.TestCase):
         with self.assertRaisesRegex(auth.AuthorizationError, "exactly one Protected policy change review"):
             auth.validate_policy_change_record(record, ["GOVERNANCE.md"], BASE)
 
+    def test_html_comment_policy_fields_cannot_satisfy_the_gate(self):
+        record = f"""## Change identity
+- Risk: HIGH
+
+## Protected policy change review
+- Changed policy paths: GOVERNANCE.md
+- Base SHA: {BASE}
+<!--
+- Reason for change: This hidden field is not visible in the rendered record.
+-->
+- Adversarial tests: Fork and same-repository workflow spoof tests executed.
+- Rollback/recovery: Revert the policy commit and restore the previous gate.
+- Independent review reference: independent technical review report and exact-head test evidence.
+- Owner decision: APPROVED
+"""
+        with self.assertRaisesRegex(auth.AuthorizationError, "field 'Reason for change' must contain concrete evidence"):
+            auth.validate_policy_change_record(record, ["GOVERNANCE.md"], BASE)
+
     def test_policy_change_record_rejects_low_risk_classification(self):
         record = f"""## Change identity
 - Risk: LOW

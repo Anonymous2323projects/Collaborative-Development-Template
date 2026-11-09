@@ -31,6 +31,12 @@ class MarkdownHelperTests(unittest.TestCase):
         self.assertIn("real-heading", anchors)
         self.assertNotIn("not-a-heading", anchors)
 
+    def test_html_comment_headings_are_removed_before_anchor_scan(self):
+        content = "# Real heading\n\n<!--\n# Hidden heading\n-->\n"
+        anchors = hygiene.markdown_anchors(content)
+        self.assertIn("real-heading", anchors)
+        self.assertNotIn("hidden-heading", anchors)
+
     def test_duplicate_heading_anchors_are_numbered(self):
         content = "# Setup\n\n# Setup\n"
         anchors = hygiene.markdown_anchors(content)
@@ -501,6 +507,20 @@ class AssuranceDocumentTests(unittest.TestCase):
         path.write_text(content, encoding="utf-8")
         errors = hygiene.assurance_document_errors(self.root)
         self.assertTrue(any("Five-perspective assessment" in error for error in errors))
+
+    def test_headings_and_links_inside_html_comments_do_not_satisfy_contract(self):
+        self.write_valid_fixture()
+        standard = self.root / "MERGE_AND_CHANGE_ASSURANCE.md"
+        content = standard.read_text(encoding="utf-8").replace(
+            "## 4. Five-perspective assessment",
+            "<!--\n## 4. Five-perspective assessment\n-->",
+        )
+        standard.write_text(content, encoding="utf-8")
+        agents = self.root / "AGENTS.md"
+        agents.write_text("<!--\n[Assurance](MERGE_AND_CHANGE_ASSURANCE.md)\n-->\n", encoding="utf-8")
+        errors = hygiene.assurance_document_errors(self.root)
+        self.assertTrue(any("Five-perspective assessment" in error for error in errors))
+        self.assertTrue(any("AGENTS.md" in error and "Markdown link" in error for error in errors))
 
     def test_missing_governing_reference_is_rejected(self):
         self.write_valid_fixture()
