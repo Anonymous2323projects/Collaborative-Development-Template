@@ -258,7 +258,7 @@ class AuthorizationPolicyTests(unittest.TestCase):
 - Independent review reference: independent technical review report and exact-head test evidence.
 - Owner decision: APPROVED
 """
-        with self.assertRaisesRegex(auth.AuthorizationError, "field 'Reason for change' must contain concrete evidence"):
+        with self.assertRaisesRegex(auth.AuthorizationError, "exactly one 'Reason for change' field"):
             auth.validate_policy_change_record(record, ["GOVERNANCE.md"], BASE)
 
     def test_policy_change_record_rejects_low_risk_classification(self):
