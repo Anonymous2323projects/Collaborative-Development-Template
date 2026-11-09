@@ -328,6 +328,8 @@ def assurance_document_errors(root: Path = ROOT) -> list[str]:
                 pattern = rf"^## {re.escape(section)}\s*$"
                 if not re.search(pattern, content, re.MULTILINE):
                     errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: required core section is missing: {section}")
+            if "recoverable snapshot of the exact pre-merge head" not in content.lower():
+                errors.append("MERGE_AND_CHANGE_ASSURANCE.md: require a verified recoverable snapshot of the exact pre-merge head for high-impact or hard-to-reverse merges")
     for path, reference in ASSURANCE_REFERENCES.items():
         target = root / path
         if not target.is_file():
