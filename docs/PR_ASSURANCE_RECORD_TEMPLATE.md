@@ -118,5 +118,6 @@
 - Critical blockers: [NONE or describe blockers]
 - Required user/owner decision:
 - Merge authorization state: AWAITING EXPLICIT OWNER AUTHORIZATION
+- Bootstrap change? NO / YES — if YES, identify the gate that cannot yet apply, existing live controls, the exact-head manual owner approval, and the post-merge configuration/acceptance-test owner.
 - Any backup/recovery evidence required and verified:
 - Post-merge verification plan:
