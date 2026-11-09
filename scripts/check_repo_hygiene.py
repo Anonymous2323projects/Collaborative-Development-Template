@@ -310,6 +310,7 @@ ASSURANCE_REFERENCES = {
     Path("AGENTS.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
     Path("docs/DEVELOPMENT_WORKFLOW.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
     Path("PROJECT_RISK_AND_RELEASE_READINESS.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("docs/EXACT_HEAD_AUTHORIZATION_SETUP.md"): "../MERGE_AND_CHANGE_ASSURANCE.md",
 }
 
 def assurance_document_errors(root: Path = ROOT) -> list[str]:
@@ -330,6 +331,9 @@ def assurance_document_errors(root: Path = ROOT) -> list[str]:
                     errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: required core section is missing: {section}")
             if "recoverable snapshot of the exact pre-merge head" not in content.lower():
                 errors.append("MERGE_AND_CHANGE_ASSURANCE.md: require a verified recoverable snapshot of the exact pre-merge head for high-impact or hard-to-reverse merges")
+            setup_link = r"\]\(docs/EXACT_HEAD_AUTHORIZATION_SETUP\.md(?:#[^)]*)?\)"
+            if not re.search(setup_link, content):
+                errors.append("MERGE_AND_CHANGE_ASSURANCE.md: must link to docs/EXACT_HEAD_AUTHORIZATION_SETUP.md")
     for path, reference in ASSURANCE_REFERENCES.items():
         target = root / path
         if not target.is_file():
