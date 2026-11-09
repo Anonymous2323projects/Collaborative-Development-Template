@@ -72,7 +72,7 @@ def valid_record():
 
 ## Residual risk and approval
 - Open findings and residual risks: none
-- Critical blockers: NONE / LIST: NONE
+- Critical blockers: NONE
 - Required user/owner decision: explicit authorization
 - Merge authorization state: AWAITING EXPLICIT OWNER AUTHORIZATION
 - Any backup/recovery evidence required and verified: not required
