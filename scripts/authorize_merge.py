@@ -21,7 +21,7 @@ from urllib.parse import quote
 SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
-from check_merge_evidence import section, strip_fenced_code_blocks, validate_record
+from check_merge_evidence import field, section, strip_fenced_code_blocks, validate_record
 
 API = "https://api.github.com"
 CONTEXT = "Explicit maintainer merge authorization"
@@ -161,6 +161,9 @@ def validate_policy_change_record(record: str, protected_paths: list[str], base_
     if len(headings) != 1:
         raise AuthorizationError("Policy-change evidence must contain exactly one Protected policy change review section.")
     policy_section = section(clean, "## Protected policy change review")
+    risk = field(section(clean, "## Change identity"), "Risk")
+    if risk not in {"HIGH", "CRITICAL"}:
+        raise AuthorizationError("Protected policy changes must be assessed as HIGH or CRITICAL risk.")
 
     def unique_field(name: str) -> str:
         matches = re.findall(rf"(?m)^-\s*{re.escape(name)}:\s*(.*?)\s*$", policy_section)
