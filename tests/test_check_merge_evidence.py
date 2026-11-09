@@ -34,7 +34,7 @@ def valid_record():
 
 ## Research and evidence
 - Research question: how to technically enforce the gate
-- Sources (prefer DOI/peer-reviewed research, standards, law, and official platform documentation): https://doi.org/10.1000/example and https://csrc.nist.gov/pubs/sp/800/218/final https://docs.github.com/en/repositories/configuring-branches-and-merges
+- Sources (prefer DOI/peer-reviewed research, standards, law, and official platform documentation): https://link.springer.com/article/10.1000/example and https://csrc.nist.gov/pubs/sp/800/218/final https://docs.github.com/en/repositories/configuring-branches-and-merges
 - What each source supports: assurance cases and merge rules
 - Publication/version/date and applicability: checked for this repository
 - Methodological limits, conflicts, or evidence gaps: noted
@@ -100,7 +100,7 @@ class MergeEvidenceTests(unittest.TestCase):
         self.assertTrue(any("Reviewed code SHA" in error for error in errors))
 
     def test_high_risk_requires_research_and_official_source(self):
-        record = valid_record().replace("https://doi.org/10.1000/example", "no citation")
+        record = valid_record().replace("https://link.springer.com/article/10.1000/example", "no citation")
         errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("peer-reviewed" in error for error in errors))
 
