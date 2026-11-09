@@ -103,6 +103,8 @@ At meaningful maintenance checkpoints, check relevant upstream changes when repo
 
 ## 7. Required development workflow
 
+For substantial, cross-cutting, or consequential changes, follow [Integration and Merge Review](docs/INTEGRATION_AND_MERGE_REVIEW.md). This adds a focused code-to-documentation trace, cross-document contradiction/paradox review, five-lens assessment, exact-SHA validation, verified recovery snapshot, and post-merge checks. It complements—not replaces—the proportionate workflow below.
+
 ### Review before and after substantial work
 
 Review is not only a final check. Before a substantial work round or a meaningful change:
