@@ -132,8 +132,46 @@ def workflow_events(content: str) -> list[str]:
             events.append(match.group(1))
     return events
 
-def workflow_policy_errors(path: Path, content: str) -> list[str]:
+def workflow_environment_errors(path: Path, content: str) -> list[str]:
+    """Keep the App-key environment exclusive to the trusted authorization workflow."""
     errors = []
+    lines = content.splitlines()
+    blocks = []
+    for index, line in enumerate(lines):
+        match = re.match(r"^([ \t]*)environment:\s*(.*?)\s*$", line)
+        if not match:
+            continue
+        indent = len(match.group(1))
+        block_lines = [match.group(2)] if match.group(2) else []
+        cursor = index + 1
+        while cursor < len(lines):
+            candidate = lines[cursor]
+            if not candidate.strip():
+                cursor += 1
+                continue
+            candidate_indent = len(candidate) - len(candidate.lstrip(" \t"))
+            if candidate_indent <= indent:
+                break
+            block_lines.append(candidate.strip())
+            cursor += 1
+        blocks.append("\n".join(block_lines))
+
+    trusted_path = path.as_posix() == ".github/workflows/merge-authorization.yml"
+    if trusted_path:
+        if len(blocks) != 1 or not re.search(r"(?m)^name:\s*merge-authorizer\s*$", blocks[0]):
+            errors.append(f"{path}: the trusted authorization workflow must use exactly one literal merge-authorizer environment")
+        if blocks and "$" + "{{" in blocks[0]:
+            errors.append(f"{path}: the trusted App-key environment name must not be dynamically constructed")
+    else:
+        if "merge-authorizer" in content:
+            errors.append(f"{path}: only the trusted authorization workflow may reference the merge-authorizer environment")
+        if any("$" + "{{" in block for block in blocks):
+            errors.append(f"{path}: dynamic environment names are not allowed in untrusted workflows")
+    return errors
+
+
+def workflow_policy_errors(path: Path, content: str) -> list[str]:
+    errors = workflow_environment_errors(path, content)
     if not re.search(r"^permissions\s*:", content, re.MULTILINE):
         errors.append(f"{path}: explicit top-level GITHUB_TOKEN permissions are required")
     if re.search(r"^\s*(?:-\s*)?uses:\s*[^\s#]+@(?![0-9a-fA-F]{40}(?:\s|$))", content, re.MULTILINE):
