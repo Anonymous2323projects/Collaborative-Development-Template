@@ -26,7 +26,7 @@ def valid_record():
 - PR number: #12
 - Base branch: main
 - Base SHA (40 characters): {BASE}
-- Head SHA (40 characters): {REVIEWED}
+- Reviewed code SHA (parent of this evidence-only commit): {REVIEWED}
 - Risk: HIGH
 - Goal and user outcome: improve a merge control
 - Scope and non-goals: scoped
@@ -97,7 +97,7 @@ class MergeEvidenceTests(unittest.TestCase):
     def test_identity_mismatch_fails(self):
         record = valid_record().replace(f"- Reviewed code SHA (parent of this evidence-only commit): {REVIEWED}", f"- Head SHA (40 characters): {BASE}")
         errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
-        self.assertTrue(any("Head SHA" in error for error in errors))
+        self.assertTrue(any("Reviewed code SHA" in error for error in errors))
 
     def test_high_risk_requires_research_and_official_source(self):
         record = valid_record().replace("https://doi.org/10.1000/example", "no citation")
