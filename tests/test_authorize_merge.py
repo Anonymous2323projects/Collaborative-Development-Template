@@ -136,6 +136,7 @@ class AuthorizationPolicyTests(unittest.TestCase):
             {"filename": "START_HERE.md"},
             {"filename": "INCIDENT_RESPONSE.md"},
             {"filename": "docs/DEVELOPMENT_WORKFLOW.md"},
+            {"filename": "docs/EXACT_HEAD_AUTHORIZATION_SETUP.md"},
             {"filename": "docs/HANDOVER_TEMPLATE.md"},
             {"filename": "docs/TEMPLATE_UPDATE_GUIDE.md"},
             {"filename": ".gitleaks.toml"},
