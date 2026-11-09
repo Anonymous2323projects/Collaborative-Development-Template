@@ -19,6 +19,7 @@ jobs:
     if: >-
       github.event.issue.pull_request &&
       (startsWith(github.event.comment.body, '/authorize-merge ') ||
+       startsWith(github.event.comment.body, '/authorize-policy-change ') ||
        startsWith(github.event.comment.body, '/revoke-merge '))
     runs-on: ubuntu-latest
     timeout-minutes: 5
