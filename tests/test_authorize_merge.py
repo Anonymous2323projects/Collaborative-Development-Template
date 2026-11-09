@@ -168,7 +168,7 @@ class AuthorizationPolicyTests(unittest.TestCase):
 - Reason for change: Close a documented workflow trust-boundary gap.
 - Adversarial tests: Fork and same-repository PR cases plus validator-tampering tests.
 - Rollback/recovery: Revert the dedicated policy commit and restore the previous ruleset.
-- Independent review reference: issue #7 review report and exact-head test run.
+- Independent review reference: independent technical review report and exact-head test run.
 - Owner decision: APPROVED
 """
         auth.validate_policy_change_record(
@@ -187,7 +187,7 @@ class AuthorizationPolicyTests(unittest.TestCase):
 - Reason for change: Update governance policy with explicit rationale.
 - Adversarial tests: Fork and same-repository workflow spoof tests executed.
 - Rollback/recovery: Revert the policy commit and restore the previous gate.
-- Independent review reference: Private issue #7 and independent review report.
+- Independent review reference: independent technical review report and exact-head test evidence.
 - Owner decision: PENDING
 """
         with self.assertRaisesRegex(auth.AuthorizationError, "must list every protected path"):
@@ -221,7 +221,7 @@ class AuthorizationPolicyTests(unittest.TestCase):
 - Reason for change: Update governance policy with explicit rationale.
 - Adversarial tests: Fork and same-repository workflow spoof tests executed.
 - Rollback/recovery: Revert the policy commit and restore the previous gate.
-- Independent review reference: Private issue #7 and independent review report.
+- Independent review reference: independent technical review report and exact-head test evidence.
 - Owner decision: APPROVED
 """
         with self.assertRaisesRegex(auth.AuthorizationError, "HIGH or CRITICAL"):
