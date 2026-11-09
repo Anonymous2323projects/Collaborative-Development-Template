@@ -161,7 +161,7 @@ class AssuranceDocumentTests(unittest.TestCase):
         path = self.root / "docs/DEVELOPMENT_WORKFLOW.md"
         path.write_text("No assurance link here\n", encoding="utf-8")
         errors = hygiene.assurance_document_errors(self.root)
-        self.assertTrue(any("docs/DEVELOPMENT_WORKFLOW.md" in error for error in errors))
+        self.assertTrue(any("DEVELOPMENT_WORKFLOW.md" in error and "must contain a Markdown link" in error for error in errors))
 
 
     def test_plain_or_fenced_mentions_do_not_satisfy_governing_links(self):
