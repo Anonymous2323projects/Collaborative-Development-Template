@@ -64,8 +64,8 @@ def valid_record():
 - Changes made to prevent recurrence: CI gate
 
 ## Efficiency audit
-- Duplicate work or contradictory sources removed: none
-- Existing evidence reused and why still valid: none
+- Duplicate work or contradictory sources removed: no duplicate authoritative source remained after the cross-file audit
+- Existing evidence reused and why still valid: no prior evidence reused; every relevant setting and check was re-fetched
 - Tests selected and why they cover the affected risk: relevant unit tests
 - Runtime/maintenance/user burden: low
 - Safety-critical work intentionally retained: exact SHA authorization
@@ -110,7 +110,7 @@ class MergeEvidenceTests(unittest.TestCase):
         self.assertTrue(any("Critical blockers remain" in error for error in errors))
 
     def test_missing_residual_risk_fails(self):
-        record = valid_record().replace("- Residual risk and mitigation: none identified", "- Residual risk and mitigation: TODO", 1)
+        record = valid_record().replace("- Assessment: PASS", "- Assessment: PASS WITH RESIDUAL RISK", 1).replace("- Residual risk and mitigation: none identified", "- Residual risk and mitigation: TODO", 1)
         errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("residual risk" in error.lower() for error in errors))
 
