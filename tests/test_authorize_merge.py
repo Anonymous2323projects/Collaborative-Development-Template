@@ -267,6 +267,24 @@ class AuthorizationPolicyTests(unittest.TestCase):
             Path(event_path).unlink(missing_ok=True)
             Path(output_path).unlink(missing_ok=True)
 
+    def test_policy_change_template_has_fail_closed_defaults(self):
+        template = (Path(__file__).resolve().parents[1] / "docs" / "PR_ASSURANCE_RECORD_TEMPLATE.md").read_text(encoding="utf-8")
+        self.assertEqual(template.count("## Protected policy change review"), 1)
+        self.assertIn("- Owner decision: NOT APPLICABLE", template)
+        for field in (
+            "- Changed policy paths: TBD",
+            "- Base SHA: TBD",
+            "- Reason for change: TBD",
+            "- Adversarial tests: TBD",
+            "- Rollback/recovery: TBD",
+            "- Independent review reference: TBD",
+        ):
+            self.assertIn(field, template)
+
+    def test_untrusted_pr_checkout_evidence_workflow_is_absent(self):
+        workflow_dir = Path(__file__).resolve().parents[1] / ".github" / "workflows"
+        self.assertFalse((workflow_dir / "merge-evidence.yml").exists())
+
     def test_workflow_uses_trusted_default_branch_and_isolated_status_app(self):
         workflow = (Path(__file__).resolve().parents[1] / ".github" / "workflows" / "merge-authorization.yml").read_text(encoding="utf-8")
         self.assertIn("issue_comment:", workflow)
