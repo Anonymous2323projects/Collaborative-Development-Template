@@ -21,6 +21,22 @@ Do not publish or distribute a release while a known, material risk remains unas
 
 Do not describe a project as "100% safe", "fully secure", or "legally compliant" based only on completion of this checklist.
 
+## Change impact and reversibility
+
+The more difficult a change is to undo, the more carefully it must be researched before it is made. This applies to code and documentation as well as data, publication, account settings, access permissions, migrations, releases, and integrations.
+
+Before a high-impact or hard-to-reverse change:
+
+1. Verify the current state and identify everything that could be affected.
+2. Research current official documentation, relevant standards and law, and other credible sources where useful. Compare reasonable alternatives.
+3. Assess likely benefits, failure scenarios, privacy/security/legal effects, compatibility, cost, and impact on users and contributors.
+4. Make and verify a backup or export where possible. Prepare and test a recovery or rollback route; do not assume that a Git commit or a backup exists unless verified.
+5. Prefer a small, reversible trial (branch, draft, dry run, copy, or test environment) before a wider change.
+6. Record evidence, assumptions, unresolved questions, the selected approach, and validation results.
+7. Obtain explicit approval from the appropriate owner before irreversible deletion, history rewriting, public release, visibility/ownership/access changes, or other material external effects.
+
+If recovery is not practical, do not proceed silently. Explain the consequences and alternatives and wait for the required decision. Routine, low-risk, reversible work should remain efficient and should not require repeated approval. Technical research and execution are the AI collaborator's responsibility where tools and authorization permit.
+
 ## Risk areas to assess
 
 Tailor the depth of review to the project's features, audience, jurisdiction, architecture, distribution model, and risk profile.
