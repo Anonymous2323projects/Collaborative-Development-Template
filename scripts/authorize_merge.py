@@ -97,6 +97,40 @@ def unresolved_threads(owner: str, repo: str, number: int, token: str) -> bool:
     return any(not node["isResolved"] for node in threads["nodes"])
 
 
+PROTECTED_POLICY_PATHS = {
+    "MERGE_AND_CHANGE_ASSURANCE.md",
+    "docs/PR_ASSURANCE_RECORD_TEMPLATE.md",
+    "scripts/authorize_merge.py",
+    "scripts/check_merge_evidence.py",
+    "scripts/check_repo_hygiene.py",
+    "tests/test_authorize_merge.py",
+    "tests/test_check_merge_evidence.py",
+    "tests/test_check_repo_hygiene.py",
+}
+
+
+def reject_policy_changes(owner: str, repo: str, number: int, token: str) -> None:
+    """Require a separate manual review for changes to trusted gate/policy files."""
+    files = api_request(
+        "GET",
+        f"/repos/{owner}/{repo}/pulls/{number}/files?per_page=100",
+        token,
+    )
+    if not isinstance(files, list) or len(files) >= 100:
+        raise AuthorizationError("Could not completely enumerate PR files; policy-change check fails closed.")
+    protected = []
+    for item in files:
+        path = item.get("filename", "")
+        if path.startswith(".github/workflows/") or path in PROTECTED_POLICY_PATHS:
+            protected.append(path)
+    if protected:
+        names = ", ".join(sorted(set(protected)))
+        raise AuthorizationError(
+            "This PR changes trusted workflow/assurance policy files and requires a separate manual owner-reviewed policy-change procedure: "
+            + names
+        )
+
+
 def verify_evidence(owner: str, repo: str, number: int, pr: dict, token: str) -> str:
     """Validate the exact-head evidence file using trusted validator code.
 
@@ -232,6 +266,7 @@ def main() -> int:
         description = "GitHub did not return a valid current base SHA."
     else:
         try:
+            reject_policy_changes(owner, repo, number, read_token)
             if unresolved_threads(owner, repo, number, read_token):
                 description = "Unresolved review threads remain; resolve them and authorize again."
             else:
