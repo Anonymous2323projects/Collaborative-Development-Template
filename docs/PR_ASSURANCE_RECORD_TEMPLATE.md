@@ -100,6 +100,18 @@
 - Runtime/maintenance/user burden:
 - Safety-critical work intentionally retained:
 
+## Protected policy change review
+
+> Required only when using /authorize-policy-change. For ordinary PRs, leave this section marked NOT APPLICABLE. The command itself must be posted by an authorized owner on the PR and include the exact current 40-character head SHA.
+
+- Changed policy paths: [comma-separated exact paths; list every protected path exactly once]
+- Base SHA: [exact current 40-character base SHA]
+- Reason for change: [concrete rationale]
+- Adversarial tests: [specific tests and results]
+- Rollback/recovery: [concrete recovery steps]
+- Independent review reference: [link or durable review identifier]
+- Owner decision: NOT APPLICABLE / APPROVED
+
 ## Residual risk and approval
 
 - Open findings and residual risks:
