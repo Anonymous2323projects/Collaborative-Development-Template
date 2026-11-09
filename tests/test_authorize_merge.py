@@ -180,6 +180,20 @@ class AuthorizationPolicyTests(unittest.TestCase):
         record = record.replace("Owner decision: PENDING", "Owner decision: APPROVED")
         auth.validate_policy_change_record(record, ["GOVERNANCE.md", "SECURITY.md"], BASE)
 
+    def test_fenced_policy_change_fields_cannot_satisfy_the_gate(self):
+        record = """~~~markdown
+## Protected policy change review
+- Changed policy paths: GOVERNANCE.md
+- Base SHA: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+- Reason for change: This is only an example in a code fence.
+- Adversarial tests: These are not executed tests.
+- Rollback/recovery: These are not recovery steps.
+- Independent review reference: This is not a real report.
+- Owner decision: APPROVED
+~~~"""
+        with self.assertRaisesRegex(auth.AuthorizationError, "exactly one Protected policy change review"):
+            auth.validate_policy_change_record(record, ["GOVERNANCE.md"], BASE)
+
     def test_policy_change_record_rejects_stale_base_sha(self):
         record = f"""## Protected policy change review
 - Changed policy paths: GOVERNANCE.md
