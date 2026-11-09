@@ -159,7 +159,10 @@ class AuthorizationPolicyTests(unittest.TestCase):
         auth.enforce_policy_change_command("authorize-policy-change", ["GOVERNANCE.md"])
 
     def test_policy_change_record_requires_exact_paths_base_and_approval(self):
-        record = f"""## Protected policy change review
+        record = f"""## Change identity
+- Risk: HIGH
+
+## Protected policy change review
 - Changed policy paths: .github/workflows/policy.yml, GOVERNANCE.md
 - Base SHA: {BASE}
 - Reason for change: Close a documented workflow trust-boundary gap.
@@ -175,7 +178,10 @@ class AuthorizationPolicyTests(unittest.TestCase):
         )
 
     def test_policy_change_record_rejects_missing_paths_or_unapproved_owner_decision(self):
-        record = f"""## Protected policy change review
+        record = f"""## Change identity
+- Risk: HIGH
+
+## Protected policy change review
 - Changed policy paths: GOVERNANCE.md
 - Base SHA: {BASE}
 - Reason for change: Update governance policy with explicit rationale.
@@ -205,8 +211,27 @@ class AuthorizationPolicyTests(unittest.TestCase):
         with self.assertRaisesRegex(auth.AuthorizationError, "exactly one Protected policy change review"):
             auth.validate_policy_change_record(record, ["GOVERNANCE.md"], BASE)
 
+    def test_policy_change_record_rejects_low_risk_classification(self):
+        record = f"""## Change identity
+- Risk: LOW
+
+## Protected policy change review
+- Changed policy paths: GOVERNANCE.md
+- Base SHA: {BASE}
+- Reason for change: Update governance policy with explicit rationale.
+- Adversarial tests: Fork and same-repository workflow spoof tests executed.
+- Rollback/recovery: Revert the policy commit and restore the previous gate.
+- Independent review reference: Private issue #7 and independent review report.
+- Owner decision: APPROVED
+"""
+        with self.assertRaisesRegex(auth.AuthorizationError, "HIGH or CRITICAL"):
+            auth.validate_policy_change_record(record, ["GOVERNANCE.md"], BASE)
+
     def test_policy_change_record_rejects_stale_base_sha(self):
-        record = f"""## Protected policy change review
+        record = f"""## Change identity
+- Risk: HIGH
+
+## Protected policy change review
 - Changed policy paths: GOVERNANCE.md
 - Base SHA: {"d" * 40}
 - Reason for change: Update governance.
