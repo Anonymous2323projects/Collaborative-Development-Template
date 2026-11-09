@@ -104,12 +104,12 @@
 
 > Required only when using /authorize-policy-change. For ordinary PRs, leave this section marked NOT APPLICABLE. The command itself must be posted by an authorized owner on the PR and include the exact current 40-character head SHA.
 
-- Changed policy paths: [comma-separated exact paths; list every protected path exactly once]
-- Base SHA: [exact current 40-character base SHA]
-- Reason for change: [concrete rationale]
-- Adversarial tests: [specific tests and results]
-- Rollback/recovery: [concrete recovery steps]
-- Independent review reference: [link or durable review identifier]
+- Changed policy paths: TBD
+- Base SHA: TBD
+- Reason for change: TBD
+- Adversarial tests: TBD
+- Rollback/recovery: TBD
+- Independent review reference: TBD
 - Owner decision: NOT APPLICABLE
 
 ## Residual risk and approval
