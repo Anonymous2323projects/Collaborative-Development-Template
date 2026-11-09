@@ -82,7 +82,7 @@ def valid_record():
 - Post-merge configuration and acceptance-test owner: NOT APPLICABLE
 - Bootstrap deadline/expiry: NOT APPLICABLE
 - Rollback/stop condition if the bootstrap deadline is missed: NOT APPLICABLE
-- Any backup/recovery evidence required and verified: no backup required for this isolated test fixture
+- Any backup/recovery evidence required and verified: verified recoverable snapshot of the exact pre-merge head and affected user-owned work; rollback route recorded
 - Post-merge verification plan: verify main and required workflows on the resulting merge commit
 """
 
@@ -190,6 +190,14 @@ class MergeEvidenceTests(unittest.TestCase):
         record = valid_record().replace("- Post-merge verification plan: verify main and required workflows on the resulting merge commit\n", "")
         errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("Post-merge verification plan" in error for error in errors))
+
+    def test_high_risk_requires_verified_recovery_snapshot(self):
+        record = valid_record().replace(
+            "- Any backup/recovery evidence required and verified: verified recoverable snapshot of the exact pre-merge head and affected user-owned work; rollback route recorded",
+            "- Any backup/recovery evidence required and verified: no backup required",
+        )
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("verified recoverable pre-merge snapshot or backup" in error for error in errors))
 
     def test_critical_blocker_fails_closed(self):
         record = valid_record().replace("- Critical blockers: NONE", "- Critical blockers: RULESET_NOT_CONFIGURED")
