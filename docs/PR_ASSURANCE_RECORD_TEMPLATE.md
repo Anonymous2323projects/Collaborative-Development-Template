@@ -7,7 +7,7 @@
 - PR number:
 - Base branch:
 - Base SHA (40 characters):
-- Head SHA (40 characters):
+- Reviewed code SHA (parent of this evidence-only commit):
 - Risk: LOW / MODERATE / HIGH / CRITICAL
 - Goal and user outcome:
 - Scope and non-goals:
