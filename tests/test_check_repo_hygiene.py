@@ -121,6 +121,15 @@ jobs:
             expanded_permissions,
         )
         self.assertTrue(any("only permission-statuses: write" in error for error in errors))
+        quoted_permission_key = content.replace(
+            "permission-statuses: write",
+            "'permission-statuses': write",
+        )
+        errors = hygiene.workflow_policy_errors(
+            Path(".github/workflows/merge-authorization.yml"),
+            quoted_permission_key,
+        )
+        self.assertTrue(any("only permission-statuses: write" in error for error in errors))
         missing_repository_scope = content.replace(
             "repositories: " + "$" + "{{ github.event.repository.name }}\n",
             "",
@@ -135,7 +144,7 @@ jobs:
         content = """permissions:
   contents: read
   pull-requests: read
-  statuses: write
+  statuses: "write"
 on:
   issue_comment:
     types: [created]
