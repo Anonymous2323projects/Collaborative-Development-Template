@@ -193,7 +193,7 @@ def assurance_document_errors(root: Path = ROOT) -> list[str]:
         except (OSError, UnicodeError) as exc:
             errors.append(f"{path}: cannot read governing document: {exc}")
             continue
-        link_pattern = rf"\\]\\([^)]*{re.escape(reference)}(?:#[^)]*)?\\)"
+        link_pattern = rf"\]\([^)]*{re.escape(reference)}(?:#[^)]*)?\)"
         if not re.search(link_pattern, content):
             errors.append(f"{path}: must contain a Markdown link to the canonical {reference}")
     return errors
