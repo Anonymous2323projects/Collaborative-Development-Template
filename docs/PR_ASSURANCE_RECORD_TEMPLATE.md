@@ -102,7 +102,7 @@
 
 ## Protected policy change review
 
-> Required only when using /authorize-policy-change. For ordinary PRs, leave this section marked NOT APPLICABLE. The command itself must be posted by an authorized owner on the PR and include the exact current 40-character head SHA.
+> Required only when using /authorize-policy-change. For ordinary PRs, leave this section marked NOT APPLICABLE. Protected policy changes must be classified HIGH or CRITICAL in Change identity. The command itself must be posted by an authorized owner on the PR and include the exact current 40-character head SHA.
 
 - Changed policy paths: TBD
 - Base SHA: TBD
