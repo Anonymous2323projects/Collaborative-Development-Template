@@ -118,6 +118,20 @@ def markdown_link_errors(path: Path, content: str, file_cache: dict[Path, str]) 
                 errors.append(f"{path}: missing Markdown heading anchor: {target}")
     return errors
 
+def workflow_events(content: str) -> list[str]:
+    lines = content.splitlines()
+    start = next((index for index, line in enumerate(lines) if line.strip() == "on:"), None)
+    if start is None:
+        return []
+    events = []
+    for line in lines[start + 1:]:
+        if line and not line[0].isspace() and not line.lstrip().startswith("#"):
+            break
+        match = re.match(r"^[ \t]{2}([A-Za-z0-9_-]+):", line)
+        if match:
+            events.append(match.group(1))
+    return events
+
 def workflow_policy_errors(path: Path, content: str) -> list[str]:
     errors = []
     if not re.search(r"^permissions\s*:", content, re.MULTILINE):
@@ -130,7 +144,7 @@ def workflow_policy_errors(path: Path, content: str) -> list[str]:
         errors.append(f"{path}: pull_request_target requires a separate security design review and is disallowed by default")
     if re.search(r"^[ \t]*statuses:[ \t]*write[ \t]*$", content, re.MULTILINE):
         trusted_path = path.as_posix() == ".github/workflows/merge-authorization.yml"
-        issue_comment_only = bool(re.search(r"^on:[ \t]*\n[ \t]+issue_comment:", content, re.MULTILINE))
+        issue_comment_only = workflow_events(content) == ["issue_comment"]
         uses_default_branch = "github.event.repository.default_branch" in content
         does_not_persist_credentials = "persist-credentials: false" in content
         if not trusted_path or not issue_comment_only or not uses_default_branch or not does_not_persist_credentials:
