@@ -168,7 +168,7 @@ class AssuranceDocumentTests(unittest.TestCase):
         self.write_valid_fixture()
         path = self.root / "AGENTS.md"
         path.write_text(
-            "MERGE_AND_CHANGE_ASSURANCE.md\\n\\n```md\\n[Assurance](MERGE_AND_CHANGE_ASSURANCE.md)\\n```\\n",
+            "MERGE_AND_CHANGE_ASSURANCE.md\n\n```md\n[Assurance](MERGE_AND_CHANGE_ASSURANCE.md)\n```\n",
             encoding="utf-8",
         )
         errors = hygiene.assurance_document_errors(self.root)
