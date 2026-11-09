@@ -170,6 +170,42 @@ def workflow_environment_errors(path: Path, content: str) -> list[str]:
     return errors
 
 
+def workflow_step_blocks(content: str) -> list[str]:
+    """Return top-level job step blocks without parsing or executing YAML."""
+    lines = content.splitlines()
+    in_steps = False
+    step_indent = None
+    current = []
+    blocks = []
+    for line in lines:
+        if not in_steps:
+            if line.strip() == "steps:":
+                in_steps = True
+            continue
+        if not line.strip():
+            if current:
+                current.append(line)
+            continue
+        indent = len(line) - len(line.lstrip(" \t"))
+        if current and indent <= step_indent:
+            blocks.append("\n".join(current))
+            current = []
+            step_indent = None
+            in_steps = False
+            continue
+        match = re.match(r"^([ \t]*)-[ \t]+", line)
+        if match and (step_indent is None or len(match.group(1)) == step_indent):
+            if current:
+                blocks.append("\n".join(current))
+            current = [line]
+            step_indent = len(match.group(1))
+        elif current:
+            current.append(line)
+    if current:
+        blocks.append("\n".join(current))
+    return blocks
+
+
 def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
     """Enforce the separate status App and read-only GITHUB_TOKEN design."""
     trusted_path = path.as_posix() == ".github/workflows/merge-authorization.yml"
@@ -194,9 +230,6 @@ def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
     required = (
         "github.event.repository.default_branch",
         "persist-credentials: false",
-        "run: python3 scripts/authorize_merge.py --preflight",
-        "GITHUB_TOKEN: " + "$" + "{{ secrets.GITHUB_TOKEN }}",
-        "MERGE_AUTH_TOKEN: " + "$" + "{{ steps.status-token.outputs.token }}",
         "MERGE_AUTH_APP_PRIVATE_KEY",
         "MERGE_AUTH_APP_CLIENT_ID",
         "client-id: " + "$" + "{{ vars.MERGE_AUTH_APP_CLIENT_ID }}",
@@ -205,20 +238,37 @@ def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
         "repositories: " + "$" + "{{ github.event.repository.name }}",
         "permission-statuses: write",
         "skip-token-revoke: false",
-        "id: status-token",
     )
     for item in required:
         if item not in content:
             errors.append(f"{path}: trusted authorization workflow is missing required control: {item}")
-    if not re.search(r"uses:\s*actions/create-github-app-token@[0-9a-fA-F]{40}(?:\s|$)", content):
-        errors.append(f"{path}: dedicated status App action must be pinned to a full commit SHA")
-    permission_inputs = [line.strip() for line in re.findall(r"(?m)^[ \t]*['\"]?permission-[A-Za-z0-9_-]+['\"]?:.*$", content)]
+    permission_inputs = [line.strip() for line in re.findall(r"(?m)^[ \\t]*['\\\"]?permission-[A-Za-z0-9_-]+['\\\"]?:.*$", content)]
     if permission_inputs != ["permission-statuses: write"]:
         errors.append(f"{path}: installation token must request only permission-statuses: write")
-    if content.count("if: steps.preflight.outputs.authorized == 'true'") < 2:
-        errors.append(f"{path}: App token creation and status publication must both require successful maintainer preflight")
-    if content.find("--preflight") < 0 or content.find("--preflight") > content.find("actions/create-github-app-token"):
-        errors.append(f"{path}: maintainer preflight must run before the status App token is created")
+
+    blocks = workflow_step_blocks(content)
+    preflight_blocks = [block for block in blocks if "run: python3 scripts/authorize_merge.py --preflight" in block]
+    token_blocks = [block for block in blocks if "actions/create-github-app-token@" in block]
+    validation_blocks = [
+        block for block in blocks
+        if "run: python3 scripts/authorize_merge.py" in block and "--preflight" not in block
+    ]
+    if len(preflight_blocks) != 1 or len(token_blocks) != 1 or len(validation_blocks) != 1:
+        errors.append(f"{path}: require exactly one preflight, App-token creation and authorization step")
+    else:
+        preflight_index = blocks.index(preflight_blocks[0])
+        token_index = blocks.index(token_blocks[0])
+        if preflight_index >= token_index:
+            errors.append(f"{path}: maintainer preflight must run before the status App token is created")
+        if "id: status-token" not in token_blocks[0] or "if: steps.preflight.outputs.authorized == 'true'" not in token_blocks[0]:
+            errors.append(f"{path}: App token creation must have the status-token ID and require successful maintainer preflight")
+        if not re.search(r"uses:\\s*actions/create-github-app-token@[0-9a-fA-F]{40}(?:\\s|$)", token_blocks[0]):
+            errors.append(f"{path}: dedicated status App action must be pinned to a full commit SHA")
+        if "if: steps.preflight.outputs.authorized == 'true'" not in validation_blocks[0]:
+            errors.append(f"{path}: status publication must require successful maintainer preflight")
+        for item in ("GITHUB_TOKEN: " + "$" + "{{ secrets.GITHUB_TOKEN }}", "MERGE_AUTH_TOKEN: " + "$" + "{{ steps.status-token.outputs.token }}"):
+            if item not in validation_blocks[0]:
+                errors.append(f"{path}: authorization step is missing required token input: {item}")
     return errors
 
 
