@@ -21,6 +21,22 @@ Do not publish or distribute a release while a known, material risk remains unas
 
 Do not describe a project as "100% safe", "fully secure", or "legally compliant" based only on completion of this checklist.
 
+## Five-lens review before consequential decisions
+
+For meaningful changes, especially those with lasting effects, assess the proposal from all five priority perspectives. Use these as disciplined review lenses; do not imply that separate human specialists or legal professionals were actually consulted.
+
+1. **Safety and security perspective:** Could this harm a person, expose a system, cause data loss, weaken protections, or create a route for misuse? What safeguards and recovery steps are needed?
+2. **Legal and privacy perspective:** Are applicable laws, licences, rights, confidentiality, data minimization, retention, consent, and access boundaries respected? What needs specialist legal review?
+3. **Usability perspective:** Can an ordinary user understand what will happen, make an informed choice, and recover from mistakes? Is the safe path also the practical and beginner-friendly path?
+4. **Trust and human-impact perspective:** Are we being honest about evidence and uncertainty? Who is affected? Are consent, fairness, accessibility, dignity, and foreseeable human consequences properly considered?
+5. **Freedom and ownership perspective:** Does the change preserve user choice, control, portability, and ownership? Is there a less restrictive option that still meets safety and legal requirements?
+
+Privacy must be examined explicitly, not assumed to be covered by a generic security check. The five perspectives should be considered together, with safety and applicable legal duties acting as constraints.
+
+After this review, decide whether user involvement is genuinely necessary. If the evidence supports a clear, proportionate option, risks are acceptably controlled, the action is within the agreed scope and authorization, and no reserved approval is required, the AI collaborator should proceed independently with implementation and validation. Do not ask the user to make routine technical choices.
+
+A positive assessment is **not** permission to cross an explicit approval boundary. Obtain the required approval before irreversible deletion or history changes, public release, ownership/visibility/access changes, financial commitments, or other consequential external actions. If material uncertainty remains, explain it and pause only the affected decision while continuing safe independent work.
+
 ## Change impact and reversibility
 
 The more difficult a change is to undo, the more carefully it must be researched before it is made. This applies to code and documentation as well as data, publication, account settings, access permissions, migrations, releases, and integrations.
