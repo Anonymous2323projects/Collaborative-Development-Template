@@ -26,6 +26,8 @@
 - Record only exact SHAs verified from upstream. Branch names and tags alone are not immutable baselines.
 - Never invent the original adoption SHA. If unknown, retain that uncertainty and establish a new baseline after a documented review.
 - Update this record only after changes are reviewed and applied.
+- If an upstream update corrects a material procedural failure, perform a systemic review of related downstream procedures, instructions, templates, automation, repository settings, tests, and user-facing claims. Adapt and technically enforce the correction where applicable; do not blindly copy controls that do not fit the downstream project's plan, architecture, or risk.
+- For meaningful updates, use the five perspectives and evidence standard in [Change, Review, and Merge Assurance](../MERGE_AND_CHANGE_ASSURANCE.md).
 - List changes deliberately not adopted; this record does not imply full synchronization.
 - Project Instructions require separate manual installation in ChatGPT Project settings.
 - See [Safe Template Update Guide](TEMPLATE_UPDATE_GUIDE.md) for the full procedure.
