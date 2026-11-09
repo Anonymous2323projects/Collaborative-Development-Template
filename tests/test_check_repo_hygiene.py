@@ -188,8 +188,9 @@ jobs:
 
     def test_trusted_authorizer_rejects_additional_triggers(self):
         content = self.trusted_authorizer_workflow_fixture().replace(
-            "  issue_comment:\\n    types: [created]\\n",
-            "  issue_comment:\\n    types: [created]\\n  pull_request:\\n    types: [opened]\\n",
+            "jobs:",
+            "  pull_request:\\n    types: [opened]\\njobs:",
+            1,
         )
         errors = hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content)
         self.assertTrue(any("must trigger only on issue_comment" in error for error in errors))
