@@ -91,8 +91,10 @@ jobs:
         with:
           permission-statuses: write
           skip-token-revoke: false
-          app-id: APP_CLIENT_ID_EXPR
+          client-id: APP_CLIENT_ID_EXPR
           private-key: APP_PRIVATE_KEY_EXPR
+          owner: OWNER_EXPR
+          repositories: REPOSITORY_EXPR
       - name: validate
         if: steps.preflight.outputs.authorized == 'true'
         env:
@@ -104,10 +106,21 @@ jobs:
         content = content.replace("MERGE_TOKEN_EXPR", "$" + "{{ steps.status-token.outputs.token }}")
         content = content.replace("APP_CLIENT_ID_EXPR", "$" + "{{ vars.MERGE_AUTH_APP_CLIENT_ID }}")
         content = content.replace("APP_PRIVATE_KEY_EXPR", "$" + "{{ secrets.MERGE_AUTH_APP_PRIVATE_KEY }}")
+        content = content.replace("OWNER_EXPR", "$" + "{{ github.repository_owner }}")
+        content = content.replace("REPOSITORY_EXPR", "$" + "{{ github.event.repository.name }}")
         self.assertEqual(
             hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content),
             [],
         )
+        missing_repository_scope = content.replace(
+            "repositories: " + "$" + "{{ github.event.repository.name }}\n",
+            "",
+        )
+        errors = hygiene.workflow_policy_errors(
+            Path(".github/workflows/merge-authorization.yml"),
+            missing_repository_scope,
+        )
+        self.assertTrue(any("repositories:" in error for error in errors))
 
     def test_github_token_status_write_is_rejected_even_in_trusted_workflow(self):
         content = """permissions:
