@@ -367,7 +367,11 @@ def main() -> int:
                     description = "Review threads changed during validation; resolve and authorize again."
                 else:
                     state = "success"
-                    description = "Evidence validated; maintainer authorized this exact PR head."
+                    description = (
+                        "Policy evidence validated; owner authorized this exact PR head."
+                        if command == "authorize-policy-change"
+                        else "Evidence validated; maintainer authorized this exact PR head."
+                    )
         except AuthorizationError as exc:
             description = str(exc)
 
