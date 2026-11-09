@@ -133,6 +133,10 @@ If the App key may be exposed:
 
 If the App or environment is misconfigured, do not broaden permissions or enable administrator bypass to get past the failure. Pause the automated gate and use the documented manual owner-approval fallback until the issue is corrected and verified.
 
+## Governing assurance standard
+
+Follow the canonical [Change, Review, and Merge Assurance Standard](../MERGE_AND_CHANGE_ASSURANCE.md) for the complete review, authorization, and evidence requirements. This setup guide is subordinate to that standard.
+
 ## Official references
 
 - [Create a GitHub App](https://docs.github.com/en/apps/creating-github-apps/setting-up-a-github-app/creating-a-github-app)
