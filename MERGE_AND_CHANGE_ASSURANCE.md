@@ -135,14 +135,22 @@ A CI job must fail closed on missing evidence, mismatched PR/base/head identity,
 
 ### Exact-head authorization
 
-A merge authorization must refer to the exact 40-character PR head SHA. A maintainer command such as `/authorize-merge <SHA>` may create a required commit status only after verifying:
+A merge authorization must refer to the exact 40-character PR head SHA. Use the strongest platform-supported route that is demonstrably bound to that exact SHA:
+
+- **Required commit status:** a trusted default-branch workflow accepts an explicit owner command containing the full current PR head SHA, verifies the actor, PR state/target/head, resolved review threads, and required evidence, then writes a required status on that exact SHA. Any new commit requires a new authorization; a revoke command should set a failing status.
+- **Protected deployment environment:** a named environment can require a maintainer reviewer and a ruleset can require a successful deployment before merge. Use this only if a trusted workflow can prove that the deployment is attached to the exact PR head, does not execute untrusted PR code, restricts eligible deployment refs, and prevents administrator bypass. A workflow dispatched on the default branch does not automatically authorize the PR head merely because it uses the same environment.
+
+For the commit-status route, verify:
 - the actor is on the configured authorized-maintainer list (or is the repository owner under the user-repository fallback);
 - the PR is open, not a draft, and targets the default branch;
 - the PR head exactly matches the supplied SHA;
 - all review threads are resolved;
-- the PR-specific assurance record exists and its required CI check is successful or pending in the expected state.
+- the PR-specific assurance record exists and its required CI check is successful;
+- the status is accepted only from the intended trusted GitHub App/integration.
 
-The authorization status is attached to that exact commit. Any new commit requires a new authorization. A corresponding revoke command should set a failing status. The workflow must not check out or execute code from the untrusted PR head and must use minimal permissions. If the platform cannot securely implement this, retain a manual explicit approval step and state that it is not technically enforced.
+**Status-source threat boundary:** GitHub documents that people or integrations with repository write permission can set commit statuses. Restricting the expected source to GitHub Actions narrows the source to that app, but does not distinguish individual workflows within the app. Therefore keep workflow-token defaults read-only, keep fork-PR tokens read-only, grant status-write permission only to the trusted base-branch authorization workflow, inspect workflow changes, and verify who has repository write access. Do not use `pull_request_target` to execute PR code. If untrusted same-repository writers can add workflows with status-write permission, use a dedicated GitHub App integration or a protected-environment design with proven exact-head binding instead.
+
+The authorization workflow must not check out or execute code from the untrusted PR head and must use minimal permissions. If the platform cannot securely implement the exact-head gate, retain a manual explicit approval step and state that it is not technically enforced.
 
 ## 8. PR-specific assurance record
 
@@ -231,6 +239,8 @@ These sources support the principles, not a claim that this template is certifie
 - SLSA v1.0, Build Track Basics and Build Provenance. https://slsa.dev/spec/v1.0/levels and https://slsa.dev/spec/v1.0/provenance
 - GitHub Docs, *Available rules for rulesets*. https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets
 - GitHub Docs, *About protected branches*. https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
+- GitHub Docs, *Deployments and environments* (required reviewers, deployment branch policies, administrator bypass). https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments
+- GitHub Docs, *Workflow syntax: GITHUB_TOKEN permissions and pull-request trust behavior*. https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax
 
 ## 13. Public/private boundary
 
