@@ -187,19 +187,20 @@ def workflow_step_blocks(content: str) -> list[str]:
                 current.append(line)
             continue
         indent = len(line) - len(line.lstrip(" \t"))
-        if current and indent <= step_indent:
-            blocks.append("\n".join(current))
-            current = []
-            step_indent = None
-            in_steps = False
-            continue
         match = re.match(r"^([ \t]*)-[ \t]+", line)
         if match and (step_indent is None or len(match.group(1)) == step_indent):
             if current:
                 blocks.append("\n".join(current))
             current = [line]
             step_indent = len(match.group(1))
-        elif current:
+            continue
+        if current and indent <= step_indent:
+            blocks.append("\n".join(current))
+            current = []
+            step_indent = None
+            in_steps = False
+            continue
+        if current:
             current.append(line)
     if current:
         blocks.append("\n".join(current))
