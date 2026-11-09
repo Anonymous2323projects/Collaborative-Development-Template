@@ -98,8 +98,20 @@ def unresolved_threads(owner: str, repo: str, number: int, token: str) -> bool:
 
 
 PROTECTED_POLICY_PATHS = {
+    "AGENTS.md",
+    "AI_SAFETY_AND_MODEL_SPEC.md",
+    "CONTRIBUTING.md",
+    "GOVERNANCE.md",
     "MERGE_AND_CHANGE_ASSURANCE.md",
+    "PRIVACY_AND_PUBLICATION.md",
+    "PROJECT_RISK_AND_RELEASE_READINESS.md",
+    "SECURITY.md",
+    "UPDATE_AND_RELEASE_SECURITY.md",
+    "docs/DEVELOPMENT_WORKFLOW.md",
+    "docs/INDEPENDENT_AGENT_REVIEW.md",
     "docs/PR_ASSURANCE_RECORD_TEMPLATE.md",
+    "docs/PRIVATE_GITHUB_SETUP.md",
+    "docs/REVIEW_CHECKLIST.md",
     "scripts/authorize_merge.py",
     "scripts/check_merge_evidence.py",
     "scripts/check_repo_hygiene.py",
