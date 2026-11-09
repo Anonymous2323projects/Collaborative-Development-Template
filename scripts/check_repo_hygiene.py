@@ -180,7 +180,7 @@ def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
         return errors
     if workflow_events(content) != ["issue_comment"]:
         errors.append(f"{path}: trusted authorization workflow must trigger only on issue_comment")
-    permissions = re.search(r"(?ms)^permissions:\s*\n((?:[ \t]+.*\n)*)", content)
+    permissions = re.search(r"(?m)^permissions:[ \t]*\n((?:[ \t]+[^\n]*\n)*)", content)
     if not permissions:
         errors.append(f"{path}: trusted authorization workflow requires explicit read-only GITHUB_TOKEN permissions")
     else:
