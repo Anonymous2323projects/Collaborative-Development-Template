@@ -76,6 +76,8 @@ on:
     types: [created]
 jobs:
   authorize:
+    environment:
+      name: merge-authorizer
     steps:
       - uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
         with:
