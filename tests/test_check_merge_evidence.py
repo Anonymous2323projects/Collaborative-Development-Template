@@ -84,6 +84,22 @@ class MergeEvidenceTests(unittest.TestCase):
         errors = gate.validate_record(valid_record(), 12, "main", BASE, REVIEWED)
         self.assertEqual(errors, [])
 
+    def test_fenced_fake_record_is_rejected(self):
+        for fence, closing in (("```", "````"), ("~~~", "~~~~")):
+            with self.subTest(fence=fence):
+                errors = gate.validate_record(f"{fence}markdown\n{valid_record()}\n{closing}\n", 12, "main", BASE, REVIEWED)
+                self.assertTrue(any("Required section" in error for error in errors))
+
+    def test_fenced_fields_cannot_fill_missing_real_field(self):
+        record = valid_record().replace("- Evidence: tests and source review recorded in this PR\n", "", 1)
+        record = record.replace("### Safety and security\n", "### Safety and security\n```text\n- Evidence: fabricated from example\n```\n", 1)
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("Safety and security: evidence is required" in error for error in errors))
+
+    def test_unclosed_fence_fails_closed(self):
+        errors = gate.validate_record("```markdown\n" + valid_record(), 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("Required section" in error for error in errors))
+
     def test_duplicate_required_section_fails(self):
         record = valid_record() + "\n## Change identity\n"
         errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)

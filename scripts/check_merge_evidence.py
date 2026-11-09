@@ -50,6 +50,35 @@ def section(text: str, heading: str) -> str:
     )
     return match.group(1).strip() if match else ""
 
+def strip_fenced_code_blocks(text: str) -> str:
+    """Remove fenced code blocks so examples cannot satisfy Markdown fields."""
+    output: list[str] = []
+    fence_char: str | None = None
+    fence_length = 0
+    for line in text.splitlines(keepends=True):
+        candidate = line.lstrip(" ")
+        indent = len(line) - len(candidate)
+        if indent <= 3:
+            if fence_char is None:
+                match = re.match(r"(`{3,}|~{3,})(.*)$", candidate.rstrip("\r\n"))
+                if match and not (match.group(1)[0] == "`" and "`" in match.group(2)):
+                    fence_char = match.group(1)[0]
+                    fence_length = len(match.group(1))
+                    output.append("\n" if line.endswith("\n") else "")
+                    continue
+            else:
+                closing = re.match(r"(`+|~+)[ \t]*\r?\n?$", candidate)
+                if closing and closing.group(1)[0] == fence_char and len(closing.group(1)) >= fence_length:
+                    fence_char = None
+                    fence_length = 0
+                    output.append("\n" if line.endswith("\n") else "")
+                    continue
+        if fence_char is None:
+            output.append(line)
+        else:
+            output.append("\n" if line.endswith("\n") else "")
+    return "".join(output)
+
 def field(text: str, name: str) -> str:
     matches = re.findall(rf"^-\s*{re.escape(name)}:\s*(.*?)\s*$", text, re.MULTILINE)
     return matches[0].strip() if len(matches) == 1 else ""
@@ -77,6 +106,7 @@ def host_is_in(hosts: set[str], domain: str) -> bool:
     return any(host == domain or host.endswith("." + domain) for host in hosts)
 
 def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, reviewed_code_sha: str) -> list[str]:
+    text = strip_fenced_code_blocks(text)
     errors: list[str] = []
     for heading in REQUIRED_SECTIONS:
         occurrences = re.findall(rf"^{re.escape(heading)}\s*$", text, re.MULTILINE)
