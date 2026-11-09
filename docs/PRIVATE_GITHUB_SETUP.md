@@ -69,7 +69,7 @@ Local work can continue before these remote-publication checks are complete, pro
 
 ## 5. Continue with the project workflow
 
-Once the repository is ready, follow [the development workflow](DEVELOPMENT_WORKFLOW.md) and [Change, Review, and Merge Assurance](../MERGE_AND_CHANGE_ASSURANCE.md). Verify the repository's actual plan, visibility, rulesets, required checks, bypass actors, and token permissions. GitHub Free supports rulesets for public repositories; private-repository protection features differ by plan. If a required technical gate is unavailable, document the limitation and retain an explicit manual owner-approval step; do not claim that a written procedure is technically enforced.
+Once the repository is ready, follow [the development workflow](DEVELOPMENT_WORKFLOW.md) and [Change, Review, and Merge Assurance](../MERGE_AND_CHANGE_ASSURANCE.md). For repositories using the dedicated exact-head owner gate, follow the [Exact-Head Authorization App Setup](EXACT_HEAD_AUTHORIZATION_SETUP.md) guide. Verify the repository's actual plan, visibility, rulesets, required checks, bypass actors, and token permissions. GitHub Free supports rulesets for public repositories; private-repository protection features differ by plan. If a required technical gate is unavailable, document the limitation and retain an explicit manual owner-approval step; do not claim that a written procedure is technically enforced.
 
 ## How ChatGPT should guide the user
 
