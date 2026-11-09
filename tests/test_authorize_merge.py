@@ -130,6 +130,7 @@ class AuthorizationPolicyTests(unittest.TestCase):
             {"filename": "scripts/authorize_merge.py"},
             {"filename": "MERGE_AND_CHANGE_ASSURANCE.md"},
             {"filename": "GOVERNANCE.md"},
+            {"filename": "CODEOWNERS"},
             {"filename": "SECURITY.md"},
             {"filename": "docs/DEVELOPMENT_WORKFLOW.md"},
             {"filename": ".gitleaks.toml"},
