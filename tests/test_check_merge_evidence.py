@@ -104,6 +104,11 @@ class MergeEvidenceTests(unittest.TestCase):
         errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("peer-reviewed" in error for error in errors))
 
+    def test_critical_blocker_fails_closed(self):
+        record = valid_record().replace("- Critical blockers: NONE", "- Critical blockers: RULESET_NOT_CONFIGURED")
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("Critical blockers remain" in error for error in errors))
+
     def test_missing_residual_risk_fails(self):
         record = valid_record().replace("- Residual risk and mitigation: none identified", "- Residual risk and mitigation: TODO", 1)
         errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
