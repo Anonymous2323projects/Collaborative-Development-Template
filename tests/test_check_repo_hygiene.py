@@ -425,13 +425,13 @@ class AssuranceDocumentTests(unittest.TestCase):
     def write_valid_fixture(self):
         (self.root / "MERGE_AND_CHANGE_ASSURANCE.md").write_text(
             "\n".join(f"## {section}" for section in hygiene.REQUIRED_ASSURANCE_SECTIONS)
-            + "\n\nBefore high-impact merges, create a recoverable snapshot of the exact pre-merge head and record the rollback route.\n",
+            + "\n\n[Setup guide](docs/EXACT_HEAD_AUTHORIZATION_SETUP.md)\n\nBefore high-impact merges, create a recoverable snapshot of the exact pre-merge head and record the rollback route.\n",
             encoding="utf-8",
         )
-        for path in hygiene.ASSURANCE_REFERENCES:
+        for path, reference in hygiene.ASSURANCE_REFERENCES.items():
             target = self.root / path
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text("[Assurance](MERGE_AND_CHANGE_ASSURANCE.md)\n", encoding="utf-8")
+            target.write_text(f"[Assurance]({reference})\n", encoding="utf-8")
 
     def test_complete_assurance_contract_passes(self):
         self.write_valid_fixture()
@@ -448,6 +448,23 @@ class AssuranceDocumentTests(unittest.TestCase):
         path.write_text(content, encoding="utf-8")
         errors = hygiene.assurance_document_errors(self.root)
         self.assertTrue(any("recoverable snapshot of the exact pre-merge head" in error for error in errors))
+
+    def test_missing_authorization_setup_guide_is_rejected(self):
+        self.write_valid_fixture()
+        (self.root / "docs/EXACT_HEAD_AUTHORIZATION_SETUP.md").unlink()
+        errors = hygiene.assurance_document_errors(self.root)
+        self.assertTrue(any("EXACT_HEAD_AUTHORIZATION_SETUP.md: required governing document is missing" in error for error in errors))
+
+    def test_canonical_standard_must_link_to_authorization_setup_guide(self):
+        self.write_valid_fixture()
+        path = self.root / "MERGE_AND_CHANGE_ASSURANCE.md"
+        content = path.read_text(encoding="utf-8").replace(
+            "[Setup guide](docs/EXACT_HEAD_AUTHORIZATION_SETUP.md)",
+            "docs/EXACT_HEAD_AUTHORIZATION_SETUP.md",
+        )
+        path.write_text(content, encoding="utf-8")
+        errors = hygiene.assurance_document_errors(self.root)
+        self.assertTrue(any("must link to docs/EXACT_HEAD_AUTHORIZATION_SETUP.md" in error for error in errors))
 
     def test_missing_canonical_document_is_rejected(self):
         self.write_valid_fixture()
