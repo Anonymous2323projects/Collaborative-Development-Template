@@ -1,6 +1,6 @@
 # Exact-Head Authorization App Setup
 
-This guide configures the optional dedicated GitHub App used by the trusted default-branch authorization workflow. It is designed for a public repository using GitHub Free or a private repository whose plan supports GitHub Actions environments and environment secrets.
+This guide configures the optional dedicated GitHub App used by the trusted default-branch authorization workflow. It is designed for a public repository using GitHub Free or a private repository whose plan supports GitHub Actions environments and environment secrets. Read it alongside the [Change, Review, and Merge Assurance standard](../MERGE_AND_CHANGE_ASSURANCE.md), which defines the review and authorization requirements.
 
 **Do not create an App, generate a private key, or change a ruleset until the repository owner has approved that setup.** This document describes the procedure; it does not authorize the action.
 
