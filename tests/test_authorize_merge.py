@@ -132,7 +132,12 @@ class AuthorizationPolicyTests(unittest.TestCase):
             {"filename": "GOVERNANCE.md"},
             {"filename": "CODEOWNERS"},
             {"filename": "SECURITY.md"},
+            {"filename": "CHATGPT_ONBOARDING.md"},
+            {"filename": "START_HERE.md"},
+            {"filename": "INCIDENT_RESPONSE.md"},
             {"filename": "docs/DEVELOPMENT_WORKFLOW.md"},
+            {"filename": "docs/HANDOVER_TEMPLATE.md"},
+            {"filename": "docs/TEMPLATE_UPDATE_GUIDE.md"},
             {"filename": ".gitleaks.toml"},
         ]
         with patch.object(auth, "api_request", return_value=changed):
