@@ -424,7 +424,8 @@ class AssuranceDocumentTests(unittest.TestCase):
 
     def write_valid_fixture(self):
         (self.root / "MERGE_AND_CHANGE_ASSURANCE.md").write_text(
-            "\n".join(f"## {section}" for section in hygiene.REQUIRED_ASSURANCE_SECTIONS),
+            "\n".join(f"## {section}" for section in hygiene.REQUIRED_ASSURANCE_SECTIONS)
+            + "\n\nBefore high-impact merges, create a recoverable snapshot of the exact pre-merge head and record the rollback route.\n",
             encoding="utf-8",
         )
         for path in hygiene.ASSURANCE_REFERENCES:
@@ -435,6 +436,18 @@ class AssuranceDocumentTests(unittest.TestCase):
     def test_complete_assurance_contract_passes(self):
         self.write_valid_fixture()
         self.assertEqual(hygiene.assurance_document_errors(self.root), [])
+
+    def test_missing_verified_pre_merge_snapshot_requirement_is_rejected(self):
+        self.write_valid_fixture()
+        path = self.root / "MERGE_AND_CHANGE_ASSURANCE.md"
+        content = path.read_text(encoding="utf-8")
+        content = content.replace(
+            "recoverable snapshot of the exact pre-merge head",
+            "backup where practical",
+        )
+        path.write_text(content, encoding="utf-8")
+        errors = hygiene.assurance_document_errors(self.root)
+        self.assertTrue(any("recoverable snapshot of the exact pre-merge head" in error for error in errors))
 
     def test_missing_canonical_document_is_rejected(self):
         self.write_valid_fixture()
