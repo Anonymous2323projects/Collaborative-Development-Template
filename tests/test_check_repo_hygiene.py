@@ -84,6 +84,9 @@ jobs:
           ref: DEFAULT_BRANCH_EXPR
           persist-credentials: false
       - id: preflight
+        env:
+          GITHUB_EVENT_PATH: EVENT_PATH_EXPR
+          MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
         run: python3 scripts/authorize_merge.py --preflight
       - id: status-token
         if: steps.preflight.outputs.authorized == 'true'
@@ -100,10 +103,14 @@ jobs:
         env:
           GITHUB_TOKEN: GITHUB_TOKEN_EXPR
           MERGE_AUTH_TOKEN: MERGE_TOKEN_EXPR
+          GITHUB_EVENT_PATH: EVENT_PATH_EXPR
+          MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
 """
         content = content.replace("DEFAULT_BRANCH_EXPR", "$" + "{{ github.event.repository.default_branch }}")
         content = content.replace("GITHUB_TOKEN_EXPR", "$" + "{{ secrets.GITHUB_TOKEN }}")
         content = content.replace("MERGE_TOKEN_EXPR", "$" + "{{ steps.status-token.outputs.token }}")
+        content = content.replace("EVENT_PATH_EXPR", "$" + "{{ github.event_path }}")
+        content = content.replace("LOGINS_EXPR", "$" + "{{ vars.MERGE_AUTHORIZER_LOGINS }}")
         content = content.replace("APP_CLIENT_ID_EXPR", "$" + "{{ vars.MERGE_AUTH_APP_CLIENT_ID }}")
         content = content.replace("APP_PRIVATE_KEY_EXPR", "$" + "{{ secrets.MERGE_AUTH_APP_PRIVATE_KEY }}")
         content = content.replace("OWNER_EXPR", "$" + "{{ github.repository_owner }}")
@@ -157,6 +164,9 @@ jobs:
           ref: DEFAULT_BRANCH_EXPR
           persist-credentials: false
       - id: preflight
+        env:
+          GITHUB_EVENT_PATH: EVENT_PATH_EXPR
+          MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
         run: python3 scripts/authorize_merge.py --preflight
       - id: status-token
         if: always()
@@ -173,12 +183,16 @@ jobs:
         env:
           GITHUB_TOKEN: GITHUB_TOKEN_EXPR
           MERGE_AUTH_TOKEN: MERGE_TOKEN_EXPR
+          GITHUB_EVENT_PATH: EVENT_PATH_EXPR
+          MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
         run: python3 scripts/authorize_merge.py
 """
         for source, replacement in (
             ("DEFAULT_BRANCH_EXPR", "$" + "{{ github.event.repository.default_branch }}"),
             ("GITHUB_TOKEN_EXPR", "$" + "{{ secrets.GITHUB_TOKEN }}"),
             ("MERGE_TOKEN_EXPR", "$" + "{{ steps.status-token.outputs.token }}"),
+            ("EVENT_PATH_EXPR", "$" + "{{ github.event_path }}"),
+            ("LOGINS_EXPR", "$" + "{{ vars.MERGE_AUTHORIZER_LOGINS }}"),
             ("APP_CLIENT_ID_EXPR", "$" + "{{ vars.MERGE_AUTH_APP_CLIENT_ID }}"),
             ("APP_PRIVATE_KEY_EXPR", "$" + "{{ secrets.MERGE_AUTH_APP_PRIVATE_KEY }}"),
             ("OWNER_EXPR", "$" + "{{ github.repository_owner }}"),
@@ -205,6 +219,9 @@ jobs:
           ref: DEFAULT_BRANCH_EXPR
           persist-credentials: false
       - id: preflight
+        env:
+          GITHUB_EVENT_PATH: EVENT_PATH_EXPR
+          MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
         run: python3 scripts/authorize_merge.py --preflight
       - id: status-token
         if: steps.preflight.outputs.authorized == 'true'
@@ -221,12 +238,16 @@ jobs:
         env:
           GITHUB_TOKEN: GITHUB_TOKEN_EXPR
           MERGE_AUTH_TOKEN: MERGE_TOKEN_EXPR
+          GITHUB_EVENT_PATH: EVENT_PATH_EXPR
+          MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
         run: python3 scripts/authorize_merge.py
 """
         for source, replacement in (
             ("DEFAULT_BRANCH_EXPR", "$" + "{{ github.event.repository.default_branch }}"),
             ("GITHUB_TOKEN_EXPR", "$" + "{{ secrets.GITHUB_TOKEN }}"),
             ("MERGE_TOKEN_EXPR", "$" + "{{ steps.status-token.outputs.token }}"),
+            ("EVENT_PATH_EXPR", "$" + "{{ github.event_path }}"),
+            ("LOGINS_EXPR", "$" + "{{ vars.MERGE_AUTHORIZER_LOGINS }}"),
             ("APP_CLIENT_ID_EXPR", "$" + "{{ vars.MERGE_AUTH_APP_CLIENT_ID }}"),
             ("APP_PRIVATE_KEY_EXPR", "$" + "{{ secrets.MERGE_AUTH_APP_PRIVATE_KEY }}"),
             ("OWNER_EXPR", "$" + "{{ github.repository_owner }}"),
@@ -284,6 +305,9 @@ jobs:
           ref: DEFAULT_BRANCH_EXPR
           persist-credentials: false
       - id: preflight
+        env:
+          GITHUB_EVENT_PATH: EVENT_PATH_EXPR
+          MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
         run: python3 scripts/authorize_merge.py --preflight
       - id: status-token
         if: steps.preflight.outputs.authorized == 'true'
@@ -296,10 +320,14 @@ jobs:
         env:
           GITHUB_TOKEN: GITHUB_TOKEN_EXPR
           MERGE_AUTH_TOKEN: MERGE_TOKEN_EXPR
+          GITHUB_EVENT_PATH: EVENT_PATH_EXPR
+          MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
 """
         content = content.replace("DEFAULT_BRANCH_EXPR", "$" + "{{ github.event.repository.default_branch }}")
         content = content.replace("GITHUB_TOKEN_EXPR", "$" + "{{ secrets.GITHUB_TOKEN }}")
         content = content.replace("MERGE_TOKEN_EXPR", "$" + "{{ steps.status-token.outputs.token }}")
+        content = content.replace("EVENT_PATH_EXPR", "$" + "{{ github.event_path }}")
+        content = content.replace("LOGINS_EXPR", "$" + "{{ vars.MERGE_AUTHORIZER_LOGINS }}")
         errors = hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content)
         self.assertTrue(any("must trigger only on issue_comment" in error for error in errors))
 
