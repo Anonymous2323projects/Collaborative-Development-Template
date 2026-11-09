@@ -2,7 +2,28 @@
 
 This template helps you turn an idea into a secure, maintainable project with ChatGPT as a practical collaborator. You do not need programming experience to begin.
 
-## 1. Required setup: Project Instructions
+Before using it, read the short [Important Notice and Disclaimer](DISCLAIMER.md).
+
+## 1. Protect your project before adding private information
+
+This repository is the **public starter template**. When you create your own project from it, GitHub creates a separate repository for your project. That new repository is where your project files and notes will live.
+
+**Our strong recommendation: keep your new project repository Private.** Choose Private when GitHub asks who can see it. Do not put private project information in a public repository. You do not need to create a second private repository just because you use this template. A separate private place for coordination is only needed if your project code itself will be public or if different people need different access.
+
+Also check your ChatGPT Project separately. GitHub privacy does not make a ChatGPT Project private.
+
+Before adding private project information:
+
+1. **GitHub:** make sure your project repository says **Private**. Check who has access, including collaborators and connected apps.
+2. **ChatGPT:** open the Project's sharing settings. Choose **Only those invited** unless you deliberately want other people with the link to be able to join. Remove anyone who should no longer have access.
+3. **Project Instructions:** follow the next section and install the instructions in this ChatGPT Project.
+4. **Keep secrets out:** never put passwords, access keys, recovery codes, or other login secrets in GitHub files, project instructions, or chats.
+
+A shared ChatGPT Project lets its members see its chats, files, and instructions. Project-only memory does **not** hide that information from project members. Your account's data controls are separate again; check them in ChatGPT Settings. These settings do not replace careful decisions about what you share.
+
+If you intentionally want a public project, that is allowed. First review what everyone will be able to see, including files, discussions, contributor names, and commit email addresses. Use the [privacy guide](PRIVACY_AND_PUBLICATION.md) and complete the [release-readiness review](PROJECT_RISK_AND_RELEASE_READINESS.md).
+
+## 2. Required setup: Project Instructions
 
 If you use a ChatGPT Project, install the project-specific instructions before relying on this workflow. GitHub files and uploads do **not** install instructions automatically.
 
@@ -16,7 +37,7 @@ If Project Instructions are unavailable, use this guide as a prompt in each new 
 
 Project Instructions are different from account-wide **Custom Instructions**. Put this project's rules in the Project's own settings.
 
-## 2. Start with the idea
+## 3. Start with the idea
 
 When someone shares this repository as the starting point for a new project, ChatGPT must read this guide first. Its first response must be only a natural equivalent of **“What are you dreaming of?”** in the user's language—no greeting, preamble, checklist, or second question.
 
@@ -30,7 +51,7 @@ Then:
 
 A successful first session does not have to produce code. It may simply establish a shared understanding, priorities, important unknowns, and one sensible next step.
 
-## 3. The five priorities
+## 4. The five priorities
 
 Apply these priorities in order:
 
@@ -42,7 +63,7 @@ Apply these priorities in order:
 
 Use the least restrictive effective safeguards. Keep the process proportionate to the project's actual needs. Never trade away necessary safety or legal controls just to make a process shorter.
 
-## 4. Work in sensible stages
+## 5. Work in sensible stages
 
 Use this as a guide, not a rigid checklist. Adapt it to the project's size and risk.
 
@@ -56,7 +77,7 @@ Use this as a guide, not a rigid checklist. Adapt it to the project's size and r
 
 Do not make every project complete every template. Use only the records that genuinely help.
 
-## 5. ChatGPT Projects, Free-plan support, and continuity
+## 6. ChatGPT Projects, Free-plan support, and continuity
 
 The core workflow must work with ChatGPT Free and GitHub Free. Paid features, automation, and repository connectors are optional.
 
@@ -85,7 +106,7 @@ The user must paste and save the block manually. Do not promise that repository 
 
 Official product details can change. Check the current [Projects guide](https://help.openai.com/en/articles/10169521-projects-in-chatgpt), [Free Tier FAQ](https://help.openai.com/en/articles/9275245-chatgpt-free-tier-faq), [file upload limits](https://help.openai.com/en/articles/8555545-uploading-files-and-audio-to-chatgpt), and [Data Controls guide](https://help.openai.com/en/articles/7730893-data-controls-in-chatgpt).
 
-## 6. Project memory and human actions
+## 7. Project memory and human actions
 
 **Project memory is required for every downstream project.** Maintain `docs/PROJECT_MEMORY.md`, initialized from [the memory template](PROJECT_MEMORY_TEMPLATE.md), or document the equivalent canonical file already used by the project.
 
@@ -97,7 +118,7 @@ Create `docs/PENDING_ACTIONS.md` only when meaningful human-dependent actions ar
 
 Use a [handover](docs/HANDOVER_TEMPLATE.md) when work changes hands or a session needs a durable transfer. Keep it short and link to the canonical records.
 
-## 7. Repository privacy and commit identity
+## 8. Repository privacy and commit identity
 
 For a **new GitHub project repository**, Private is the default recommendation. Public visibility requires the user's informed, explicit choice. Do not create a duplicate when a suitable repository already exists.
 
@@ -110,7 +131,7 @@ Before the first remote push:
 
 See [Private GitHub Setup](docs/PRIVATE_GITHUB_SETUP.md) for the full, beginner-friendly procedure. Never request passwords, tokens, recovery codes, or private email addresses in chat. A private repository is not a secret store.
 
-## 8. Safety, access, and approval
+## 9. Safety, access, and approval
 
 Follow [AGENTS.md](AGENTS.md) for the authoritative collaboration and repository rules, and [AI_SAFETY_AND_MODEL_SPEC.md](AI_SAFETY_AND_MODEL_SPEC.md) for instruction authority and prompt-injection safeguards.
 
@@ -123,7 +144,7 @@ Follow [AGENTS.md](AGENTS.md) for the authoritative collaboration and repository
 
 Specialist guidance is available when relevant: [Security](SECURITY.md), [Privacy and Publication](PRIVACY_AND_PUBLICATION.md), [Incident Response](INCIDENT_RESPONSE.md), [Project Risk and Release Readiness](PROJECT_RISK_AND_RELEASE_READINESS.md), and [Update and Release Security](UPDATE_AND_RELEASE_SECURITY.md). **The risk and release-readiness assessment is required before public release.**
 
-## 9. Optional templates and further help
+## 10. Optional templates and further help
 
 Use only what the project needs:
 

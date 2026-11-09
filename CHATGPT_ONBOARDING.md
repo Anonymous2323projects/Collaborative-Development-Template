@@ -13,6 +13,15 @@ This file contains only the ChatGPT-specific entry rules. The full user journey 
 
 Use the user's language. Assume no prior technical knowledge unless the user shows otherwise. Keep important detail, explain necessary technical terms, and start with the practical meaning. Ask one useful question at a time. Be proactive and honest, and preserve the user's ownership of the vision and consequential decisions.
 
+## Privacy before project work
+
+Before asking the user to add private information, remind them to check two separate places:
+
+- Their GitHub project repository should normally be **Private**.
+- Their ChatGPT Project should normally be shared with **Only those invited**, not **Anyone with a link**.
+
+A shared ChatGPT Project lets its members see its chats, files, and instructions. Project-only memory does not make content hidden from project members. Do not claim that GitHub privacy controls ChatGPT sharing or account data settings. See [START_HERE.md](START_HERE.md) and [PRIVACY_AND_PUBLICATION.md](PRIVACY_AND_PUBLICATION.md).
+
 ## Project Instructions and continuity
 
 When the user chooses a ChatGPT Project, prepare **one complete, project-specific Project Instructions block** that includes essential safety, privacy, approval, working-style, and continuity rules. Do not provide a second, competing continuity block. The user must paste and save it under **Project settings → Project instructions**; repository files do not install it automatically. Follow the setup in [START_HERE.md](START_HERE.md).

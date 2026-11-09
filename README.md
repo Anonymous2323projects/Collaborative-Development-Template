@@ -10,9 +10,13 @@ Share this repository with ChatGPT and ask it to use the template. If it can rea
 
 You do not need programming experience to begin. The guide helps you explore the idea, agree on a useful first step, and build at a manageable pace.
 
-**Required when using a ChatGPT Project:** before relying on the workflow, have ChatGPT prepare one complete, project-specific set of Project Instructions. Paste it into **Project settings → Project instructions** and save it. GitHub files and uploads do not install instructions automatically. Follow the full setup and verification steps in [START_HERE.md](START_HERE.md).
+**Before adding private project information:** this is a public starter template, not your private workspace. When you create your own project from it, choose **Private** for the new project repository. Also check your ChatGPT Project's sharing settings separately and use **Only those invited** unless you intentionally want others with the link to join. The setup guide explains both.
 
-For new GitHub project repositories, Private is the default recommendation. An existing suitable repository or a local/alternative-host workflow is also valid. Before the first remote push, explain publication risks and let each contributor choose how their own commit name and email appear.
+**Required when using a ChatGPT Project:** have ChatGPT prepare one complete, project-specific set of Project Instructions. Paste it into **Project settings → Project instructions** and save it. GitHub files and uploads do not install instructions automatically. Follow the full setup and verification steps in [START_HERE.md](START_HERE.md).
+
+Private is the strong default, not a requirement for every project. You do not need a second private repository for a normal project whose workspace is already private. If you choose to publish the project code, keep private conversations and project records out of that public repository and review the [privacy guide](PRIVACY_AND_PUBLICATION.md) first.
+
+An existing suitable repository or a local/alternative-host workflow is also valid. Before the first remote push, explain publication risks and let each contributor choose how their own commit name and email appear.
 
 ## Find what you need
 
@@ -45,6 +49,8 @@ Use these when the project needs them; they are not all required for every proje
 - [Independent agent review](docs/INDEPENDENT_AGENT_REVIEW.md)
 
 ### Safety, privacy, and release
+
+- [Important notice and disclaimer](DISCLAIMER.md)
 
 These policies cover different responsibilities. Read the relevant one when the work reaches that area. **The risk and release-readiness assessment is required before public release.**
 

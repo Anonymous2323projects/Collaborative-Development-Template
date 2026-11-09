@@ -4,6 +4,21 @@
 
 Everything committed here is public and may be copied, indexed, archived, or retained by third parties. A later deletion does not guarantee that a copy or Git-history object disappears.
 
+## Keep the project private while it contains private work
+
+The public template repository is a starter example. A user's own project should normally be created as a separate **Private** GitHub repository. Check its access list and connected applications; private does not mean that nobody else can access it. Do not use a public repository for private project notes, unpublished work, or internal conversations.
+
+GitHub repository visibility and ChatGPT Project sharing are separate controls:
+
+- **GitHub:** a public repository can be viewed by anyone. A private repository is limited to its owner and people or applications granted access, subject to GitHub and organization settings.
+- **ChatGPT Project:** check the Project's Share settings separately. **Only those invited** is the safer default. With **Anyone with a link**, any logged-in ChatGPT user who has the link can join. Members of a shared Project can view its chats, files, and instructions.
+- **Project memory:** project-only memory limits which other conversations ChatGPT can use as context. It does not hide chats, files, or instructions from members of a shared Project.
+- **Account data controls:** these are separate from both GitHub visibility and Project sharing. Check the current ChatGPT Data Controls settings and official guidance; do not assume one setting changes another.
+
+A private repository or invite-only Project reduces exposure but cannot guarantee confidentiality. Authorized collaborators, connected apps, downloaded copies, screenshots, backups, and information shared elsewhere may still expose content. Never store passwords, access tokens, recovery codes, private keys, or other login secrets in project files, Project Instructions, or chats.
+
+A separate private coordination repository is not required for every user. Consider one when the code repository is public but project discussions, decisions, or records must remain private, or when collaborators need different access.
+
 ## Personal information and contributor choice
 
 A contributor controls whether their own name or contact details appear publicly. Do not require contributors to publish personal contact details, and do not assume that every contributor wants them hidden. Respect each person's explicit choice for their own information.

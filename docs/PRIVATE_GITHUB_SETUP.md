@@ -2,6 +2,10 @@
 
 Use this guide when a project is ready to work with a remote GitHub repository. It is not a reason to delay discovery, design, or safe local development.
 
+The public Collaborative Development Template is only the starter. The repository created for the user's own project should normally be **Private**. This is a recommendation, not a forced choice. A normal private project does not need a second private coordination repository. If the project code will be public, keep private project discussions and records somewhere private.
+
+GitHub privacy does not change ChatGPT Project sharing. Check the ChatGPT Project separately and use **Only those invited** unless wider access is intentional. Members of a shared Project can see its chats, files, and instructions. Project-only memory does not hide that material from members.
+
 ## 1. Check the starting point
 
 Ask one question at a time:
