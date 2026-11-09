@@ -55,7 +55,7 @@ This prohibition applies to source files, documentation, examples, filenames, co
 
 ## Pre-commit and release review
 
-Use automated secret/PII detection as a safety net, not as a substitute for human review. Inspect the staged diff and all release artifacts. Check image/document metadata and generated files. Review commit messages and history.
+Use automated secret/PII detection as a safety net, not as a substitute for human review. Inspect the staged diff and all release artifacts. Check image/document metadata and generated files. Review commit messages and history. For substantive publication changes, use [Change, Review, and Merge Assurance](MERGE_AND_CHANGE_ASSURANCE.md) to record the five perspectives, evidence, and documentation-to-implementation consistency. If a privacy or publication control fails, search all related procedures, templates, automation, permissions, and user-facing claims; do not patch only the immediate file.
 
 ## Incident response
 
