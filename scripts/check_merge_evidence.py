@@ -224,9 +224,46 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
     approval = section(text, "## Residual risk and approval")
     if field(approval, "Merge authorization state") != "AWAITING EXPLICIT OWNER AUTHORIZATION":
         errors.append("Merge authorization must remain awaiting the separate exact-head owner gate.")
+    for label in (
+        "Open findings and residual risks",
+        "Required user/owner decision",
+        "Any backup/recovery evidence required and verified",
+        "Post-merge verification plan",
+    ):
+        if not non_placeholder(field(approval, label)):
+            errors.append(f"Residual-risk/approval section is incomplete: {label}.")
+
     blockers = field(approval, "Critical blockers")
     if not blockers or blockers.strip().startswith("[") or blockers.strip().upper() != "NONE":
         errors.append(f"Critical blockers remain or are not explicitly cleared: {blockers or 'not recorded'}.")
+
+    bootstrap = field(approval, "Bootstrap change?")
+    bootstrap_fields = (
+        "Gate that cannot yet apply",
+        "Existing live controls and compensating manual controls",
+        "Manual owner approval evidence/state",
+        "Post-merge configuration and acceptance-test owner",
+        "Bootstrap deadline/expiry",
+        "Rollback/stop condition if the bootstrap deadline is missed",
+    )
+    if bootstrap not in {"YES", "NO"}:
+        errors.append("Bootstrap change? must be exactly YES or NO.")
+    else:
+        for label in bootstrap_fields:
+            value = field(approval, label)
+            if not non_placeholder(value):
+                errors.append(f"Bootstrap evidence is incomplete: {label}.")
+            elif bootstrap == "YES" and value.strip().upper() in {"NOT APPLICABLE", "N/A"}:
+                errors.append(f"Bootstrap exception requires a concrete value for: {label}.")
+            elif bootstrap == "NO" and value.strip().upper() not in {"NOT APPLICABLE", "N/A"}:
+                errors.append(f"Non-bootstrap change must mark '{label}' as NOT APPLICABLE.")
+        if bootstrap == "YES":
+            deadline = field(approval, "Bootstrap deadline/expiry")
+            if not re.search(r"\\b20\\d{2}-\\d{2}-\\d{2}\\b|\\bwithin\\s+\\d+\\s+(?:hours?|days?)\\b", deadline, re.IGNORECASE):
+                errors.append("Bootstrap exception must have a concrete date or bounded duration.")
+            approval_state = field(approval, "Manual owner approval evidence/state")
+            if not re.search(r"\\b(?:pending|approved|approval)\\b", approval_state, re.IGNORECASE):
+                errors.append("Bootstrap exception must state the manual owner-approval state.")
     return errors
 
 def main(argv: list[str]) -> int:
