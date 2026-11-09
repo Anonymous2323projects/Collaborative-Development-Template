@@ -360,6 +360,22 @@ class AuthorizationPolicyTests(unittest.TestCase):
         workflow_dir = Path(__file__).resolve().parents[1] / ".github" / "workflows"
         self.assertFalse((workflow_dir / "merge-evidence.yml").exists())
 
+    def test_unauthorized_comments_never_enter_the_environment_protected_job(self):
+        workflow = (Path(__file__).resolve().parents[1] / ".github" / "workflows" / "merge-authorization.yml").read_text(encoding="utf-8")
+        jobs = workflow.split("jobs:", 1)[1]
+        preflight_job = jobs.split("  preflight:", 1)[1].split("\n  authorize:", 1)[0]
+        authorize_job = jobs.split("  authorize:", 1)[1]
+
+        self.assertNotIn("\n    environment:", preflight_job)
+        self.assertIn("MERGE_AUTHORIZER_LOGINS: " + "$" + "{{ vars.MERGE_AUTHORIZER_LOGINS }}", preflight_job)
+        self.assertNotIn("secrets.", preflight_job)
+        self.assertIn("outputs:", preflight_job)
+        self.assertIn("authorized: " + "$" + "{{ steps.preflight.outputs.authorized }}", preflight_job)
+        self.assertIn("needs: preflight", authorize_job)
+        self.assertIn("if: needs.preflight.outputs.authorized == 'true'", authorize_job)
+        self.assertIn("environment:", authorize_job)
+        self.assertLess(jobs.index("  preflight:"), jobs.index("  authorize:"))
+
     def test_workflow_uses_trusted_default_branch_and_isolated_status_app(self):
         workflow = (Path(__file__).resolve().parents[1] / ".github" / "workflows" / "merge-authorization.yml").read_text(encoding="utf-8")
         self.assertIn("issue_comment:", workflow)
@@ -367,7 +383,7 @@ class AuthorizationPolicyTests(unittest.TestCase):
         self.assertIn("name: merge-authorizer", workflow)
         self.assertIn("run: python3 scripts/authorize_merge.py --preflight", workflow)
         self.assertIn("/authorize-policy-change ", workflow)
-        self.assertIn("if: steps.preflight.outputs.authorized == 'true'", workflow)
+        self.assertIn("if: needs.preflight.outputs.authorized == 'true'", workflow)
         self.assertLess(workflow.index("--preflight"), workflow.index("actions/create-github-app-token"))
         self.assertIn("actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510", workflow)
         self.assertIn("permission-statuses: write", workflow)
