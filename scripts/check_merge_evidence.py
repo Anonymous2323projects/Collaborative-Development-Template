@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+import subprocess
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -212,7 +213,6 @@ def main(argv: list[str]) -> int:
         event_head_sha = pr["head"]["sha"]
         if not SHA_RE.fullmatch(base_sha) or not SHA_RE.fullmatch(event_head_sha):
             raise GateError("GitHub event did not contain valid full commit SHAs.")
-        import subprocess
         commit_line = subprocess.check_output(["git", "rev-list", "--parents", "-n", "1", "HEAD"], text=True).strip().split()
         if len(commit_line) != 2 or commit_line[0] != event_head_sha:
             raise GateError("The PR head must be a single-parent evidence-only commit checked out by exact SHA.")
@@ -226,7 +226,7 @@ def main(argv: list[str]) -> int:
             raise GateError(f"Missing required PR assurance record: reviews/PR-{number}.md")
         text = path.read_text(encoding="utf-8")
         errors = validate_record(text, number, base_ref, base_sha, reviewed_code_sha)
-    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError, subprocess.CalledProcessError) as exc:
         print(f"Merge evidence gate failed closed: {exc}")
         return 1
     if errors:
