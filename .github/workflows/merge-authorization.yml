@@ -1,0 +1,31 @@
+name: Exact-head maintainer merge authorization
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: read
+  statuses: write
+
+concurrency:
+  group: merge-authorization-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  authorize:
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/authorize-merge ') || github.event.issue.pull_request && startsWith(github.event.comment.body, '/revoke-merge ')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out trusted default-branch policy code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - name: Verify maintainer and exact PR head, then set commit status
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          MERGE_AUTHORIZER_LOGINS: ${{ vars.MERGE_AUTHORIZER_LOGINS }}
+        run: python3 scripts/authorize_merge.py
