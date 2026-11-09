@@ -86,7 +86,7 @@
 
 ## Systemic recurrence review
 
-- Was this change prompted by a defect, incident, near miss, or procedural weakness? YES / NO
+- Was this change prompted by a defect, incident, near miss, or procedural weakness? YES / NO:
 - Related procedures, instructions, templates, workflows, permissions, and tests searched:
 - Similar weaknesses found:
 - Changes made to prevent recurrence:
@@ -103,7 +103,7 @@
 ## Residual risk and approval
 
 - Open findings and residual risks:
-- Critical blockers: NONE / LIST
+- Critical blockers: [NONE or describe blockers]
 - Required user/owner decision:
 - Merge authorization state: AWAITING EXPLICIT OWNER AUTHORIZATION
 - Any backup/recovery evidence required and verified:
