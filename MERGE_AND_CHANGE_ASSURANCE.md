@@ -218,6 +218,20 @@ The approach draws on:
 
 These sources support the principles, not a claim that this template is certified or that the proposed process is formally proven. Record the source versions and re-check them at meaningful maintenance checkpoints.
 
+### References
+
+**Peer-reviewed research**
+- Mohamad, M., Steghöfer, J.-P., & Scandariato, R. (2021). *Security assurance cases—state of the art of an emerging approach*. Empirical Software Engineering, 26, 70. Systematic literature review of 51 papers; identifies a gap between proposed assurance-case approaches and their validation/tool support. https://doi.org/10.1007/s10664-021-09971-7
+- Charoenwet, W., Thongtanunam, P., Pham, V.-T., et al. (2024). *Toward effective secure code reviews: an empirical study of security-related coding weaknesses*. Empirical Software Engineering, 29, 88. Empirical analysis of 135,560 review comments in OpenSSL and PHP; reports that some security concerns are acknowledged but remain unresolved, and some unresolved concerns reach merged code. https://doi.org/10.1007/s10664-024-10496-y
+- Leveson, N. G. (2018). *Safety Analysis in Early Concept Development and Requirements Generation*. INCOSE International Symposium, 28(1), 441–455. Describes STPA as a lifecycle method for deriving safety constraints and maintaining traceability as designs evolve. https://doi.org/10.1002/j.2334-5837.2018.00492.x
+
+**Standards and primary technical sources**
+- NIST SP 800-218, *Secure Software Development Framework (SSDF) Version 1.1* (2022). https://csrc.nist.gov/pubs/sp/800/218/final
+- NIST SP 800-204D, *Strategies for the Integration of Software Supply Chain Security in DevSecOps CI/CD Pipelines* (2024). https://doi.org/10.6028/NIST.SP.800-204D
+- SLSA v1.0, Build Track Basics and Build Provenance. https://slsa.dev/spec/v1.0/levels and https://slsa.dev/spec/v1.0/provenance
+- GitHub Docs, *Available rules for rulesets*. https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets
+- GitHub Docs, *About protected branches*. https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
+
 ## 13. Public/private boundary
 
 This public standard contains only generic reusable process guidance. Keep project-specific memory, private decisions, personal preferences, internal incidents, operational details, credentials, and private coordination records in their appropriate private repositories. Never copy this project's private maintainer-only sixth efficiency rule into the public template.
