@@ -82,6 +82,10 @@ Do not speculate, blame individuals prematurely, disclose exploit details unnece
 - Create prioritized corrective actions with an owner role and due date.
 - Review the playbook and risk register; share sanitized lessons without exposing people or sensitive details.
 
+## Systemic recurrence and procedure review
+
+After a material incident, near miss, unsafe release/merge, or failure of a documented control, do not limit remediation to the immediate technical defect. Follow [Change, Review, and Merge Assurance](MERGE_AND_CHANGE_ASSURANCE.md): identify why the control failed, search related procedures, instructions, templates, workflows, permissions, tests, handovers, and user-facing claims, assess all five perspectives, update affected controls, and add regression tests. Record what was inspected and what remains uncertain. Share only sanitized, non-confidential lessons.
+
 ## Incident record (sanitized)
 
 - **Incident ID:** <ID>
