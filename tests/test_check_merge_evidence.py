@@ -84,6 +84,28 @@ class MergeEvidenceTests(unittest.TestCase):
         errors = gate.validate_record(valid_record(), 12, "main", BASE, REVIEWED)
         self.assertEqual(errors, [])
 
+    def test_duplicate_required_section_fails(self):
+        record = valid_record() + "\n## Change identity\n"
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("exactly once" in error for error in errors))
+
+    def test_duplicate_field_fails_closed(self):
+        record = valid_record().replace(
+            "- Research question: how to technically enforce the gate",
+            "- Research question: how to technically enforce the gate\n- Research question: duplicate value",
+        )
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("Research question" in error for error in errors))
+
+    def test_documented_literature_gap_is_explicit_exception(self):
+        record = valid_record().replace("https://link.springer.com/article/10.1000/example and ", "")
+        record = record.replace(
+            "- Methodological limits, conflicts, or evidence gaps: noted",
+            "- Methodological limits, conflicts, or evidence gaps: no directly applicable peer-reviewed research; documented literature gap",
+        )
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
+        self.assertEqual(errors, [])
+
     def test_missing_lens_fails(self):
         record = valid_record().replace("### Trust and human impact", "### Trust perspective")
         errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
