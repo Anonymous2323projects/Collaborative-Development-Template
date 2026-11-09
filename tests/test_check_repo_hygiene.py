@@ -67,6 +67,25 @@ steps:
         errors = hygiene.workflow_policy_errors(Path("workflow.yml"), content)
         self.assertTrue(any("full 40-character" in error for error in errors))
 
+    def test_status_write_is_restricted_to_trusted_authorization_workflow(self):
+        trusted = """permissions:
+  statuses: write
+  contents: read
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  authorize:
+    steps:
+      - uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+"""
+        self.assertEqual(hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), trusted), [])
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/untrusted.yml"), trusted)
+        self.assertTrue(any("statuses: write is restricted" in error for error in errors))
+
     def test_pull_request_target_is_rejected_by_default(self):
         content = """permissions:
   contents: read
