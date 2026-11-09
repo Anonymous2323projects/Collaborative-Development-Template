@@ -163,6 +163,17 @@ class AssuranceDocumentTests(unittest.TestCase):
         errors = hygiene.assurance_document_errors(self.root)
         self.assertTrue(any("docs/DEVELOPMENT_WORKFLOW.md" in error for error in errors))
 
+
+    def test_plain_or_fenced_mentions_do_not_satisfy_governing_links(self):
+        self.write_valid_fixture()
+        path = self.root / "AGENTS.md"
+        path.write_text(
+            "MERGE_AND_CHANGE_ASSURANCE.md\\n\\n```md\\n[Assurance](MERGE_AND_CHANGE_ASSURANCE.md)\\n```\\n",
+            encoding="utf-8",
+        )
+        errors = hygiene.assurance_document_errors(self.root)
+        self.assertTrue(any("AGENTS.md" in error and "Markdown link" in error for error in errors))
+
     def test_headings_inside_fenced_code_do_not_satisfy_contract(self):
         self.write_valid_fixture()
         path = self.root / "MERGE_AND_CHANGE_ASSURANCE.md"
