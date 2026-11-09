@@ -120,6 +120,26 @@ jobs:
             hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content),
             [],
         )
+        untrusted_checkout = content.replace(
+            "ref: " + "$" + "{{ github.event.repository.default_branch }}",
+            "ref: refs/pull/12/head",
+        ) + "\n# default branch expression moved outside checkout"
+        errors = hygiene.workflow_policy_errors(
+            Path(".github/workflows/merge-authorization.yml"),
+            untrusted_checkout,
+        )
+        self.assertTrue(any("checkout step must use the trusted default branch" in error for error in errors))
+        leaked_app_key = content + """\n      - name: accidental App key reference
+        env:
+          APP_KEY: APP_PRIVATE_KEY_EXPR
+        run: echo not-safe
+"""
+        leaked_app_key = leaked_app_key.replace("APP_PRIVATE_KEY_EXPR", "$" + "{{ secrets.MERGE_AUTH_APP_PRIVATE_KEY }}")
+        errors = hygiene.workflow_policy_errors(
+            Path(".github/workflows/merge-authorization.yml"),
+            leaked_app_key,
+        )
+        self.assertTrue(any("App credentials may be referenced only by the guarded status-token step" in error for error in errors))
         expanded_permissions = content.replace(
             "          permission-statuses: write\n",
             "          permission-statuses: write\n          permission-contents: read\n",
