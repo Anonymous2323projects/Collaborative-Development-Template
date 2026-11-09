@@ -136,12 +136,16 @@ def reject_policy_changes(owner: str, repo: str, number: int, token: str) -> lis
     )
     if not isinstance(files, list) or len(files) >= 100:
         raise AuthorizationError("Could not completely enumerate PR files; policy-change check fails closed.")
-    protected = []
+    protected = set()
     for item in files:
-        path = item.get("filename", "")
-        if path.startswith(".github/") or path in PROTECTED_POLICY_PATHS:
-            protected.append(path)
-    return sorted(set(protected))
+        # GitHub reports the destination as `filename` and, for renames,
+        # the original path as `previous_filename`. Both sides matter:
+        # moving a trusted workflow or policy file out of a protected path
+        # must not downgrade the change to ordinary authorization.
+        for path in (item.get("filename", ""), item.get("previous_filename", "")):
+            if path and (path.startswith(".github/") or path in PROTECTED_POLICY_PATHS):
+                protected.add(path)
+    return sorted(protected)
 
 
 def enforce_policy_change_command(command: str, protected_paths: list[str]) -> None:
