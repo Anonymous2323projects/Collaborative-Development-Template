@@ -233,6 +233,13 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
         if not non_placeholder(field(approval, label)):
             errors.append(f"Residual-risk/approval section is incomplete: {label}.")
 
+    backup_evidence = field(approval, "Any backup/recovery evidence required and verified")
+    if risk in {"HIGH", "CRITICAL"} and (
+        not re.search(r"\\b(?:verified|checked|confirmed)\\b", backup_evidence, re.IGNORECASE)
+        or not re.search(r"\\b(?:snapshot|backup)\\b", backup_evidence, re.IGNORECASE)
+    ):
+        errors.append("HIGH/CRITICAL changes require evidence of a verified recoverable pre-merge snapshot or backup.")
+
     blockers = field(approval, "Critical blockers")
     if not blockers or blockers.strip().startswith("[") or blockers.strip().upper() != "NONE":
         errors.append(f"Critical blockers remain or are not explicitly cleared: {blockers or 'not recorded'}.")
