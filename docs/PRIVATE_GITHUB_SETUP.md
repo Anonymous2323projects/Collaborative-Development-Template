@@ -69,7 +69,7 @@ Local work can continue before these remote-publication checks are complete, pro
 
 ## 5. Continue with the project workflow
 
-Once the repository is ready, follow [the development workflow](DEVELOPMENT_WORKFLOW.md). On plans where branch protection is unavailable, review and merge approval remain manual working agreements. Keep the process proportionate to the project's size and risk.
+Once the repository is ready, follow [the development workflow](DEVELOPMENT_WORKFLOW.md) and [Change, Review, and Merge Assurance](../MERGE_AND_CHANGE_ASSURANCE.md). Verify the repository's actual plan, visibility, rulesets, required checks, bypass actors, and token permissions. GitHub Free supports rulesets for public repositories; private-repository protection features differ by plan. If a required technical gate is unavailable, document the limitation and retain an explicit manual owner-approval step; do not claim that a written procedure is technically enforced.
 
 ## How ChatGPT should guide the user
 
