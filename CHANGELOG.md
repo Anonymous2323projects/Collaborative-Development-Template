@@ -4,6 +4,11 @@ Notable user-facing changes to the template are recorded here. This is a curated
 
 ## Unreleased
 
+- Added a project-wide change-assurance standard with risk-based research, system-level hazard analysis, five separate review perspectives, documentation-to-implementation traceability, systemic recurrence review, and an efficiency audit.
+- Added a PR-specific fail-closed evidence validator and exact-head maintainer authorization workflow. The validator binds the assurance record to the reviewed code commit and requires a separate evidence-only final commit to avoid self-referential SHA claims.
+- Updated contributor, governance, development, security, review, risk, and downstream-update guidance to require evidence-backed procedures and verified technical enforcement. The corresponding GitHub ruleset still requires configuration of the new check contexts before these gates are fully enforced.
+
+
 - Added a clear review-before-work and verification-after-substantial-change cadence, with checks scaled to impact and evidence reused only while still valid.
 - Streamlined onboarding, project records, README navigation, and the downstream update guide and reusable prompt; clarified when specialist templates are needed without weakening mandatory project memory or public-release risk assessment.
 - Resolved conflicting commit-email instructions: contributors choose how their own identity appears, and the workflow checks the author details attached to saved changes against that choice.
