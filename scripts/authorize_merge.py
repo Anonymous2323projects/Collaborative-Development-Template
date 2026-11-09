@@ -66,6 +66,8 @@ def unresolved_threads(owner: str, repo: str, number: int, token: str) -> bool:
         "query": query,
         "variables": {"owner": owner, "repo": repo, "number": number},
     })
+    if result.get("errors"):
+        raise AuthorizationError("GitHub GraphQL returned errors; refusing to authorize.")
     try:
         threads = result["data"]["repository"]["pullRequest"]["reviewThreads"]
     except (KeyError, TypeError) as exc:
