@@ -138,6 +138,26 @@ class AuthorizationPolicyTests(unittest.TestCase):
             protected = auth.reject_policy_changes("owner", "repo", 12, "read-token")
         self.assertEqual(protected, sorted(item["filename"] for item in changed))
 
+    def test_renaming_a_protected_file_outside_its_path_still_requires_policy_review(self):
+        changed = [
+            {
+                "filename": "scripts/legacy_authorizer.py",
+                "previous_filename": "scripts/authorize_merge.py",
+                "status": "renamed",
+            },
+            {
+                "filename": "workflows/legacy.yml",
+                "previous_filename": ".github/workflows/merge-authorization.yml",
+                "status": "renamed",
+            },
+        ]
+        with patch.object(auth, "api_request", return_value=changed):
+            protected = auth.reject_policy_changes("owner", "repo", 12, "read-token")
+        self.assertEqual(
+            protected,
+            [".github/workflows/merge-authorization.yml", "scripts/authorize_merge.py"],
+        )
+
     def test_ordinary_source_and_documentation_changes_do_not_trigger_policy_block(self):
         changed = [
             {"filename": "src/application.py"},
