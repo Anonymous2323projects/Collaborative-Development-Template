@@ -189,12 +189,13 @@ def assurance_document_errors(root: Path = ROOT) -> list[str]:
             errors.append(f"{path}: required governing document is missing")
             continue
         try:
-            content = target.read_text(encoding="utf-8")
+            content = strip_fenced_code(target.read_text(encoding="utf-8"))
         except (OSError, UnicodeError) as exc:
             errors.append(f"{path}: cannot read governing document: {exc}")
             continue
-        if reference not in content:
-            errors.append(f"{path}: must reference the canonical {reference}")
+        link_pattern = rf"\\]\\([^)]*{re.escape(reference)}(?:#[^)]*)?\\)"
+        if not re.search(link_pattern, content):
+            errors.append(f"{path}: must contain a Markdown link to the canonical {reference}")
     return errors
 
 def main() -> int:
