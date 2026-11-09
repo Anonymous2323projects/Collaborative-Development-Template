@@ -151,9 +151,55 @@ def workflow_policy_errors(path: Path, content: str) -> list[str]:
             errors.append(f"{path}: statuses: write is restricted to the trusted default-branch issue_comment authorization workflow")
     return errors
 
+
+REQUIRED_ASSURANCE_SECTIONS = (
+    "1. Scope and risk-based depth",
+    "2. Research standard",
+    "3. Hazard and system analysis",
+    "4. Five-perspective assessment",
+    "5. Systemic recurrence rule",
+    "6. Documentation-to-implementation assurance",
+    "7. Technical enforcement architecture",
+)
+ASSURANCE_REFERENCES = {
+    Path("AGENTS.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("docs/DEVELOPMENT_WORKFLOW.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("PROJECT_RISK_AND_RELEASE_READINESS.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+}
+
+def assurance_document_errors(root: Path = ROOT) -> list[str]:
+    """Keep the canonical assurance standard and its governing references present."""
+    errors = []
+    standard = root / "MERGE_AND_CHANGE_ASSURANCE.md"
+    if not standard.is_file():
+        errors.append("MERGE_AND_CHANGE_ASSURANCE.md: required canonical assurance standard is missing")
+    else:
+        try:
+            content = strip_fenced_code(standard.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: cannot read canonical standard: {exc}")
+        else:
+            for section in REQUIRED_ASSURANCE_SECTIONS:
+                pattern = rf"^## {re.escape(section)}\\s*$"
+                if not re.search(pattern, content, re.MULTILINE):
+                    errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: required core section is missing: {section}")
+    for path, reference in ASSURANCE_REFERENCES.items():
+        target = root / path
+        if not target.is_file():
+            errors.append(f"{path}: required governing document is missing")
+            continue
+        try:
+            content = target.read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"{path}: cannot read governing document: {exc}")
+            continue
+        if reference not in content:
+            errors.append(f"{path}: must reference the canonical {reference}")
+    return errors
+
 def main() -> int:
     files = tracked_files()
-    errors = []
+    errors = assurance_document_errors(ROOT)
     file_cache = {}
     for path in files:
         if sensitive_path(path):
