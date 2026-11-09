@@ -41,6 +41,8 @@ These checks protect remote publication; they are not a reason to block safe loc
 
 ## 5. Validate
 
+For a substantial change, compare the result with the pre-change baseline and acceptance criteria. Check that only intended files and behavior changed, and look for regressions, omissions, broken links/references, conflicting documentation, and new risks. Re-run the checks affected by the change; reuse earlier evidence only when it still applies to the exact code, configuration, permissions, and environment.
+
 Choose checks based on the change and its risks. Reuse a passing result only when it applies to the exact code, configuration, and environment being assessed.
 
 - Run relevant tests, checks, builds, and accessibility or security reviews.
