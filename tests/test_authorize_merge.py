@@ -119,6 +119,30 @@ class AuthorizationPolicyTests(unittest.TestCase):
         with self.assertRaisesRegex(auth.AuthorizationError, "valid full base/head SHAs"):
             auth.verify_evidence("owner", "repo", 12, pr, "read-token")
 
+    def test_trusted_policy_file_changes_require_manual_review(self):
+        changed = [
+            {"filename": ".github/workflows/new-workflow.yml"},
+            {"filename": "scripts/authorize_merge.py"},
+            {"filename": "MERGE_AND_CHANGE_ASSURANCE.md"},
+        ]
+        with patch.object(auth, "api_request", return_value=changed):
+            with self.assertRaisesRegex(auth.AuthorizationError, "separate manual owner-reviewed policy-change procedure"):
+                auth.reject_policy_changes("owner", "repo", 12, "read-token")
+
+    def test_ordinary_source_and_documentation_changes_do_not_trigger_policy_block(self):
+        changed = [
+            {"filename": "src/application.py"},
+            {"filename": "README.md"},
+            {"filename": "docs/USER_GUIDE.md"},
+        ]
+        with patch.object(auth, "api_request", return_value=changed):
+            auth.reject_policy_changes("owner", "repo", 12, "read-token")
+
+    def test_incomplete_pr_file_listing_fails_closed(self):
+        with patch.object(auth, "api_request", return_value=[{"filename": f"file-{i}.txt"} for i in range(100)]):
+            with self.assertRaisesRegex(auth.AuthorizationError, "completely enumerate PR files"):
+                auth.reject_policy_changes("owner", "repo", 12, "read-token")
+
     def test_workflow_uses_trusted_default_branch_and_isolated_status_app(self):
         workflow = (Path(__file__).resolve().parents[1] / ".github" / "workflows" / "merge-authorization.yml").read_text(encoding="utf-8")
         self.assertIn("issue_comment:", workflow)
