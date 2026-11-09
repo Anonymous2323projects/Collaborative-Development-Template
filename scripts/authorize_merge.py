@@ -106,6 +106,12 @@ PROTECTED_POLICY_PATHS = {
     "tests/test_authorize_merge.py",
     "tests/test_check_merge_evidence.py",
     "tests/test_check_repo_hygiene.py",
+    ".gitleaks.toml",
+    ".gitleaksignore",
+    "gitleaks.toml",
+    "gitleaksignore",
+    ".secretlintignore",
+    ".trufflehog.yml",
 }
 
 
@@ -121,7 +127,7 @@ def reject_policy_changes(owner: str, repo: str, number: int, token: str) -> Non
     protected = []
     for item in files:
         path = item.get("filename", "")
-        if path.startswith(".github/workflows/") or path in PROTECTED_POLICY_PATHS:
+        if path.startswith(".github/") or path in PROTECTED_POLICY_PATHS:
             protected.append(path)
     if protected:
         names = ", ".join(sorted(set(protected)))
