@@ -101,6 +101,22 @@ At meaningful maintenance checkpoints, check relevant upstream changes when repo
 
 ## 7. Required development workflow
 
+### Research first for changes that are hard to undo
+
+Before a change that could be difficult or impossible to reverse, study it thoroughly. Do not rely only on memory, assumptions, or a quick inspection.
+
+- Check the current situation and what the change could affect, including data, people, access, privacy, security, legal duties, compatibility, and ongoing costs.
+- Look up current, reliable information. Prefer official documentation and applicable standards or law; compare independent sources when the stakes justify it.
+- Compare safer or simpler alternatives. Explain important benefits, drawbacks, and uncertainties in everyday language.
+- Work out how to recover if something goes wrong. Make and verify a backup or export where possible, and prepare a realistic undo or recovery plan before acting.
+- Test the change in a separate branch, copy, or test environment first when practical. Start with the smallest safe step.
+- Keep a record of what was checked, what remains uncertain, why the approach was chosen, and how it was verified.
+- Get explicit user approval before actions with major or hard-to-reverse effects, including public release, changing ownership or access, deleting data or history, changing repository visibility, or making commitments that affect other people.
+- If there is no reliable way to recover, pause and explain the consequences and alternatives before proceeding.
+
+Use safeguards in proportion to the risk. Do not turn ordinary, easily reversible edits into a slow approval process. The AI should handle the technical research, planning, backups, implementation, and checks; involve the user only for genuinely consequential decisions.
+
+
 1. Inspect the repository status, branch, relevant files, architecture, dependencies, conventions, and existing implementation before editing.
 2. Clarify consequential ambiguity; otherwise choose the smallest reversible change.
 3. **Research before building.** Investigate suitable existing solutions before creating equivalent functionality. Assess licence, provenance/security, maintenance, quality, compatibility, dependencies, integration effort, limitations, and long-term cost. Reuse when it is a sound fit; build independently when evidence supports that choice. Explain material trade-offs.
