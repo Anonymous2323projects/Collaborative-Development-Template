@@ -162,7 +162,7 @@ def validate_policy_change_record(record: str, protected_paths: list[str], base_
         raise AuthorizationError("Policy-change evidence base SHA does not match the current PR base.")
     for name in ("Reason for change", "Adversarial tests", "Rollback/recovery", "Independent review reference"):
         value = unique_field(name)
-        if not value or value.lower() in {"todo", "tbd", "n/a", "none", "pending"}:
+        if len(value) < 12 or value.lower() in {"todo", "tbd", "n/a", "none", "pending"}:
             raise AuthorizationError(f"Policy-change evidence field '{name}' must contain concrete evidence.")
     if unique_field("Owner decision") != "APPROVED":
         raise AuthorizationError("Policy-change evidence must state Owner decision: APPROVED.")
