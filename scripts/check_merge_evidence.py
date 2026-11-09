@@ -11,6 +11,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
@@ -59,6 +60,20 @@ def non_placeholder(value: str) -> bool:
         normalized.startswith("[") and normalized.endswith("]")
     )
 
+def source_hosts(value: str) -> set[str]:
+    hosts: set[str] = set()
+    for candidate in URL_RE.findall(value):
+        try:
+            host = urlsplit(candidate).hostname
+        except ValueError:
+            host = None
+        if host:
+            hosts.add(host.lower().rstrip("."))
+    return hosts
+
+def host_is_in(hosts: set[str], domain: str) -> bool:
+    return any(host == domain or host.endswith("." + domain) for host in hosts)
+
 def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, reviewed_code_sha: str) -> list[str]:
     errors: list[str] = []
     for heading in REQUIRED_SECTIONS:
@@ -106,13 +121,19 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
     research = section(text, "## Research and evidence")
     sources = field(research, "Sources (prefer DOI/peer-reviewed research, standards, law, and official platform documentation)")
     research_rationale = field(research, "If external research was not needed, explain why the change is genuinely low risk")
+    hosts = source_hosts(sources)
     has_source = bool(URL_RE.search(sources) or DOI_RE.search(sources))
+    peer_reviewed = bool(DOI_RE.search(sources) or host_is_in(hosts, "springer.com") or host_is_in(hosts, "ieeexplore.ieee.org"))
+    official_source = any(host_is_in(hosts, domain) for domain in (
+        "nist.gov", "docs.github.com", "europa.eu", "eur-lex.europa.eu",
+        "owasp.org", "slsa.dev", "iso.org",
+    ))
     if risk in {"HIGH", "CRITICAL"}:
         if not has_source:
             errors.append("HIGH/CRITICAL changes require cited source URLs or DOIs.")
-        if not (DOI_RE.search(sources) or "doi.org/" in sources.lower() or "springer.com" in sources.lower() or "ieeexplore.ieee.org" in sources.lower()):
-            errors.append("HIGH/CRITICAL changes require peer-reviewed research or an explicit documented literature gap.")
-        if not any(domain in sources.lower() for domain in ("nist.gov", "csrc.nist.gov", "docs.github.com", "europa.eu", "eur-lex.europa.eu", "owasp.org", "slsa.dev", "iso.org")):
+        if not peer_reviewed:
+            errors.append("HIGH/CRITICAL changes require a peer-reviewed research source or a documented literature gap.")
+        if not official_source:
             errors.append("HIGH/CRITICAL changes require an authoritative standard, law, or official technical source.")
     elif not has_source and not non_placeholder(research_rationale):
         errors.append("Provide source URLs/DOIs or explain why external research is not needed.")
