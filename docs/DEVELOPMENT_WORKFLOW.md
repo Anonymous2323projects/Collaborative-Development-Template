@@ -14,7 +14,7 @@ Use this workflow as a practical guide, not a checklist to repeat mechanically. 
 
 Before building equivalent functionality, look for suitable existing tools, libraries, and projects. The assistant should discover plausible options; the user should not need to know what to search for.
 
-For serious candidates, check the points that matter to this decision: licence, security and provenance, maintenance, reliability, compatibility, dependencies, integration effort, limitations, and long-term cost. Prefer reuse when it is a sound fit. Build independently when evidence shows that existing options are unsuitable or create greater risk or cost. Record material findings and sources; do not create a research report for trivial choices.
+For meaningful or high-impact changes, use the research standard in [Change, Review, and Merge Assurance](../MERGE_AND_CHANGE_ASSURANCE.md): prioritize peer-reviewed research, applicable standards, law, and primary official documentation; record methods, limitations, applicability, alternatives, and evidence gaps. Research effort should be thorough enough to support the decision, not limited by a speed target. Keep genuinely trivial choices proportionate.
 
 ## 3. Prepare for remote collaboration
 
@@ -33,13 +33,15 @@ These checks protect remote publication; they are not a reason to block safe loc
 ## 4. Implement safely
 
 - Work on a focused branch and keep changes reviewable.
-- On GitHub Free private repositories, branch protection may not be available; treat review and merge approval as manual rules unless enforcement is verified.
+- Verify the actual GitHub plan, repository visibility, active rulesets, required status checks, expected check sources, bypass actors, and administrative permissions. GitHub Free supports rulesets for public repositories; private-repository availability differs by plan. Never infer enforcement merely because a workflow or policy document exists.
 - Preserve existing architecture and conventions. Avoid unrelated refactors and parallel systems.
 - Inspect commands and scripts before running them.
 - Do not install software, grant permissions, or change machine configuration without authorization.
 - Never put secrets in code, tests, logs, or examples.
 
 ## 5. Validate
+
+For meaningful changes, compare documentation, requirements, implementation, tests, workflows, live repository settings, and user-facing claims. Record traceability and the five-perspective assessment in a PR-specific assurance record as described in [Change, Review, and Merge Assurance](../MERGE_AND_CHANGE_ASSURANCE.md). A serious procedural defect triggers a project-wide search for analogous weaknesses and regression controls.
 
 For a substantial change, compare the result with the pre-change baseline and acceptance criteria. Check that only intended files and behavior changed, and look for regressions, omissions, broken links/references, conflicting documentation, and new risks. Re-run the checks affected by the change; reuse earlier evidence only when it still applies to the exact code, configuration, permissions, and environment.
 
@@ -53,7 +55,7 @@ Choose checks based on the change and its risks. Reuse a passing result only whe
 
 ## 6. Review and integrate
 
-Summarize the change, reason, user impact, risks, and validation evidence. Use a pull request when review or collaboration is useful. Resolve review comments and merge only with the required approval. Never merge to a protected/default branch without explicit authorization.
+Summarize the change, reason, user impact, risks, and validation evidence. Use a pull request for substantive changes. Resolve review comments and require the applicable automated gates. For single-maintainer projects, do not invent a second human approval; use an exact-head owner authorization gate if the platform can enforce it. A changed head SHA invalidates prior authorization. Never merge without explicit owner authorization. Follow [Change, Review, and Merge Assurance](../MERGE_AND_CHANGE_ASSURANCE.md).
 
 ## 7. Keep downstream template updates safe
 
@@ -93,6 +95,9 @@ When work is being transferred or a session is ending, record only what the next
 Put durable decisions, research, and risks in their canonical records and link to them. Do not duplicate their contents in every handover. Preserve reusable learning only after removing project-specific and private information.
 
 ## 11. Avoid repeated work
+
+When a material process failure or near miss occurs, perform the systemic recurrence review in [Change, Review, and Merge Assurance](../MERGE_AND_CHANGE_ASSURANCE.md) across all related procedures and technical controls. Do not limit remediation to the immediate file or incident.
+
 
 - Verify a setting or requirement once and reuse the evidence while it remains valid.
 - Do not repeat GitHub walkthroughs or ask again for a decision already made for the same scope.
