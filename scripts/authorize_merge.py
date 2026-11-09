@@ -34,7 +34,7 @@ class AuthorizationError(RuntimeError):
     pass
 
 
-def api_request(method: str, path: str, token: str, payload: dict | None = None) -> dict:
+def api_request(method: str, path: str, token: str, payload: dict | None = None) -> dict | list:
     data = json.dumps(payload).encode() if payload is not None else None
     request = urllib.request.Request(
         API + path,
@@ -171,7 +171,7 @@ def validate_policy_change_record(record: str, protected_paths: list[str], base_
         raise AuthorizationError("Policy-change evidence must state Owner decision: APPROVED.")
 
 
-def verify_evidence(owner: str, repo: str, number: int, pr: dict, token: str) -> str:
+def verify_evidence(owner: str, repo: str, number: int, pr: dict, token: str) -> tuple[str, str]:
     """Validate the exact-head evidence file using trusted validator code.
 
     The PR's head commit must be a single-parent, evidence-only commit. The
