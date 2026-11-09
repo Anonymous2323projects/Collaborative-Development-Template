@@ -4,6 +4,7 @@ Notable user-facing changes to the template are recorded here. This is a curated
 
 ## Unreleased
 
+- Added a clear review-before-work and verification-after-substantial-change cadence, with checks scaled to impact and evidence reused only while still valid.
 - Streamlined onboarding, project records, README navigation, and the downstream update guide and reusable prompt; clarified when specialist templates are needed without weakening mandatory project memory or public-release risk assessment.
 - Resolved conflicting commit-email instructions: contributors choose how their own identity appears, and the workflow checks the author details attached to saved changes against that choice.
 - Consolidated Project Instructions setup into one complete project-specific block, including continuity; removed the competing short continuity block.
