@@ -49,6 +49,7 @@ jobs:
           owner: ${{ github.repository_owner }}
           repositories: ${{ github.event.repository.name }}
           permission-statuses: write
+          skip-token-revoke: false
 
       - name: Validate evidence and owner authorization for the exact PR head
         if: steps.preflight.outputs.authorized == 'true'
