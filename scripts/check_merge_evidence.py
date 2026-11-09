@@ -127,7 +127,7 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
     research_rationale = field(research, "If external research was not needed, explain why the change is genuinely low risk")
     hosts = source_hosts(sources)
     has_source = bool(URL_RE.search(sources) or DOI_RE.search(sources))
-    peer_reviewed = bool(DOI_RE.search(sources) or host_is_in(hosts, "springer.com") or host_is_in(hosts, "ieeexplore.ieee.org"))
+    peer_reviewed = any(host_is_in(hosts, domain) for domain in ("springer.com", "ieeexplore.ieee.org", "dl.acm.org", "sciencedirect.com", "onlinelibrary.wiley.com", "academic.oup.com", "journals.sagepub.com", "tandfonline.com", "cambridge.org", "nature.com", "journals.plos.org", "frontiersin.org", "pubmed.ncbi.nlm.nih.gov"))
     official_source = any(host_is_in(hosts, domain) for domain in (
         "nist.gov", "docs.github.com", "europa.eu", "eur-lex.europa.eu",
         "owasp.org", "slsa.dev", "iso.org",
@@ -135,8 +135,10 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
     if risk in {"HIGH", "CRITICAL"}:
         if not has_source:
             errors.append("HIGH/CRITICAL changes require cited source URLs or DOIs.")
-        if not peer_reviewed:
-            errors.append("HIGH/CRITICAL changes require a peer-reviewed research source or a documented literature gap.")
+        literature_limits = field(research, "Methodological limits, conflicts, or evidence gaps").lower()
+        literature_gap = "literature gap" in literature_limits or "no directly applicable peer-reviewed research" in literature_limits
+        if not peer_reviewed and not literature_gap:
+            errors.append("HIGH/CRITICAL changes require a peer-reviewed publisher source or a documented literature gap.")
         if not official_source:
             errors.append("HIGH/CRITICAL changes require an authoritative standard, law, or official technical source.")
     elif not has_source and not non_placeholder(research_rationale):
