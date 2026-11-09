@@ -144,6 +144,16 @@ def reject_policy_changes(owner: str, repo: str, number: int, token: str) -> lis
     return sorted(set(protected))
 
 
+def enforce_policy_change_command(command: str, protected_paths: list[str]) -> None:
+    if command == "authorize-policy-change" and not protected_paths:
+        raise AuthorizationError("No protected policy files changed; use /authorize-merge for an ordinary PR.")
+    if command == "authorize-merge" and protected_paths:
+        raise AuthorizationError(
+            "This PR changes protected policy files; use /authorize-policy-change with the additional evidence fields: "
+            + ", ".join(protected_paths)
+        )
+
+
 def validate_policy_change_record(record: str, protected_paths: list[str], base_sha: str) -> None:
     """Require explicit, evidence-backed owner review for protected policy changes."""
     clean = strip_fenced_code_blocks(record)
@@ -341,13 +351,7 @@ def main() -> int:
     else:
         try:
             protected_paths = reject_policy_changes(owner, repo, number, read_token)
-            if command == "authorize-policy-change" and not protected_paths:
-                raise AuthorizationError("No protected policy files changed; use /authorize-merge for an ordinary PR.")
-            if command == "authorize-merge" and protected_paths:
-                raise AuthorizationError(
-                    "This PR changes protected policy files; use /authorize-policy-change with the additional evidence fields: "
-                    + ", ".join(protected_paths)
-                )
+            enforce_policy_change_command(command, protected_paths)
             if unresolved_threads(owner, repo, number, read_token):
                 description = "Unresolved review threads remain; resolve them and authorize again."
             else:
