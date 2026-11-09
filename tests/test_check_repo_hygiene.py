@@ -116,5 +116,64 @@ on:
         self.assertTrue(any("pull_request_target" in error for error in errors))
 
 
+
+class AssuranceDocumentTests(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp_dir.name)
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
+
+    def write_valid_fixture(self):
+        (self.root / "MERGE_AND_CHANGE_ASSURANCE.md").write_text(
+            "\\n".join(f"## {section}" for section in hygiene.REQUIRED_ASSURANCE_SECTIONS),
+            encoding="utf-8",
+        )
+        for path in hygiene.ASSURANCE_REFERENCES:
+            target = self.root / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("[Assurance](MERGE_AND_CHANGE_ASSURANCE.md)\\n", encoding="utf-8")
+
+    def test_complete_assurance_contract_passes(self):
+        self.write_valid_fixture()
+        self.assertEqual(hygiene.assurance_document_errors(self.root), [])
+
+    def test_missing_canonical_document_is_rejected(self):
+        self.write_valid_fixture()
+        (self.root / "MERGE_AND_CHANGE_ASSURANCE.md").unlink()
+        errors = hygiene.assurance_document_errors(self.root)
+        self.assertTrue(any("canonical assurance standard is missing" in error for error in errors))
+
+    def test_missing_core_section_is_rejected(self):
+        self.write_valid_fixture()
+        path = self.root / "MERGE_AND_CHANGE_ASSURANCE.md"
+        content = path.read_text(encoding="utf-8").replace(
+            "## 4. Five-perspective assessment", "## 4. Omitted assessment"
+        )
+        path.write_text(content, encoding="utf-8")
+        errors = hygiene.assurance_document_errors(self.root)
+        self.assertTrue(any("Five-perspective assessment" in error for error in errors))
+
+    def test_missing_governing_reference_is_rejected(self):
+        self.write_valid_fixture()
+        path = self.root / "docs/DEVELOPMENT_WORKFLOW.md"
+        path.write_text("No assurance link here\\n", encoding="utf-8")
+        errors = hygiene.assurance_document_errors(self.root)
+        self.assertTrue(any("docs/DEVELOPMENT_WORKFLOW.md" in error for error in errors))
+
+    def test_headings_inside_fenced_code_do_not_satisfy_contract(self):
+        self.write_valid_fixture()
+        path = self.root / "MERGE_AND_CHANGE_ASSURANCE.md"
+        content = path.read_text(encoding="utf-8")
+        content = content.replace(
+            "## 4. Five-perspective assessment",
+            "```md\\n## 4. Five-perspective assessment\\n```",
+        )
+        path.write_text(content, encoding="utf-8")
+        errors = hygiene.assurance_document_errors(self.root)
+        self.assertTrue(any("Five-perspective assessment" in error for error in errors))
+
 if __name__ == "__main__":
     unittest.main()
