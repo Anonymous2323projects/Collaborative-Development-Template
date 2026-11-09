@@ -15,13 +15,17 @@ This document explains how the Collaborative Development Template is maintained 
 1. Prefer evidence, user impact, safety, legal solidity, usability, trust, and freedom—in that priority order.
 2. Research relevant standards and existing solutions before adding new mechanisms or dependencies.
 3. Keep changes focused, explain material trade-offs, and preserve backwards compatibility where practical.
-4. Use pull requests for substantive changes so the rationale and validation remain visible.
-5. The maintainer makes the final decision after considering feedback and the project's capacity.
+4. Use pull requests for substantive changes so the rationale and validation remain visible. Apply [Change, Review, and Merge Assurance](MERGE_AND_CHANGE_ASSURANCE.md), including the five perspectives, PR-specific evidence, and live technical-gate verification.
+5. The maintainer makes the final decision after considering feedback and the project's capacity. For a single-maintainer project, use a platform-enforced exact-head owner authorization rather than an impossible self-review requirement. Never treat an AI review or successful CI as owner authorization.
 6. Record durable decisions in the relevant project documentation or changelog; do not duplicate the same decision across multiple files.
 
 ## Changes requiring particular care
 
 Changes to privacy boundaries, security policy, licensing, contribution terms, default project instructions, or release/update behavior require explicit rationale and careful review. Do not weaken safeguards merely to improve convenience or a security score.
+
+## Merge protection and exact-head authorization
+
+The default branch should have an active ruleset that requires pull requests, relevant status checks, resolved review threads, and blocks deletion/force-push. Configure required check names against their trusted integration and require the branch to be up to date. Keep bypass actors empty unless a narrowly justified emergency path is documented and audited. Where no second human reviewer is available, a maintainer authorization should be bound to the exact PR head SHA; any new commit requires a new authorization. Verify the live ruleset rather than relying on this text.
 
 ## Releases and compatibility
 
