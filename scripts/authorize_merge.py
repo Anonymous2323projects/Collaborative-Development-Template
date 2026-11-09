@@ -329,6 +329,7 @@ def main() -> int:
                     or latest.get("base", {}).get("sha") != pr.get("base", {}).get("sha")
                     or latest.get("state") != "open"
                     or latest.get("draft")
+                    or latest.get("base", {}).get("ref") != repository.get("default_branch")
                 ):
                     description = "PR head/base/state changed during validation; re-run authorization on the current exact head."
                 elif unresolved_threads(owner, repo, number, read_token):
