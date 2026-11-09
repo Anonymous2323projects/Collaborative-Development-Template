@@ -140,6 +140,102 @@ jobs:
         )
         self.assertTrue(any("repositories:" in error for error in errors))
 
+    def test_token_creation_step_itself_requires_preflight(self):
+        content = """permissions:
+  contents: read
+  pull-requests: read
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  authorize:
+    environment:
+      name: merge-authorizer
+    steps:
+      - uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
+        with:
+          ref: DEFAULT_BRANCH_EXPR
+          persist-credentials: false
+      - id: preflight
+        run: python3 scripts/authorize_merge.py --preflight
+      - id: status-token
+        if: always()
+        uses: actions/create-github-app-token@0123456789abcdef0123456789abcdef01234567
+        with:
+          permission-statuses: write
+          skip-token-revoke: false
+          client-id: APP_CLIENT_ID_EXPR
+          private-key: APP_PRIVATE_KEY_EXPR
+          owner: OWNER_EXPR
+          repositories: REPOSITORY_EXPR
+      - name: validate
+        if: steps.preflight.outputs.authorized == 'true'
+        env:
+          GITHUB_TOKEN: GITHUB_TOKEN_EXPR
+          MERGE_AUTH_TOKEN: MERGE_TOKEN_EXPR
+        run: python3 scripts/authorize_merge.py
+"""
+        for source, replacement in (
+            ("DEFAULT_BRANCH_EXPR", "$" + "{{ github.event.repository.default_branch }}"),
+            ("GITHUB_TOKEN_EXPR", "$" + "{{ secrets.GITHUB_TOKEN }}"),
+            ("MERGE_TOKEN_EXPR", "$" + "{{ steps.status-token.outputs.token }}"),
+            ("APP_CLIENT_ID_EXPR", "$" + "{{ vars.MERGE_AUTH_APP_CLIENT_ID }}"),
+            ("APP_PRIVATE_KEY_EXPR", "$" + "{{ secrets.MERGE_AUTH_APP_PRIVATE_KEY }}"),
+            ("OWNER_EXPR", "$" + "{{ github.repository_owner }}"),
+            ("REPOSITORY_EXPR", "$" + "{{ github.event.repository.name }}"),
+        ):
+            content = content.replace(source, replacement)
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content)
+        self.assertTrue(any("App token creation must have the status-token ID and require successful maintainer preflight" in error for error in errors))
+
+    def test_validation_step_itself_requires_preflight(self):
+        content = """permissions:
+  contents: read
+  pull-requests: read
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  authorize:
+    environment:
+      name: merge-authorizer
+    steps:
+      - uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
+        with:
+          ref: DEFAULT_BRANCH_EXPR
+          persist-credentials: false
+      - id: preflight
+        run: python3 scripts/authorize_merge.py --preflight
+      - id: status-token
+        if: steps.preflight.outputs.authorized == 'true'
+        uses: actions/create-github-app-token@0123456789abcdef0123456789abcdef01234567
+        with:
+          permission-statuses: write
+          skip-token-revoke: false
+          client-id: APP_CLIENT_ID_EXPR
+          private-key: APP_PRIVATE_KEY_EXPR
+          owner: OWNER_EXPR
+          repositories: REPOSITORY_EXPR
+      - name: validate
+        if: always()
+        env:
+          GITHUB_TOKEN: GITHUB_TOKEN_EXPR
+          MERGE_AUTH_TOKEN: MERGE_TOKEN_EXPR
+        run: python3 scripts/authorize_merge.py
+"""
+        for source, replacement in (
+            ("DEFAULT_BRANCH_EXPR", "$" + "{{ github.event.repository.default_branch }}"),
+            ("GITHUB_TOKEN_EXPR", "$" + "{{ secrets.GITHUB_TOKEN }}"),
+            ("MERGE_TOKEN_EXPR", "$" + "{{ steps.status-token.outputs.token }}"),
+            ("APP_CLIENT_ID_EXPR", "$" + "{{ vars.MERGE_AUTH_APP_CLIENT_ID }}"),
+            ("APP_PRIVATE_KEY_EXPR", "$" + "{{ secrets.MERGE_AUTH_APP_PRIVATE_KEY }}"),
+            ("OWNER_EXPR", "$" + "{{ github.repository_owner }}"),
+            ("REPOSITORY_EXPR", "$" + "{{ github.event.repository.name }}"),
+        ):
+            content = content.replace(source, replacement)
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content)
+        self.assertTrue(any("status publication must require successful maintainer preflight" in error for error in errors))
+
     def test_github_token_status_write_is_rejected_even_in_trusted_workflow(self):
         content = """permissions:
   contents: read
