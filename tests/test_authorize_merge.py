@@ -1,6 +1,7 @@
 """Unit tests for exact-head maintainer authorization policy."""
 import importlib.util
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "authorize_merge.py"
@@ -20,6 +21,27 @@ class AuthorizationPolicyTests(unittest.TestCase):
     def test_configured_allowlist_is_case_insensitive(self):
         allowed = auth.authorized_logins({"owner": {"type": "Organization", "login": "example"}}, "Alice, BOB")
         self.assertEqual(allowed, {"alice", "bob"})
+
+    def test_graphql_errors_fail_closed(self):
+        with patch.object(auth, "api_request", return_value={"errors": [{"message": "partial response"}]}):
+            with self.assertRaises(auth.AuthorizationError):
+                auth.unresolved_threads("owner", "repo", 1, "token")
+
+    def test_unresolved_review_thread_blocks_authorization(self):
+        payload = {"data": {"repository": {"pullRequest": {"reviewThreads": {
+            "nodes": [{"isResolved": False}],
+            "pageInfo": {"hasNextPage": False},
+        }}}}}
+        with patch.object(auth, "api_request", return_value=payload):
+            self.assertTrue(auth.unresolved_threads("owner", "repo", 1, "token"))
+
+    def test_all_resolved_review_threads_allow_progress(self):
+        payload = {"data": {"repository": {"pullRequest": {"reviewThreads": {
+            "nodes": [{"isResolved": True}],
+            "pageInfo": {"hasNextPage": False},
+        }}}}}
+        with patch.object(auth, "api_request", return_value=payload):
+            self.assertFalse(auth.unresolved_threads("owner", "repo", 1, "token"))
 
     def test_only_full_sha_command_is_accepted(self):
         self.assertIsNotNone(auth.COMMAND_RE.fullmatch("/authorize-merge " + "a" * 40))
