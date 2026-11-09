@@ -155,6 +155,18 @@ A merge authorization must refer to the exact 40-character PR head SHA. Use a di
 
 **Bootstrap limitation:** a newly introduced default-branch authorization workflow cannot authorize the PR that first adds it, because issue_comment runs only the workflow definition already present on the default branch. The initial policy/workflow change therefore requires a separate manual owner review and explicit approval, or a one-time local owner-run status publication using the distinct App after exact-head review. Do not claim that the bootstrap was technically gated. After the trusted workflow is on the default branch and the App/environment/ruleset are configured, the automated gate can protect subsequent eligible PRs.
 
+### Bootstrap exception and staged enforcement
+
+A bootstrap PR is a change that introduces the authorization workflow, trusted validator, independent status source, or ruleset requirement itself. The new gate cannot authorize that PR before its workflow is present on the default branch. Apply this bounded sequence:
+
+1. **Pre-merge review:** complete the full exact-head diff review, independent review where warranted, five-perspective assessment, exact-head CI, documentation-to-implementation review, public privacy scan, and the PR-specific assurance record. Inspect the existing live ruleset and record which new controls are not yet active.
+2. **Manual bootstrap approval:** obtain the owner's explicit approval for that exact PR head. The initial merge is a one-time manual bootstrap exception, not evidence that the new technical gate already worked. Do not invent or publish a success status from a not-yet-configured App.
+3. **Post-merge configuration:** only after the trusted workflow is on the default branch may the owner configure/install the dedicated App, protect its key in the restricted environment, add the App as the expected status source, and enable strict up-to-date checks.
+4. **Post-merge proof:** re-fetch the live ruleset and run adversarial acceptance tests on a separate test PR. Verify that missing evidence, stale SHAs, unauthorized actors, changed heads, policy-path changes, and failed checks are blocked. Only then may the system be described as technically enforced.
+5. **No recurring bypass:** later policy/workflow changes use the normal protected-policy review route and live required checks. The bootstrap exception applies only to the initial installation of the gate.
+
+The assurance record must distinguish the pre-merge bootstrap review from post-merge enforcement work. A known configuration gap may be accepted only as an explicit, time-bounded bootstrap limitation with an owner and post-merge acceptance plan; it must never be described as a passed technical control.
+
 **Protected deployment environments:** environments can provide a native approval UI, but a successful deployment record alone does not prove exact PR-head owner authorization. Keep this as an alternative only if an end-to-end exact-SHA binding and reviewer gate are independently demonstrated; do not substitute a deployment record for the distinct status App without that proof.
 
 If the repository cannot securely implement the exact-head gate, retain a manual explicit approval step and state that technical enforcement is incomplete.
