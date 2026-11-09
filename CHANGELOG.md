@@ -4,6 +4,8 @@ Notable user-facing changes to the template are recorded here. This is a curated
 
 ## Unreleased
 
+- Add a least-privilege, Free-compatible setup and acceptance guide for the optional exact-head authorization App, including the expected-source UI prerequisite.
+
 - Tightened PR assurance evidence: high-impact merges require a verified pre-merge recovery snapshot, and bootstrap exceptions require explicit compensating controls, owner state, deadline, post-merge owner, and stop/rollback conditions.
 
 - Added a project-wide change-assurance standard with risk-based research, system-level hazard analysis, five separate review perspectives, documentation-to-implementation traceability, systemic recurrence review, and an efficiency audit.
