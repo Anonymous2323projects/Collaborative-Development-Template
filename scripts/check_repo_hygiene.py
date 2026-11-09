@@ -170,8 +170,48 @@ def workflow_environment_errors(path: Path, content: str) -> list[str]:
     return errors
 
 
+def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
+    """Enforce the separate status App and read-only GITHUB_TOKEN design."""
+    if path.as_posix() != ".github/workflows/merge-authorization.yml":
+        return []
+    errors = []
+    if workflow_events(content) != ["issue_comment"]:
+        errors.append(f"{path}: trusted authorization workflow must trigger only on issue_comment")
+    permissions = re.search(r"(?ms)^permissions:\s*\n((?:[ \t]+.*\n)*)", content)
+    if not permissions:
+        errors.append(f"{path}: trusted authorization workflow requires explicit read-only GITHUB_TOKEN permissions")
+    else:
+        block = permissions.group(1)
+        if not re.search(r"(?m)^[ \t]+contents:\s*read\s*$", block):
+            errors.append(f"{path}: GITHUB_TOKEN must have contents: read")
+        if not re.search(r"(?m)^[ \t]+pull-requests:\s*read\s*$", block):
+            errors.append(f"{path}: GITHUB_TOKEN must have pull-requests: read")
+        if re.search(r"(?m)^[ \t]+[A-Za-z_-]+:\s*(?:write|write-all)\s*$", block):
+            errors.append(f"{path}: GITHUB_TOKEN must not have write permissions")
+    required = (
+        "github.event.repository.default_branch",
+        "persist-credentials: false",
+        "run: python3 scripts/authorize_merge.py --preflight",
+        "GITHUB_TOKEN: " + "$" + "{{ secrets.GITHUB_TOKEN }}",
+        "MERGE_AUTH_TOKEN: " + "$" + "{{ steps.status-token.outputs.token }}",
+        "permission-statuses: write",
+        "skip-token-revoke: false",
+    )
+    for item in required:
+        if item not in content:
+            errors.append(f"{path}: trusted authorization workflow is missing required control: {item}")
+    if not re.search(r"uses:\s*actions/create-github-app-token@[0-9a-fA-F]{40}(?:\s|$)", content):
+        errors.append(f"{path}: dedicated status App action must be pinned to a full commit SHA")
+    if content.count("if: steps.preflight.outputs.authorized == 'true'") < 2:
+        errors.append(f"{path}: App token creation and status publication must both require successful maintainer preflight")
+    if content.find("--preflight") < 0 or content.find("--preflight") > content.find("actions/create-github-app-token"):
+        errors.append(f"{path}: maintainer preflight must run before the status App token is created")
+    return errors
+
+
 def workflow_policy_errors(path: Path, content: str) -> list[str]:
     errors = workflow_environment_errors(path, content)
+    errors.extend(trusted_authorizer_workflow_errors(path, content))
     if not re.search(r"^permissions\s*:", content, re.MULTILINE):
         errors.append(f"{path}: explicit top-level GITHUB_TOKEN permissions are required")
     if re.search(r"^\s*(?:-\s*)?uses:\s*[^\s#]+@(?![0-9a-fA-F]{40}(?:\s|$))", content, re.MULTILINE):
@@ -181,12 +221,7 @@ def workflow_policy_errors(path: Path, content: str) -> list[str]:
     if re.search(r"^\s*pull_request_target\s*:", content, re.MULTILINE):
         errors.append(f"{path}: pull_request_target requires a separate security design review and is disallowed by default")
     if re.search(r"^[ \t]*statuses:[ \t]*write[ \t]*$", content, re.MULTILINE):
-        trusted_path = path.as_posix() == ".github/workflows/merge-authorization.yml"
-        issue_comment_only = workflow_events(content) == ["issue_comment"]
-        uses_default_branch = "github.event.repository.default_branch" in content
-        does_not_persist_credentials = "persist-credentials: false" in content
-        if not trusted_path or not issue_comment_only or not uses_default_branch or not does_not_persist_credentials:
-            errors.append(f"{path}: statuses: write is restricted to the trusted default-branch issue_comment authorization workflow")
+        errors.append(f"{path}: GITHUB_TOKEN statuses: write is prohibited; publish through the dedicated status App token")
     return errors
 
 
