@@ -26,7 +26,7 @@ from check_merge_evidence import validate_record
 API = "https://api.github.com"
 CONTEXT = "Explicit maintainer merge authorization"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
-COMMAND_RE = re.compile(r"^/(authorize-merge|revoke-merge)\s+([0-9a-f]{40})\s*$")
+COMMAND_RE = re.compile(r"^/(authorize-merge|authorize-policy-change|revoke-merge)\s+([0-9a-f]{40})\s*$")
 MAX_EVIDENCE_BYTES = 1_000_000
 
 
@@ -127,8 +127,8 @@ PROTECTED_POLICY_PATHS = {
 }
 
 
-def reject_policy_changes(owner: str, repo: str, number: int, token: str) -> None:
-    """Require a separate manual review for changes to trusted gate/policy files."""
+def reject_policy_changes(owner: str, repo: str, number: int, token: str) -> list[str]:
+    """Return protected policy paths; caller selects the explicit policy-change route."""
     files = api_request(
         "GET",
         f"/repos/{owner}/{repo}/pulls/{number}/files?per_page=100",
@@ -141,12 +141,31 @@ def reject_policy_changes(owner: str, repo: str, number: int, token: str) -> Non
         path = item.get("filename", "")
         if path.startswith(".github/") or path in PROTECTED_POLICY_PATHS:
             protected.append(path)
-    if protected:
-        names = ", ".join(sorted(set(protected)))
-        raise AuthorizationError(
-            "This PR changes trusted workflow/assurance policy files and requires a separate manual owner-reviewed policy-change procedure: "
-            + names
-        )
+    return sorted(set(protected))
+
+
+def validate_policy_change_record(record: str, protected_paths: list[str], base_sha: str) -> None:
+    """Require explicit, evidence-backed owner review for protected policy changes."""
+    if record.count("## Protected policy change review") != 1:
+        raise AuthorizationError("Policy-change evidence must contain exactly one Protected policy change review section.")
+
+    def unique_field(name: str) -> str:
+        matches = re.findall(rf"(?m)^- {re.escape(name)}:\s*(.*?)\s*$", record)
+        if len(matches) != 1:
+            raise AuthorizationError(f"Policy-change evidence must contain exactly one '{name}' field.")
+        return matches[0].strip().strip(chr(96))
+
+    listed_paths = [item.strip().strip(chr(96)) for item in unique_field("Changed policy paths").split(",") if item.strip()]
+    if len(listed_paths) != len(set(listed_paths)) or set(listed_paths) != set(protected_paths):
+        raise AuthorizationError("Policy-change evidence must list every protected path exactly once.")
+    if unique_field("Base SHA") != base_sha:
+        raise AuthorizationError("Policy-change evidence base SHA does not match the current PR base.")
+    for name in ("Reason for change", "Adversarial tests", "Rollback/recovery", "Independent review reference"):
+        value = unique_field(name)
+        if not value or value.lower() in {"todo", "tbd", "n/a", "none", "pending"}:
+            raise AuthorizationError(f"Policy-change evidence field '{name}' must contain concrete evidence.")
+    if unique_field("Owner decision") != "APPROVED":
+        raise AuthorizationError("Policy-change evidence must state Owner decision: APPROVED.")
 
 
 def verify_evidence(owner: str, repo: str, number: int, pr: dict, token: str) -> str:
@@ -204,7 +223,7 @@ def verify_evidence(owner: str, repo: str, number: int, pr: dict, token: str) ->
     errors = validate_record(record, number, base_ref, base_sha, reviewed_code_sha)
     if errors:
         raise AuthorizationError("Evidence validation failed: " + "; ".join(errors[:3]))
-    return reviewed_code_sha
+    return reviewed_code_sha, record
 
 
 def publish_status(
@@ -318,11 +337,20 @@ def main() -> int:
         description = "GitHub did not return a valid current base SHA."
     else:
         try:
-            reject_policy_changes(owner, repo, number, read_token)
+            protected_paths = reject_policy_changes(owner, repo, number, read_token)
+            if command == "authorize-policy-change" and not protected_paths:
+                raise AuthorizationError("No protected policy files changed; use /authorize-merge for an ordinary PR.")
+            if command == "authorize-merge" and protected_paths:
+                raise AuthorizationError(
+                    "This PR changes protected policy files; use /authorize-policy-change with the additional evidence fields: "
+                    + ", ".join(protected_paths)
+                )
             if unresolved_threads(owner, repo, number, read_token):
                 description = "Unresolved review threads remain; resolve them and authorize again."
             else:
-                verify_evidence(owner, repo, number, pr, read_token)
+                reviewed_code_sha, evidence_record = verify_evidence(owner, repo, number, pr, read_token)
+                if command == "authorize-policy-change":
+                    validate_policy_change_record(evidence_record, protected_paths, pr["base"]["sha"])
                 latest = api_request("GET", f"/repos/{owner}/{repo}/pulls/{number}", read_token)
                 if (
                     latest.get("head", {}).get("sha") != current_sha
