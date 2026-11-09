@@ -8,7 +8,7 @@ This guide configures the optional dedicated GitHub App used by the trusted defa
 
 - Confirm the exact repository owner, repository name, default branch, and visibility.
 - This design relies on a GitHub Actions environment, an environment secret, and a deployment-branch restriction.
-- GitHub provides environments, environment secrets, and deployment-branch restrictions for public repositories on current plans. Private/internal repositories require GitHub Pro, Team, or Enterprise for these features. If the repository is private on GitHub Free, do not claim this environment-secret design is available; use the documented manual owner-approval fallback unless a separately reviewed secret-management design is adopted.
+- GitHub provides environments, environment secrets, and deployment-branch restrictions for public repositories on current plans. Private/internal repositories require GitHub Pro, Team, or Enterprise for these features. GitHub rulesets are likewise available on GitHub Free for public repositories, but private repositories require Pro, Team, or Enterprise. Therefore, a private repository on GitHub Free cannot rely on this environment-secret design or ruleset enforcement. Its manual owner-approval fallback is procedural only: it cannot technically prevent direct pushes or merges and is not equivalent to an enforced gate. Record that reduced assurance explicitly; do not claim technical enforcement. Do not make a repository public or upgrade a plan without the owner's informed choice.
 - Replace `main` below with the repository's actual default branch if it differs.
 
 ## 2. Create a dedicated GitHub App
@@ -145,5 +145,6 @@ Follow the canonical [Change, Review, and Merge Assurance Standard](../MERGE_AND
 - [Manage GitHub App private keys](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/managing-private-keys-for-github-apps)
 - [GitHub Actions environments](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments)
 - [Ruleset status-check requirements and expected source](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets)
+- [Ruleset availability by GitHub plan](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/troubleshooting-rules)
 - [REST API for commit statuses](https://docs.github.com/en/rest/commits/statuses)
 - [REST API for check runs](https://docs.github.com/en/rest/checks/runs)
