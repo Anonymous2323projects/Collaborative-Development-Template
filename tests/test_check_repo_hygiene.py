@@ -77,15 +77,11 @@ on:
         self.assertTrue(any("pull_request_target" in error for error in errors))
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class IntegrationReviewContractTests(unittest.TestCase):
     def test_complete_canonical_review_contract_passes(self):
         doc = hygiene.INTEGRATION_REVIEW_DOC
         contents = {
-            doc: "\\n".join(hygiene.INTEGRATION_REVIEW_HEADINGS),
+            doc: "\n".join(hygiene.INTEGRATION_REVIEW_HEADINGS),
             Path("AGENTS.md"): "docs/INTEGRATION_AND_MERGE_REVIEW.md",
             Path("docs/DEVELOPMENT_WORKFLOW.md"): "INTEGRATION_AND_MERGE_REVIEW.md",
             Path("PROJECT_RISK_AND_RELEASE_READINESS.md"): "docs/INTEGRATION_AND_MERGE_REVIEW.md",
@@ -100,7 +96,7 @@ class IntegrationReviewContractTests(unittest.TestCase):
     def test_missing_cross_document_reference_is_rejected(self):
         doc = hygiene.INTEGRATION_REVIEW_DOC
         contents = {
-            doc: "\\n".join(hygiene.INTEGRATION_REVIEW_HEADINGS),
+            doc: "\n".join(hygiene.INTEGRATION_REVIEW_HEADINGS),
             Path("AGENTS.md"): "",
             Path("docs/DEVELOPMENT_WORKFLOW.md"): "INTEGRATION_AND_MERGE_REVIEW.md",
             Path("PROJECT_RISK_AND_RELEASE_READINESS.md"): "docs/INTEGRATION_AND_MERGE_REVIEW.md",
@@ -111,10 +107,16 @@ class IntegrationReviewContractTests(unittest.TestCase):
     def test_missing_review_gate_section_is_rejected(self):
         doc = hygiene.INTEGRATION_REVIEW_DOC
         contents = {
-            doc: "\\n".join(hygiene.INTEGRATION_REVIEW_HEADINGS[:-1]),
+            doc: "\n".join(hygiene.INTEGRATION_REVIEW_HEADINGS[:-1]),
             Path("AGENTS.md"): "docs/INTEGRATION_AND_MERGE_REVIEW.md",
             Path("docs/DEVELOPMENT_WORKFLOW.md"): "INTEGRATION_AND_MERGE_REVIEW.md",
             Path("PROJECT_RISK_AND_RELEASE_READINESS.md"): "docs/INTEGRATION_AND_MERGE_REVIEW.md",
         }
         errors = hygiene.integration_review_contract_errors(list(contents), contents)
         self.assertTrue(any("Evidence, efficiency, and honest reporting" in error for error in errors))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
