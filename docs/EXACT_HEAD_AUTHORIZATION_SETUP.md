@@ -55,7 +55,7 @@ In the target repository:
 - Do not upload the PEM file to ChatGPT or Codex.
 - Keep the downloaded PEM in a secure temporary location only long enough to add the environment secret; do not leave it in Downloads, the repository, or a synced project folder.
 - GitHub App private keys do not expire automatically. They must be manually rotated or revoked. Treat this as a long-lived credential and keep its access limited.
-- The workflow mints an installation token scoped to this repository with only `statuses:write`. The token is revoked by the action after the job and expires after one hour even if not revoked.
+- The workflow mints an installation token scoped to this repository with only the explicitly requested write permission `statuses:write`; GitHub's Metadata read-only baseline remains. The token is revoked by the action after the job and expires after one hour even if not revoked.
 
 The Actions environment is a practical least-privilege control, not a hardware-backed key vault. A dedicated key vault with signing-only access can provide stronger protection, but requires a separately reviewed integration. Do not overstate the protection provided by an Actions environment secret.
 
