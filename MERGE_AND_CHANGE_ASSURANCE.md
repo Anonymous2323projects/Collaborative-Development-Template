@@ -234,4 +234,4 @@ These sources support the principles, not a claim that this template is certifie
 
 ## 13. Public/private boundary
 
-This public standard contains only generic reusable process guidance. Keep project-specific memory, private decisions, personal preferences, internal incidents, operational details, credentials, and private coordination records in their appropriate private repositories. Never copy this project's private maintainer-only sixth efficiency rule into the public template.
+This public standard contains only generic reusable process guidance. Keep project-specific memory, private decisions, personal preferences, internal incidents, operational details, credentials, and private coordination records in their appropriate private repositories. Public template content must remain generic, sanitized, and suitable for unrelated users.
