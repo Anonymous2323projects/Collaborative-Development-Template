@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Updates are a security-sensitive change to a user's software, not merely a convenience feature. A release can fix vulnerabilities, but it can also introduce regressions, unwanted behavior, compromised dependencies, or malicious code. Projects adopting this template must define and document an update policy before shipping an update mechanism.
+Updates are a security-sensitive change to a user's software, not merely a convenience feature. A release can fix vulnerabilities, but it can also introduce regressions, unwanted behavior, compromised dependencies, or malicious code. Projects adopting this template must define and document an update policy before shipping an update mechanism. Apply [Change, Review, and Merge Assurance](MERGE_AND_CHANGE_ASSURANCE.md) to meaningful updater, signing, deployment, and release changes. Verify that the controls described here exist in code, CI, repository settings, and the release environment; documentation alone is not enforcement. If an update/release control fails or a near miss occurs, perform a systemic recurrence review of related procedures and technical controls.
 
 ## User-consent principles
 
