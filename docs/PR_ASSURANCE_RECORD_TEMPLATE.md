@@ -21,7 +21,7 @@
 - Publication/version/date and applicability:
 - Methodological limits, conflicts, or evidence gaps:
 - Alternatives considered and why this option was selected:
-- If external research was not needed, explain why the change is genuinely low risk.
+- If external research was not needed, explain why the change is genuinely low risk:
 
 ## Five-perspective assessment
 
