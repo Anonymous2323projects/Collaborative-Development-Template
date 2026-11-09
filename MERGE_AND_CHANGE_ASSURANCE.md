@@ -137,7 +137,7 @@ A CI job must fail closed on missing evidence, mismatched PR/base/head identity,
 
 A merge authorization must refer to the exact 40-character PR head SHA. Use a distinct, independently authenticated status source; a workflow name or the shared GitHub Actions App identity is not a workflow-level trust boundary.
 
-- A trusted workflow on the default branch accepts an explicit owner command containing the full current PR head SHA.
+- A trusted workflow on the default branch accepts /authorize-merge <full-40-character-head-SHA> for ordinary PRs, /authorize-policy-change <full-40-character-head-SHA> for protected policy changes, and /revoke-merge <full-40-character-head-SHA> to revoke authorization. Each command must be posted by an authorized owner on the PR itself.
 - It checks the actor against an explicit maintainer allowlist (or the repository owner for a user-owned repository), verifies that the PR is open, ready for review, and targets the default branch, and checks the exact current head and base SHAs.
 - It checks that required review threads are resolved and validates the PR-specific assurance record using validator code from the trusted default branch.
 - It fetches the evidence commit and evidence file through the GitHub API at the exact PR head. The evidence commit must have exactly one parent and change only reviews/PR-<number>.md. The validator receives the file as inert text; no PR checkout, script, workflow, or executable content is run.
