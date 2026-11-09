@@ -51,6 +51,10 @@ Choose checks based on the change and its risks. Reuse a passing result only whe
 - Inspect the complete diff for accidental changes, secrets, personal data, unsafe behavior, and unsupported claims.
 - Report exactly what was and was not checked. A passing automated check is not proof of complete security or legal compliance.
 
+## 5A. Cross-document integration review for substantial changes
+
+When a change spans code and documentation, changes user-visible behavior, or has material safety, privacy, legal, or operational impact, use [the Integration and Merge Review Standard](INTEGRATION_AND_MERGE_REVIEW.md). Trace each changed behavior to its implementation, tests, and documentation in both directions. Read related documents together to find contradictions, circular or impossible instructions, drifting duplicates, unsupported promises, and exceptions that weaken safeguards. Validate the exact proposed commit, then verify the resulting merge commit and its checks. Keep the review risk-proportionate; do not repeat checks whose evidence remains valid.
+
 ## 6. Review and integrate
 
 Summarize the change, reason, user impact, risks, and validation evidence. Use a pull request when review or collaboration is useful. Resolve review comments and merge only with the required approval. Never merge to a protected/default branch without explicit authorization.
