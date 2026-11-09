@@ -128,13 +128,13 @@ class AssuranceDocumentTests(unittest.TestCase):
 
     def write_valid_fixture(self):
         (self.root / "MERGE_AND_CHANGE_ASSURANCE.md").write_text(
-            "\\n".join(f"## {section}" for section in hygiene.REQUIRED_ASSURANCE_SECTIONS),
+            "\n".join(f"## {section}" for section in hygiene.REQUIRED_ASSURANCE_SECTIONS),
             encoding="utf-8",
         )
         for path in hygiene.ASSURANCE_REFERENCES:
             target = self.root / path
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text("[Assurance](MERGE_AND_CHANGE_ASSURANCE.md)\\n", encoding="utf-8")
+            target.write_text("[Assurance](MERGE_AND_CHANGE_ASSURANCE.md)\n", encoding="utf-8")
 
     def test_complete_assurance_contract_passes(self):
         self.write_valid_fixture()
@@ -159,7 +159,7 @@ class AssuranceDocumentTests(unittest.TestCase):
     def test_missing_governing_reference_is_rejected(self):
         self.write_valid_fixture()
         path = self.root / "docs/DEVELOPMENT_WORKFLOW.md"
-        path.write_text("No assurance link here\\n", encoding="utf-8")
+        path.write_text("No assurance link here\n", encoding="utf-8")
         errors = hygiene.assurance_document_errors(self.root)
         self.assertTrue(any("docs/DEVELOPMENT_WORKFLOW.md" in error for error in errors))
 
@@ -169,7 +169,7 @@ class AssuranceDocumentTests(unittest.TestCase):
         content = path.read_text(encoding="utf-8")
         content = content.replace(
             "## 4. Five-perspective assessment",
-            "```md\\n## 4. Five-perspective assessment\\n```",
+            "```md\n## 4. Five-perspective assessment\n```",
         )
         path.write_text(content, encoding="utf-8")
         errors = hygiene.assurance_document_errors(self.root)
