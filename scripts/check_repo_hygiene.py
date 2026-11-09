@@ -179,6 +179,34 @@ def workflow_environment_errors(path: Path, content: str) -> list[str]:
     return errors
 
 
+def workflow_job_blocks(content: str) -> dict[str, str]:
+    """Return top-level job blocks without parsing or executing YAML."""
+    lines = content.splitlines()
+    in_jobs = False
+    current_name = None
+    current = []
+    jobs = {}
+    for line in lines:
+        if not in_jobs:
+            if line.strip() == "jobs:":
+                in_jobs = True
+            continue
+        if line and not line[0].isspace() and not line.lstrip().startswith("#"):
+            break
+        match = re.match(r"^  ([A-Za-z0-9_-]+):[ \t]*$", line)
+        if match:
+            if current_name is not None:
+                jobs[current_name] = "\n".join(current)
+            current_name = match.group(1)
+            current = [line]
+            continue
+        if current_name is not None:
+            current.append(line)
+    if current_name is not None:
+        jobs[current_name] = "\n".join(current)
+    return jobs
+
+
 def workflow_step_blocks(content: str) -> list[str]:
     """Return top-level job step blocks without parsing or executing YAML."""
     lines = content.splitlines()
@@ -256,33 +284,51 @@ def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
     if permission_inputs != ["permission-statuses: write"]:
         errors.append(f"{path}: installation token must request only permission-statuses: write")
 
-    blocks = workflow_step_blocks(content)
-    checkout_blocks = [block for block in blocks if "uses: actions/checkout@" in block]
-    preflight_blocks = [block for block in blocks if "run: python3 scripts/authorize_merge.py --preflight" in block]
-    token_blocks = [block for block in blocks if "actions/create-github-app-token@" in block]
+    jobs = workflow_job_blocks(content)
+    preflight_job = jobs.get("preflight", "")
+    authorize_job = jobs.get("authorize", "")
+    if not preflight_job or not authorize_job:
+        errors.append(f"{path}: require separate preflight and environment-protected authorization jobs")
+        return errors
+    if re.search(r"(?m)^    environment:", preflight_job):
+        errors.append(f"{path}: untrusted-comment preflight job must not request a protected environment")
+    if "MERGE_AUTHORIZER_LOGINS: " + "$" + "{{ vars.MERGE_AUTHORIZER_LOGINS }}" not in preflight_job:
+        errors.append(f"{path}: preflight must read the non-secret maintainer allowlist from a repository-level variable")
+    if "secrets." in preflight_job or "MERGE_AUTH_APP" in preflight_job:
+        errors.append(f"{path}: preflight must not access secrets or merge App credentials")
+    if "outputs:" not in preflight_job or "authorized: " + "$" + "{{ steps.preflight.outputs.authorized }}" not in preflight_job:
+        errors.append(f"{path}: preflight job must expose its authorized output")
+    if "needs: preflight" not in authorize_job or "if: needs.preflight.outputs.authorized == 'true'" not in authorize_job:
+        errors.append(f"{path}: environment-protected authorization job must run only after an authorized preflight output")
+
+    preflight_steps = workflow_step_blocks(preflight_job)
+    authorize_steps = workflow_step_blocks(authorize_job)
+    preflight_checkouts = [block for block in preflight_steps if "uses: actions/checkout@" in block]
+    preflight_blocks = [block for block in preflight_steps if "run: python3 scripts/authorize_merge.py --preflight" in block]
+    auth_checkouts = [block for block in authorize_steps if "uses: actions/checkout@" in block]
+    token_blocks = [block for block in authorize_steps if "actions/create-github-app-token@" in block]
     validation_blocks = [
-        block for block in blocks
+        block for block in authorize_steps
         if "run: python3 scripts/authorize_merge.py" in block and "--preflight" not in block
     ]
-    if len(checkout_blocks) != 1 or len(preflight_blocks) != 1 or len(token_blocks) != 1 or len(validation_blocks) != 1:
-        errors.append(f"{path}: require exactly one trusted checkout, preflight, App-token creation and authorization step")
+    if len(preflight_checkouts) != 1 or len(preflight_blocks) != 1 or len(auth_checkouts) != 1 or len(token_blocks) != 1 or len(validation_blocks) != 1:
+        errors.append(f"{path}: require one trusted checkout and preflight in the unprivileged job, then one trusted checkout, App-token creation and authorization in the protected job")
     else:
-        checkout_index = blocks.index(checkout_blocks[0])
-        preflight_index = blocks.index(preflight_blocks[0])
-        token_index = blocks.index(token_blocks[0])
-        validation_index = blocks.index(validation_blocks[0])
-        if checkout_index >= preflight_index or preflight_index >= token_index or token_index >= validation_index:
-            errors.append(f"{path}: require trusted checkout, maintainer preflight, App-token creation and validation in that order")
-        if "ref: " + "$" + "{{ github.event.repository.default_branch }}" not in checkout_blocks[0]:
-            errors.append(f"{path}: checkout step must use the trusted default branch")
-        if "persist-credentials: false" not in checkout_blocks[0]:
-            errors.append(f"{path}: trusted checkout must set persist-credentials: false")
+        if preflight_steps.index(preflight_checkouts[0]) >= preflight_steps.index(preflight_blocks[0]):
+            errors.append(f"{path}: preflight job must check out trusted code before maintainer preflight")
+        if authorize_steps.index(auth_checkouts[0]) >= authorize_steps.index(token_blocks[0]) or authorize_steps.index(token_blocks[0]) >= authorize_steps.index(validation_blocks[0]):
+            errors.append(f"{path}: protected job must check out trusted code, create the App token, then validate authorization")
+        for checkout in (preflight_checkouts[0], auth_checkouts[0]):
+            if "ref: " + "$" + "{{ github.event.repository.default_branch }}" not in checkout:
+                errors.append(f"{path}: both trusted jobs must check out the default branch")
+            if "persist-credentials: false" not in checkout:
+                errors.append(f"{path}: both trusted checkouts must set persist-credentials: false")
         for item in ("GITHUB_EVENT_PATH: " + "$" + "{{ github.event_path }}", "MERGE_AUTHORIZER_LOGINS: " + "$" + "{{ vars.MERGE_AUTHORIZER_LOGINS }}"):
             if item not in preflight_blocks[0]:
                 errors.append(f"{path}: maintainer preflight is missing required input: {item}")
-        if "id: status-token" not in token_blocks[0] or "if: steps.preflight.outputs.authorized == 'true'" not in token_blocks[0]:
-            errors.append(f"{path}: App token creation must have the status-token ID and require successful maintainer preflight")
-        if not re.search(r"uses:\s*actions/create-github-app-token@[0-9a-fA-F]{40}(?:\s|$)", token_blocks[0]):
+        if "id: status-token" not in token_blocks[0]:
+            errors.append(f"{path}: App token creation must use the status-token ID")
+        if not re.search(r"uses:\\s*actions/create-github-app-token@[0-9a-fA-F]{40}(?:\\s|$)", token_blocks[0]):
             errors.append(f"{path}: dedicated status App action must be pinned to a full commit SHA")
         for item in (
             "client-id: " + "$" + "{{ vars.MERGE_AUTH_APP_CLIENT_ID }}",
@@ -294,8 +340,6 @@ def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
         ):
             if item not in token_blocks[0]:
                 errors.append(f"{path}: App-token step is missing required control: {item}")
-        if "if: steps.preflight.outputs.authorized == 'true'" not in validation_blocks[0]:
-            errors.append(f"{path}: status publication must require successful maintainer preflight")
         for item in (
             "GITHUB_TOKEN: " + "$" + "{{ secrets.GITHUB_TOKEN }}",
             "MERGE_AUTH_TOKEN: " + "$" + "{{ steps.status-token.outputs.token }}",
@@ -304,8 +348,8 @@ def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
         ):
             if item not in validation_blocks[0]:
                 errors.append(f"{path}: authorization step is missing required token input: {item}")
-        for index, block in enumerate(blocks):
-            if index != token_index and "MERGE_AUTH_APP" in block:
+        for block in preflight_steps + authorize_steps:
+            if block not in token_blocks and "MERGE_AUTH_APP" in block:
                 errors.append(f"{path}: App credentials may be referenced only by the guarded status-token step")
     return errors
 
