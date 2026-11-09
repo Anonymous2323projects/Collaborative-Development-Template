@@ -167,10 +167,10 @@ class AuthorizationPolicyTests(unittest.TestCase):
         record = f"""## Protected policy change review
 - Changed policy paths: GOVERNANCE.md
 - Base SHA: {BASE}
-- Reason for change: Update governance.
-- Adversarial tests: Tests run.
-- Rollback/recovery: Revert.
-- Independent review reference: report #1.
+- Reason for change: Update governance policy with explicit rationale.
+- Adversarial tests: Fork and same-repository workflow spoof tests executed.
+- Rollback/recovery: Revert the policy commit and restore the previous gate.
+- Independent review reference: Private issue #7 and independent review report.
 - Owner decision: PENDING
 """
         with self.assertRaisesRegex(auth.AuthorizationError, "must list every protected path"):
