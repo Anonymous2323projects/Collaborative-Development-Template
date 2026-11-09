@@ -19,6 +19,16 @@ HEADING_RE = re.compile(r"^\s{0,3}#{1,6}\s+(.+?)\s*#*\s*$", re.MULTILINE)
 HTML_ID_RE = re.compile(r"""\b(?:id|name)\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
 ALLOWED_ENV_FILES = {".env.example"}
 WORKFLOW_DIR = Path(".github/workflows")
+INTEGRATION_REVIEW_DOC = Path("docs/INTEGRATION_AND_MERGE_REVIEW.md")
+INTEGRATION_REVIEW_HEADINGS = (
+    "## 1. Establish the exact scope and baseline",
+    "## 2. Trace implementation to documentation",
+    "## 3. Detect contradictions, paradoxes, and duplication",
+    "## 4. Verify behavior, not just prose",
+    "## 5. Apply all five review lenses",
+    "## 6. Merge gate and post-merge verification",
+    "## 7. Evidence, efficiency, and honest reporting",
+)
 
 def tracked_files() -> list[Path]:
     result = subprocess.run(["git", "ls-files", "-z"], cwd=ROOT, check=True, stdout=subprocess.PIPE)
@@ -130,6 +140,28 @@ def workflow_policy_errors(path: Path, content: str) -> list[str]:
         errors.append(f"{path}: pull_request_target requires a separate security design review and is disallowed by default")
     return errors
 
+def integration_review_contract_errors(files: list[Path], contents: dict[Path, str]) -> list[str]:
+    """Keep the canonical integration/merge gate present and discoverable."""
+    errors = []
+    tracked = set(files)
+    if INTEGRATION_REVIEW_DOC not in tracked:
+        return [f"{INTEGRATION_REVIEW_DOC}: required integration and merge review standard is missing"]
+    review = contents.get(INTEGRATION_REVIEW_DOC, "")
+    if not review:
+        errors.append(f"{INTEGRATION_REVIEW_DOC}: review standard is empty or unreadable")
+    for heading in INTEGRATION_REVIEW_HEADINGS:
+        if heading not in review:
+            errors.append(f"{INTEGRATION_REVIEW_DOC}: required review section missing: {heading}")
+    references = {
+        Path("AGENTS.md"): "docs/INTEGRATION_AND_MERGE_REVIEW.md",
+        Path("docs/DEVELOPMENT_WORKFLOW.md"): "INTEGRATION_AND_MERGE_REVIEW.md",
+        Path("PROJECT_RISK_AND_RELEASE_READINESS.md"): "docs/INTEGRATION_AND_MERGE_REVIEW.md",
+    }
+    for path, target in references.items():
+        if path not in tracked or target not in contents.get(path, ""):
+            errors.append(f"{path}: must reference the canonical integration and merge review standard")
+    return errors
+
 def main() -> int:
     files = tracked_files()
     errors = []
@@ -153,6 +185,7 @@ def main() -> int:
                 errors.append(f"{path}: cannot read workflow: {exc}")
                 continue
             errors.extend(workflow_policy_errors(path, content))
+    errors.extend(integration_review_contract_errors(files, file_cache))
     if errors:
         print("Repository hygiene checks failed:")
         for error in errors:
