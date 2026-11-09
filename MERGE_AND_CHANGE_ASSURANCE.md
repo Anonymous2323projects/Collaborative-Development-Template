@@ -210,7 +210,7 @@ A change is ready for merge only when:
 - systemic recurrence checks are complete where triggered;
 - required CI checks pass on the exact current head;
 - review threads are resolved;
-- backup/recovery is verified where the change is high-impact or hard to reverse;
+- before a high-impact or hard-to-reverse merge, create and verify a recoverable snapshot of the exact pre-merge head and any user-owned work that could be affected; record the backup reference and a realistic rollback/recovery route; a Git commit alone is not assumed to be an independent backup;
 - residual risks are documented and acceptable;
 - the exact-head owner authorization is present where required;
 - no unresolved critical blocker or explicit approval boundary remains.
