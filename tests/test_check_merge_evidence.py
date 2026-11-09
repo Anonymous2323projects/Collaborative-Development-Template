@@ -9,7 +9,7 @@ gate = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(gate)
 
 BASE = "a" * 40
-HEAD = "b" * 40
+REVIEWED = "b" * 40
 
 def valid_record():
     lenses = []
@@ -26,7 +26,7 @@ def valid_record():
 - PR number: #12
 - Base branch: main
 - Base SHA (40 characters): {BASE}
-- Head SHA (40 characters): {HEAD}
+- Head SHA (40 characters): {REVIEWED}
 - Risk: HIGH
 - Goal and user outcome: improve a merge control
 - Scope and non-goals: scoped
@@ -55,7 +55,7 @@ def valid_record():
 | unittest | Python | PASS | run |
 - Complete diff reviewed: yes
 - Checks not run and why: none
-- Exact commit SHA tested: {HEAD}
+- Exact commit SHA tested: {REVIEWED}
 
 ## Systemic recurrence review
 - Was this change prompted by a defect, incident, near miss, or procedural weakness? YES / NO: YES
@@ -81,32 +81,32 @@ def valid_record():
 
 class MergeEvidenceTests(unittest.TestCase):
     def test_complete_record_passes(self):
-        errors = gate.validate_record(valid_record(), 12, "main", BASE, HEAD)
+        errors = gate.validate_record(valid_record(), 12, "main", BASE, REVIEWED)
         self.assertEqual(errors, [])
 
     def test_missing_lens_fails(self):
         record = valid_record().replace("### Trust and human impact", "### Trust perspective")
-        errors = gate.validate_record(record, 12, "main", BASE, HEAD)
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("Trust and human impact" in error for error in errors))
 
     def test_blocked_lens_fails(self):
         record = valid_record().replace("- Assessment: PASS\n- Evidence:", "- Assessment: BLOCKED\n- Evidence:", 1)
-        errors = gate.validate_record(record, 12, "main", BASE, HEAD)
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("BLOCKED" in error for error in errors))
 
     def test_identity_mismatch_fails(self):
-        record = valid_record().replace(f"- Head SHA (40 characters): {HEAD}", f"- Head SHA (40 characters): {BASE}")
-        errors = gate.validate_record(record, 12, "main", BASE, HEAD)
+        record = valid_record().replace(f"- Reviewed code SHA (parent of this evidence-only commit): {REVIEWED}", f"- Head SHA (40 characters): {BASE}")
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("Head SHA" in error for error in errors))
 
     def test_high_risk_requires_research_and_official_source(self):
         record = valid_record().replace("https://doi.org/10.1000/example", "no citation")
-        errors = gate.validate_record(record, 12, "main", BASE, HEAD)
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("peer-reviewed" in error for error in errors))
 
     def test_missing_residual_risk_fails(self):
         record = valid_record().replace("- Residual risk and mitigation: none identified", "- Residual risk and mitigation: TODO", 1)
-        errors = gate.validate_record(record, 12, "main", BASE, HEAD)
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("residual risk" in error.lower() for error in errors))
 
 if __name__ == "__main__":
