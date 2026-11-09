@@ -59,7 +59,7 @@ def non_placeholder(value: str) -> bool:
         normalized.startswith("[") and normalized.endswith("]")
     )
 
-def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, head_sha: str) -> list[str]:
+def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, reviewed_code_sha: str) -> list[str]:
     errors: list[str] = []
     for heading in REQUIRED_SECTIONS:
         if not section(text, heading):
@@ -70,7 +70,7 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, hea
         "PR number": f"#{pr_number}",
         "Base branch": base_ref,
         "Base SHA (40 characters)": base_sha,
-        "Head SHA (40 characters)": head_sha,
+        "Reviewed code SHA (parent of this evidence-only commit)": reviewed_code_sha,
     }
     for name, value in expected.items():
         actual = field(identity, name)
@@ -139,8 +139,8 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, hea
     if not non_placeholder(field(validation, "Complete diff reviewed")):
         errors.append("Confirm whether the complete diff was reviewed.")
     tested_sha = field(validation, "Exact commit SHA tested")
-    if not SHA_RE.fullmatch(tested_sha):
-        errors.append("Record the exact full 40-character SHA that was tested.")
+    if tested_sha != reviewed_code_sha:
+        errors.append("The exact commit SHA tested must equal the reviewed code SHA.")
 
     systemic = section(text, "## Systemic recurrence review")
     for label in (
@@ -181,14 +181,23 @@ def main(argv: list[str]) -> int:
         number = int(pr["number"] if "number" in pr else event["number"])
         base_ref = pr["base"]["ref"]
         base_sha = pr["base"]["sha"]
-        head_sha = pr["head"]["sha"]
-        if not SHA_RE.fullmatch(base_sha) or not SHA_RE.fullmatch(head_sha):
+        event_head_sha = pr["head"]["sha"]
+        if not SHA_RE.fullmatch(base_sha) or not SHA_RE.fullmatch(event_head_sha):
             raise GateError("GitHub event did not contain valid full commit SHAs.")
+        import subprocess
+        commit_line = subprocess.check_output(["git", "rev-list", "--parents", "-n", "1", "HEAD"], text=True).strip().split()
+        if len(commit_line) != 2 or commit_line[0] != event_head_sha:
+            raise GateError("The PR head must be a single-parent evidence-only commit checked out by exact SHA.")
+        changed_paths = subprocess.check_output(["git", "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD"], text=True).splitlines()
+        expected_path = f"reviews/PR-{number}.md"
+        if changed_paths != [expected_path]:
+            raise GateError(f"The final PR commit must change only {expected_path}; put all code changes before the evidence-only commit.")
+        reviewed_code_sha = commit_line[1]
         path = ROOT / "reviews" / f"PR-{number}.md"
         if not path.is_file():
             raise GateError(f"Missing required PR assurance record: reviews/PR-{number}.md")
         text = path.read_text(encoding="utf-8")
-        errors = validate_record(text, number, base_ref, base_sha, head_sha)
+        errors = validate_record(text, number, base_ref, base_sha, reviewed_code_sha)
     except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
         print(f"Merge evidence gate failed closed: {exc}")
         return 1
@@ -197,7 +206,7 @@ def main(argv: list[str]) -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    print(f"Merge evidence structure passed for PR #{number} at exact head {head_sha}.")
+    print(f"Merge evidence structure passed for PR #{number}; reviewed code SHA {reviewed_code_sha} is the parent of the evidence-only head commit.")
     print("This validates structure and identity only, not the truth or quality of the review.")
     return 0
 
