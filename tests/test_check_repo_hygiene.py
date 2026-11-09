@@ -112,6 +112,15 @@ jobs:
             hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content),
             [],
         )
+        expanded_permissions = content.replace(
+            "          permission-statuses: write\n",
+            "          permission-statuses: write\n          permission-contents: read\n",
+        )
+        errors = hygiene.workflow_policy_errors(
+            Path(".github/workflows/merge-authorization.yml"),
+            expanded_permissions,
+        )
+        self.assertTrue(any("only permission-statuses: write" in error for error in errors))
         missing_repository_scope = content.replace(
             "repositories: " + "$" + "{{ github.event.repository.name }}\n",
             "",
