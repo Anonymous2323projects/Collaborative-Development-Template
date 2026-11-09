@@ -13,9 +13,11 @@ jobs:
     name: Five-lens merge evidence
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the pull request
+      - name: Check out the exact pull request head and its parent
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 2
           persist-credentials: false
       - name: Validate PR-specific assurance record
         env:
