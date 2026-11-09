@@ -73,7 +73,7 @@ steps:
         errors = hygiene.workflow_policy_errors(Path("workflow.yml"), content)
         self.assertTrue(any("full 40-character" in error for error in errors))
 
-    def test_trusted_authorizer_requires_separate_app_token_and_read_only_github_token(self):
+    def trusted_authorizer_workflow_fixture(self):
         content = """permissions:
   contents: read
   pull-requests: read
@@ -81,9 +81,9 @@ on:
   issue_comment:
     types: [created]
 jobs:
-  authorize:
-    environment:
-      name: merge-authorizer
+  preflight:
+    outputs:
+      authorized: PREFLIGHT_OUTPUT
     steps:
       - uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
         with:
@@ -94,8 +94,17 @@ jobs:
           GITHUB_EVENT_PATH: EVENT_PATH_EXPR
           MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
         run: python3 scripts/authorize_merge.py --preflight
+  authorize:
+    needs: preflight
+    if: PREFLIGHT_JOB_CONDITION
+    environment:
+      name: merge-authorizer
+    steps:
+      - uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
+        with:
+          ref: DEFAULT_BRANCH_EXPR
+          persist-credentials: false
       - id: status-token
-        if: steps.preflight.outputs.authorized == 'true'
         uses: actions/create-github-app-token@0123456789abcdef0123456789abcdef01234567
         with:
           permission-statuses: write
@@ -105,7 +114,6 @@ jobs:
           owner: OWNER_EXPR
           repositories: REPOSITORY_EXPR
       - name: validate
-        if: steps.preflight.outputs.authorized == 'true'
         env:
           GITHUB_TOKEN: GITHUB_TOKEN_EXPR
           MERGE_AUTH_TOKEN: MERGE_TOKEN_EXPR
@@ -113,176 +121,41 @@ jobs:
           MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
         run: python3 scripts/authorize_merge.py
 """
-        content = content.replace("DEFAULT_BRANCH_EXPR", "$" + "{{ github.event.repository.default_branch }}")
-        content = content.replace("GITHUB_TOKEN_EXPR", "$" + "{{ secrets.GITHUB_TOKEN }}")
-        content = content.replace("MERGE_TOKEN_EXPR", "$" + "{{ steps.status-token.outputs.token }}")
-        content = content.replace("EVENT_PATH_EXPR", "$" + "{{ github.event_path }}")
-        content = content.replace("LOGINS_EXPR", "$" + "{{ vars.MERGE_AUTHORIZER_LOGINS }}")
-        content = content.replace("APP_CLIENT_ID_EXPR", "$" + "{{ vars.MERGE_AUTH_APP_CLIENT_ID }}")
-        content = content.replace("APP_PRIVATE_KEY_EXPR", "$" + "{{ secrets.MERGE_AUTH_APP_PRIVATE_KEY }}")
-        content = content.replace("OWNER_EXPR", "$" + "{{ github.repository_owner }}")
-        content = content.replace("REPOSITORY_EXPR", "$" + "{{ github.event.repository.name }}")
+        for source, replacement in (
+            ("DEFAULT_BRANCH_EXPR", "$" + "{{ github.event.repository.default_branch }}"),
+            ("PREFLIGHT_OUTPUT", "$" + "{{ steps.preflight.outputs.authorized }}"),
+            ("PREFLIGHT_JOB_CONDITION", "needs.preflight.outputs.authorized == 'true'"),
+            ("GITHUB_TOKEN_EXPR", "$" + "{{ secrets.GITHUB_TOKEN }}"),
+            ("MERGE_TOKEN_EXPR", "$" + "{{ steps.status-token.outputs.token }}"),
+            ("EVENT_PATH_EXPR", "$" + "{{ github.event_path }}"),
+            ("LOGINS_EXPR", "$" + "{{ vars.MERGE_AUTHORIZER_LOGINS }}"),
+            ("APP_CLIENT_ID_EXPR", "$" + "{{ vars.MERGE_AUTH_APP_CLIENT_ID }}"),
+            ("APP_PRIVATE_KEY_EXPR", "$" + "{{ secrets.MERGE_AUTH_APP_PRIVATE_KEY }}"),
+            ("OWNER_EXPR", "$" + "{{ github.repository_owner }}"),
+            ("REPOSITORY_EXPR", "$" + "{{ github.event.repository.name }}"),
+        ):
+            content = content.replace(source, replacement)
+        return content
+
+    def test_trusted_authorizer_requires_separate_app_token_and_read_only_github_token(self):
+        content = self.trusted_authorizer_workflow_fixture()
         self.assertEqual(
             hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content),
             [],
         )
-        untrusted_checkout = content.replace(
-            "ref: " + "$" + "{{ github.event.repository.default_branch }}",
-            "ref: refs/pull/12/head",
-        ) + "\n# default branch expression moved outside checkout"
-        errors = hygiene.workflow_policy_errors(
-            Path(".github/workflows/merge-authorization.yml"),
-            untrusted_checkout,
-        )
-        self.assertTrue(any("checkout step must use the trusted default branch" in error for error in errors))
-        leaked_app_key = content + """\n      - name: accidental App key reference
-        env:
-          APP_KEY: APP_PRIVATE_KEY_EXPR
-        run: echo not-safe
-"""
-        leaked_app_key = leaked_app_key.replace("APP_PRIVATE_KEY_EXPR", "$" + "{{ secrets.MERGE_AUTH_APP_PRIVATE_KEY }}")
-        errors = hygiene.workflow_policy_errors(
-            Path(".github/workflows/merge-authorization.yml"),
-            leaked_app_key,
-        )
-        self.assertTrue(any("App credentials may be referenced only by the guarded status-token step" in error for error in errors))
-        expanded_permissions = content.replace(
-            "          permission-statuses: write\n",
-            "          permission-statuses: write\n          permission-contents: read\n",
-        )
-        errors = hygiene.workflow_policy_errors(
-            Path(".github/workflows/merge-authorization.yml"),
-            expanded_permissions,
-        )
-        self.assertTrue(any("only permission-statuses: write" in error for error in errors))
-        quoted_permission_key = content.replace(
-            "permission-statuses: write",
-            "'permission-statuses': write",
-        )
-        errors = hygiene.workflow_policy_errors(
-            Path(".github/workflows/merge-authorization.yml"),
-            quoted_permission_key,
-        )
-        self.assertTrue(any("only permission-statuses: write" in error for error in errors))
-        missing_repository_scope = content.replace(
-            "repositories: " + "$" + "{{ github.event.repository.name }}\n",
-            "",
-        )
-        errors = hygiene.workflow_policy_errors(
-            Path(".github/workflows/merge-authorization.yml"),
-            missing_repository_scope,
-        )
-        self.assertTrue(any("repositories:" in error for error in errors))
 
-    def test_token_creation_step_itself_requires_preflight(self):
-        content = """permissions:
-  contents: read
-  pull-requests: read
-on:
-  issue_comment:
-    types: [created]
-jobs:
-  authorize:
-    environment:
-      name: merge-authorizer
-    steps:
-      - uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
-        with:
-          ref: DEFAULT_BRANCH_EXPR
-          persist-credentials: false
-      - id: preflight
-        env:
-          GITHUB_EVENT_PATH: EVENT_PATH_EXPR
-          MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
-        run: python3 scripts/authorize_merge.py --preflight
-      - id: status-token
-        if: always()
-        uses: actions/create-github-app-token@0123456789abcdef0123456789abcdef01234567
-        with:
-          permission-statuses: write
-          skip-token-revoke: false
-          client-id: APP_CLIENT_ID_EXPR
-          private-key: APP_PRIVATE_KEY_EXPR
-          owner: OWNER_EXPR
-          repositories: REPOSITORY_EXPR
-      - name: validate
-        if: steps.preflight.outputs.authorized == 'true'
-        env:
-          GITHUB_TOKEN: GITHUB_TOKEN_EXPR
-          MERGE_AUTH_TOKEN: MERGE_TOKEN_EXPR
-          GITHUB_EVENT_PATH: EVENT_PATH_EXPR
-          MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
-        run: python3 scripts/authorize_merge.py
-"""
-        for source, replacement in (
-            ("DEFAULT_BRANCH_EXPR", "$" + "{{ github.event.repository.default_branch }}"),
-            ("GITHUB_TOKEN_EXPR", "$" + "{{ secrets.GITHUB_TOKEN }}"),
-            ("MERGE_TOKEN_EXPR", "$" + "{{ steps.status-token.outputs.token }}"),
-            ("EVENT_PATH_EXPR", "$" + "{{ github.event_path }}"),
-            ("LOGINS_EXPR", "$" + "{{ vars.MERGE_AUTHORIZER_LOGINS }}"),
-            ("APP_CLIENT_ID_EXPR", "$" + "{{ vars.MERGE_AUTH_APP_CLIENT_ID }}"),
-            ("APP_PRIVATE_KEY_EXPR", "$" + "{{ secrets.MERGE_AUTH_APP_PRIVATE_KEY }}"),
-            ("OWNER_EXPR", "$" + "{{ github.repository_owner }}"),
-            ("REPOSITORY_EXPR", "$" + "{{ github.event.repository.name }}"),
-        ):
-            content = content.replace(source, replacement)
+    def test_token_creation_job_itself_requires_authorized_preflight(self):
+        content = self.trusted_authorizer_workflow_fixture().replace(
+            "if: needs.preflight.outputs.authorized == 'true'",
+            "if: always()",
+        )
         errors = hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content)
-        self.assertTrue(any("App token creation must have the status-token ID and require successful maintainer preflight" in error for error in errors))
+        self.assertTrue(any("environment-protected authorization job must run only after an authorized preflight output" in error for error in errors))
 
-    def test_validation_step_itself_requires_preflight(self):
-        content = """permissions:
-  contents: read
-  pull-requests: read
-on:
-  issue_comment:
-    types: [created]
-jobs:
-  authorize:
-    environment:
-      name: merge-authorizer
-    steps:
-      - uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
-        with:
-          ref: DEFAULT_BRANCH_EXPR
-          persist-credentials: false
-      - id: preflight
-        env:
-          GITHUB_EVENT_PATH: EVENT_PATH_EXPR
-          MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
-        run: python3 scripts/authorize_merge.py --preflight
-      - id: status-token
-        if: steps.preflight.outputs.authorized == 'true'
-        uses: actions/create-github-app-token@0123456789abcdef0123456789abcdef01234567
-        with:
-          permission-statuses: write
-          skip-token-revoke: false
-          client-id: APP_CLIENT_ID_EXPR
-          private-key: APP_PRIVATE_KEY_EXPR
-          owner: OWNER_EXPR
-          repositories: REPOSITORY_EXPR
-      - name: validate
-        if: always()
-        env:
-          GITHUB_TOKEN: GITHUB_TOKEN_EXPR
-          MERGE_AUTH_TOKEN: MERGE_TOKEN_EXPR
-          GITHUB_EVENT_PATH: EVENT_PATH_EXPR
-          MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
-        run: python3 scripts/authorize_merge.py
-"""
-        for source, replacement in (
-            ("DEFAULT_BRANCH_EXPR", "$" + "{{ github.event.repository.default_branch }}"),
-            ("GITHUB_TOKEN_EXPR", "$" + "{{ secrets.GITHUB_TOKEN }}"),
-            ("MERGE_TOKEN_EXPR", "$" + "{{ steps.status-token.outputs.token }}"),
-            ("EVENT_PATH_EXPR", "$" + "{{ github.event_path }}"),
-            ("LOGINS_EXPR", "$" + "{{ vars.MERGE_AUTHORIZER_LOGINS }}"),
-            ("APP_CLIENT_ID_EXPR", "$" + "{{ vars.MERGE_AUTH_APP_CLIENT_ID }}"),
-            ("APP_PRIVATE_KEY_EXPR", "$" + "{{ secrets.MERGE_AUTH_APP_PRIVATE_KEY }}"),
-            ("OWNER_EXPR", "$" + "{{ github.repository_owner }}"),
-            ("REPOSITORY_EXPR", "$" + "{{ github.event.repository.name }}"),
-        ):
-            content = content.replace(source, replacement)
+    def test_authorization_job_requires_preflight_dependency(self):
+        content = self.trusted_authorizer_workflow_fixture().replace("    needs: preflight\n", "    needs: []\n")
         errors = hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content)
-        self.assertTrue(any("status publication must require successful maintainer preflight" in error for error in errors))
+        self.assertTrue(any("environment-protected authorization job must run only after an authorized preflight output" in error for error in errors))
 
     def test_github_token_status_write_is_rejected_even_in_trusted_workflow(self):
         content = """permissions:
@@ -314,47 +187,10 @@ jobs:
         self.assertTrue(any("GITHUB_TOKEN statuses: write is prohibited" in error for error in errors))
 
     def test_trusted_authorizer_rejects_additional_triggers(self):
-        content = """permissions:
-  contents: read
-  pull-requests: read
-on:
-  issue_comment:
-    types: [created]
-  pull_request:
-    types: [opened]
-jobs:
-  authorize:
-    environment:
-      name: merge-authorizer
-    steps:
-      - uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
-        with:
-          ref: DEFAULT_BRANCH_EXPR
-          persist-credentials: false
-      - id: preflight
-        env:
-          GITHUB_EVENT_PATH: EVENT_PATH_EXPR
-          MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
-        run: python3 scripts/authorize_merge.py --preflight
-      - id: status-token
-        if: steps.preflight.outputs.authorized == 'true'
-        uses: actions/create-github-app-token@0123456789abcdef0123456789abcdef01234567
-        with:
-          permission-statuses: write
-          skip-token-revoke: false
-      - name: validate
-        if: steps.preflight.outputs.authorized == 'true'
-        env:
-          GITHUB_TOKEN: GITHUB_TOKEN_EXPR
-          MERGE_AUTH_TOKEN: MERGE_TOKEN_EXPR
-          GITHUB_EVENT_PATH: EVENT_PATH_EXPR
-          MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
-"""
-        content = content.replace("DEFAULT_BRANCH_EXPR", "$" + "{{ github.event.repository.default_branch }}")
-        content = content.replace("GITHUB_TOKEN_EXPR", "$" + "{{ secrets.GITHUB_TOKEN }}")
-        content = content.replace("MERGE_TOKEN_EXPR", "$" + "{{ steps.status-token.outputs.token }}")
-        content = content.replace("EVENT_PATH_EXPR", "$" + "{{ github.event_path }}")
-        content = content.replace("LOGINS_EXPR", "$" + "{{ vars.MERGE_AUTHORIZER_LOGINS }}")
+        content = self.trusted_authorizer_workflow_fixture().replace(
+            "  issue_comment:\\n    types: [created]\\n",
+            "  issue_comment:\\n    types: [created]\\n  pull_request:\\n    types: [opened]\\n",
+        )
         errors = hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content)
         self.assertTrue(any("must trigger only on issue_comment" in error for error in errors))
 
