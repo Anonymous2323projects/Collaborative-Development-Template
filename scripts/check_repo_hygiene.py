@@ -172,9 +172,12 @@ def workflow_environment_errors(path: Path, content: str) -> list[str]:
 
 def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
     """Enforce the separate status App and read-only GITHUB_TOKEN design."""
-    if path.as_posix() != ".github/workflows/merge-authorization.yml":
-        return []
+    trusted_path = path.as_posix() == ".github/workflows/merge-authorization.yml"
     errors = []
+    if not trusted_path:
+        if "MERGE_AUTH_APP_PRIVATE_KEY" in content or "MERGE_AUTH_APP_CLIENT_ID" in content:
+            errors.append(f"{path}: only the trusted authorization workflow may reference the merge App credentials")
+        return errors
     if workflow_events(content) != ["issue_comment"]:
         errors.append(f"{path}: trusted authorization workflow must trigger only on issue_comment")
     permissions = re.search(r"(?ms)^permissions:\s*\n((?:[ \t]+.*\n)*)", content)
@@ -194,6 +197,8 @@ def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
         "run: python3 scripts/authorize_merge.py --preflight",
         "GITHUB_TOKEN: " + "$" + "{{ secrets.GITHUB_TOKEN }}",
         "MERGE_AUTH_TOKEN: " + "$" + "{{ steps.status-token.outputs.token }}",
+        "MERGE_AUTH_APP_PRIVATE_KEY",
+        "MERGE_AUTH_APP_CLIENT_ID",
         "permission-statuses: write",
         "skip-token-revoke: false",
     )
