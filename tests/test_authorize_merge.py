@@ -1,6 +1,9 @@
 """Unit tests for exact-head maintainer authorization policy."""
 import base64
 import importlib.util
+import json
+import os
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -144,11 +147,58 @@ class AuthorizationPolicyTests(unittest.TestCase):
             with self.assertRaisesRegex(auth.AuthorizationError, "completely enumerate PR files"):
                 auth.reject_policy_changes("owner", "repo", 12, "read-token")
 
+    def test_authorized_preflight_runs_before_status_token_creation(self):
+        event = {
+            "issue": {"number": 12, "pull_request": {"url": "https://api.github.com/repos/owner/repo/pulls/12"}},
+            "comment": {"body": "/authorize-merge " + HEAD, "user": {"login": "maintainer"}},
+            "repository": {"owner": {"type": "User", "login": "maintainer"}},
+        }
+        with tempfile.NamedTemporaryFile("w", encoding="utf-8", delete=False) as event_file, \
+             tempfile.NamedTemporaryFile("r", encoding="utf-8", delete=False) as output_file:
+            json.dump(event, event_file)
+            event_path, output_path = event_file.name, output_file.name
+        try:
+            with patch.dict(os.environ, {
+                "GITHUB_EVENT_PATH": event_path,
+                "GITHUB_OUTPUT": output_path,
+                "MERGE_AUTHORIZER_LOGINS": "",
+            }):
+                self.assertEqual(auth.preflight(), 0)
+            self.assertIn("authorized=true", Path(output_path).read_text(encoding="utf-8"))
+        finally:
+            Path(event_path).unlink(missing_ok=True)
+            Path(output_path).unlink(missing_ok=True)
+
+    def test_unauthorized_preflight_does_not_enable_status_token(self):
+        event = {
+            "issue": {"number": 12, "pull_request": {"url": "https://api.github.com/repos/owner/repo/pulls/12"}},
+            "comment": {"body": "/authorize-merge " + HEAD, "user": {"login": "outsider"}},
+            "repository": {"owner": {"type": "User", "login": "maintainer"}},
+        }
+        with tempfile.NamedTemporaryFile("w", encoding="utf-8", delete=False) as event_file, \
+             tempfile.NamedTemporaryFile("r", encoding="utf-8", delete=False) as output_file:
+            json.dump(event, event_file)
+            event_path, output_path = event_file.name, output_file.name
+        try:
+            with patch.dict(os.environ, {
+                "GITHUB_EVENT_PATH": event_path,
+                "GITHUB_OUTPUT": output_path,
+                "MERGE_AUTHORIZER_LOGINS": "",
+            }):
+                self.assertEqual(auth.preflight(), 0)
+            self.assertIn("authorized=false", Path(output_path).read_text(encoding="utf-8"))
+        finally:
+            Path(event_path).unlink(missing_ok=True)
+            Path(output_path).unlink(missing_ok=True)
+
     def test_workflow_uses_trusted_default_branch_and_isolated_status_app(self):
         workflow = (Path(__file__).resolve().parents[1] / ".github" / "workflows" / "merge-authorization.yml").read_text(encoding="utf-8")
         self.assertIn("issue_comment:", workflow)
         self.assertIn("ref: " + "$" + "{{ github.event.repository.default_branch }}", workflow)
         self.assertIn("name: merge-authorizer", workflow)
+        self.assertIn("run: python3 scripts/authorize_merge.py --preflight", workflow)
+        self.assertIn("if: steps.preflight.outputs.authorized == 'true'", workflow)
+        self.assertLess(workflow.index("--preflight"), workflow.index("actions/create-github-app-token"))
         self.assertIn("actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510", workflow)
         self.assertIn("permission-statuses: write", workflow)
         self.assertIn("MERGE_AUTH_TOKEN:", workflow)
