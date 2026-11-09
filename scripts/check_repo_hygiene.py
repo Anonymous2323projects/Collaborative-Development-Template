@@ -273,7 +273,7 @@ def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
                 errors.append(f"{path}: maintainer preflight is missing required input: {item}")
         if "id: status-token" not in token_blocks[0] or "if: steps.preflight.outputs.authorized == 'true'" not in token_blocks[0]:
             errors.append(f"{path}: App token creation must have the status-token ID and require successful maintainer preflight")
-        if not re.search(r"uses:\\s*actions/create-github-app-token@[0-9a-fA-F]{40}(?:\\s|$)", token_blocks[0]):
+        if not re.search(r"uses:\s*actions/create-github-app-token@[0-9a-fA-F]{40}(?:\s|$)", token_blocks[0]):
             errors.append(f"{path}: dedicated status App action must be pinned to a full commit SHA")
         for item in (
             "client-id: " + "$" + "{{ vars.MERGE_AUTH_APP_CLIENT_ID }}",
