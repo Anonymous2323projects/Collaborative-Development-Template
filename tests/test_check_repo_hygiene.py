@@ -105,6 +105,7 @@ jobs:
           MERGE_AUTH_TOKEN: MERGE_TOKEN_EXPR
           GITHUB_EVENT_PATH: EVENT_PATH_EXPR
           MERGE_AUTHORIZER_LOGINS: LOGINS_EXPR
+        run: python3 scripts/authorize_merge.py
 """
         content = content.replace("DEFAULT_BRANCH_EXPR", "$" + "{{ github.event.repository.default_branch }}")
         content = content.replace("GITHUB_TOKEN_EXPR", "$" + "{{ secrets.GITHUB_TOKEN }}")
