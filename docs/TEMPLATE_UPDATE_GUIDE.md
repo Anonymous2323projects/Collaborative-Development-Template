@@ -19,6 +19,7 @@ When adopting the template, copy [TEMPLATE_VERSION_TEMPLATE.md](TEMPLATE_VERSION
 5. If the previous SHA is known, compare that exact upstream commit with the new SHA. A GitHub compare URL is `https://github.com/Anonymous2323projects/Collaborative-Development-Template/compare/OLD_SHA...NEW_SHA`.
 6. If the baseline is unknown, say so and perform a current-state, file-by-file gap analysis. Do not claim a historical diff.
 7. Make one compact impact list for relevant changes only: what changed, whether this project needs it, which local files are affected, any conflict/risk, and the proposed action (adopt, adapt, already covered, not applicable, or defer). Do not create a separate row for every file when several files form one coherent change.
+8. If an upstream change corrects a material procedural failure, perform a systemic recurrence review in the downstream project. Search all related procedures, instructions, templates, automation, repository settings, tests, and user-facing claims—not only the files changed upstream. Adapt and technically enforce the correction where applicable; do not blindly copy upstream controls that do not fit the downstream platform or risk.
 
 Do not rely on stale chat context, cached Project uploads, tags, or moving branch names as proof of current state.
 
