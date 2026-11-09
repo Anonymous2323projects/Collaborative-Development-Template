@@ -95,7 +95,7 @@ class MergeEvidenceTests(unittest.TestCase):
         self.assertTrue(any("BLOCKED" in error for error in errors))
 
     def test_identity_mismatch_fails(self):
-        record = valid_record().replace(f"- Reviewed code SHA (parent of this evidence-only commit): {REVIEWED}", f"- Head SHA (40 characters): {BASE}")
+        record = valid_record().replace(f"- Reviewed code SHA (parent of this evidence-only commit): {REVIEWED}", f"- Reviewed code SHA (parent of this evidence-only commit): {BASE}")
         errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("Reviewed code SHA" in error for error in errors))
 
