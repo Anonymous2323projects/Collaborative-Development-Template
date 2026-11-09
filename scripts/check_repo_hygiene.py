@@ -205,12 +205,16 @@ def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
         "repositories: " + "$" + "{{ github.event.repository.name }}",
         "permission-statuses: write",
         "skip-token-revoke: false",
+        "id: status-token",
     )
     for item in required:
         if item not in content:
             errors.append(f"{path}: trusted authorization workflow is missing required control: {item}")
     if not re.search(r"uses:\s*actions/create-github-app-token@[0-9a-fA-F]{40}(?:\s|$)", content):
         errors.append(f"{path}: dedicated status App action must be pinned to a full commit SHA")
+    permission_inputs = re.findall(r"(?m)^[ \t]*permission-([a-z-]+):[ \t]*(read|write)[ \t]*$", content)
+    if permission_inputs != [("statuses", "write")]:
+        errors.append(f"{path}: installation token must request only permission-statuses: write")
     if content.count("if: steps.preflight.outputs.authorized == 'true'") < 2:
         errors.append(f"{path}: App token creation and status publication must both require successful maintainer preflight")
     if content.find("--preflight") < 0 or content.find("--preflight") > content.find("actions/create-github-app-token"):
