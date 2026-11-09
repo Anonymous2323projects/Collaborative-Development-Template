@@ -47,7 +47,14 @@ In the target repository:
    - `MERGE_AUTH_APP_CLIENT_ID`: the App's Client ID.
 5. Add the following environment secret:
    - `MERGE_AUTH_APP_PRIVATE_KEY`: the complete PEM private-key contents generated for this App.
-6. Optionally set `MERGE_AUTHORIZER_LOGINS` to a comma-separated allowlist of exact GitHub login names. If it is set, include the repository owner. If it is absent in a user-owned repository, the trusted authorizer defaults to the repository owner.
+
+The workflow first runs an unprivileged preflight job that has **no environment attached**. Only a preflight result confirming an authorized maintainer allows the separate `authorize` job to request the protected `merge-authorizer` environment. Therefore the optional non-secret maintainer allowlist must be available to the preflight without environment access:
+
+1. Open **Settings → Secrets and variables → Actions → Variables** (repository-level variables, not environment variables).
+2. Optionally create `MERGE_AUTHORIZER_LOGINS` as a comma-separated allowlist of exact GitHub login names. If set, include the repository owner.
+3. If it is absent in a user-owned repository, the trusted preflight defaults to the repository owner. For organization-owned repositories, configure an explicit allowlist.
+
+Do not move the App Client ID or private key out of the protected environment. The allowlist contains non-secret login names; it must not contain credentials.
 
 **Secret handling:**
 
@@ -64,7 +71,9 @@ The Actions environment is a practical least-privilege control, not a hardware-b
 Confirm the default-branch workflow:
 
 - triggers only on `issue_comment`;
-- checks the authorized owner before creating the App token;
+- runs maintainer preflight in a separate job with no protected environment attached;
+- gates the environment-protected authorization job on the successful authorized preflight output;
+- reads the optional non-secret maintainer allowlist from a repository-level Actions variable, not from the protected environment;
 - checks out policy code from the default branch, not the PR head;
 - does not execute PR code or workflows;
 - uses `GITHUB_TOKEN` only with read permissions;
