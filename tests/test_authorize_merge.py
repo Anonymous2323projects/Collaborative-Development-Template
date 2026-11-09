@@ -98,7 +98,7 @@ class AuthorizationPolicyTests(unittest.TestCase):
 
     def test_evidence_commit_must_change_only_the_pr_record(self):
         with patch.object(auth, "api_request", return_value=commit_response(path="scripts/authorize_merge.py")):
-            with self.assertRaisesRegex(auth.AuthorizationError, "must change exactly one evidence file"):
+            with self.assertRaisesRegex(auth.AuthorizationError, "must add or update only"):
                 auth.verify_evidence("owner", "repo", 12, valid_pr(), "read-token")
 
     def test_evidence_content_must_be_base64(self):
