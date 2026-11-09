@@ -106,6 +106,65 @@ jobs:
         errors = hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content)
         self.assertTrue(any("statuses: write is restricted" in error for error in errors))
 
+    def test_only_trusted_authorizer_may_reference_app_key_environment(self):
+        trusted = """permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  authorize:
+    environment:
+      name: merge-authorizer
+"""
+        self.assertEqual(
+            hygiene.workflow_environment_errors(Path(".github/workflows/merge-authorization.yml"), trusted),
+            [],
+        )
+        untrusted = """permissions:
+  contents: read
+jobs:
+  deploy:
+    environment: merge-authorizer
+"""
+        errors = hygiene.workflow_environment_errors(Path(".github/workflows/untrusted.yml"), untrusted)
+        self.assertTrue(any("only the trusted authorization workflow" in error for error in errors))
+
+    def test_untrusted_workflow_cannot_construct_dynamic_environment_name(self):
+        content = """permissions:
+  contents: read
+jobs:
+  deploy:
+    environment:
+      name: ENV_EXPR
+"""
+        content = content.replace("ENV_EXPR", "$" + "{{ vars.DEPLOY_ENV }}")
+        errors = hygiene.workflow_environment_errors(Path(".github/workflows/untrusted.yml"), content)
+        self.assertTrue(any("dynamic environment names" in error for error in errors))
+
+    def test_other_static_deployment_environments_remain_allowed(self):
+        content = """permissions:
+  contents: read
+jobs:
+  deploy:
+    environment: staging
+"""
+        self.assertEqual(
+            hygiene.workflow_environment_errors(Path(".github/workflows/deploy.yml"), content),
+            [],
+        )
+
+    def test_trusted_authorizer_requires_literal_environment_name(self):
+        content = """permissions:
+  contents: read
+jobs:
+  authorize:
+    environment:
+      name: ENV_EXPR
+"""
+        content = content.replace("ENV_EXPR", "$" + "{{ vars.MERGE_ENV }}")
+        errors = hygiene.workflow_environment_errors(Path(".github/workflows/merge-authorization.yml"), content)
+        self.assertTrue(any("must use exactly one literal merge-authorizer environment" in error for error in errors))
+        self.assertTrue(any("must not be dynamically constructed" in error for error in errors))
+
     def test_pull_request_target_is_rejected_by_default(self):
         content = """permissions:
   contents: read
