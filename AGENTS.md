@@ -103,6 +103,19 @@ At meaningful maintenance checkpoints, check relevant upstream changes when repo
 
 ## 7. Required development workflow
 
+### Review before and after substantial work
+
+Review is not only a final check. Before a substantial work round or a meaningful change:
+
+- Verify the current branch, commit, working state, relevant files, dependencies, existing decisions, and affected parts of the project.
+- Confirm the goal, scope, acceptance criteria, constraints, and what must remain unchanged.
+- Consider the five priority perspectives: safety/security; legal solidity and privacy; usability; trust and human impact; freedom and ownership.
+- Identify likely side effects, dependencies, uncertainties, required approvals, and how the change can be reversed or recovered.
+- Research current authoritative information when platform behaviour, law, licences, security, privacy, or compatibility may have changed.
+- Choose the smallest effective approach and decide which checks will provide meaningful evidence.
+
+After a substantial change, compare the actual result with that starting point and intended scope. Check for regressions, omissions, accidental changes, broken references, documentation conflicts, and new risks. Re-run checks affected by the change; reuse earlier evidence only while it still applies to the exact code, configuration, permissions, and environment. Record material outcomes and limitations. Keep both reviews proportionate: do not turn routine edits into a ceremony or skip a safety-critical check to save time.
+
 ### Research first for changes that are hard to undo
 
 Before a change that could be difficult or impossible to reverse, study it thoroughly. Do not rely only on memory, assumptions, or a quick inspection.
