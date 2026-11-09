@@ -86,6 +86,26 @@ jobs:
         errors = hygiene.workflow_policy_errors(Path(".github/workflows/untrusted.yml"), trusted)
         self.assertTrue(any("statuses: write is restricted" in error for error in errors))
 
+    def test_status_write_workflow_rejects_additional_triggers(self):
+        content = """permissions:
+  statuses: write
+  contents: read
+on:
+  issue_comment:
+    types: [created]
+  pull_request:
+    types: [opened]
+jobs:
+  authorize:
+    steps:
+      - uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+"""
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content)
+        self.assertTrue(any("statuses: write is restricted" in error for error in errors))
+
     def test_pull_request_target_is_rejected_by_default(self):
         content = """permissions:
   contents: read
