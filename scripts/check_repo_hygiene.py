@@ -189,7 +189,7 @@ def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
             errors.append(f"{path}: GITHUB_TOKEN must have contents: read")
         if not re.search(r"(?m)^[ \t]+pull-requests:\s*read\s*$", block):
             errors.append(f"{path}: GITHUB_TOKEN must have pull-requests: read")
-        if re.search(r"(?m)^[ \t]+[A-Za-z_-]+:\s*(?:write|write-all)\s*$", block):
+        if re.search(r"(?m)^[ \t]+[A-Za-z_-]+:[ \t]*['\"]?(?:write|write-all)['\"]?[ \t]*(?:#.*)?$", block):
             errors.append(f"{path}: GITHUB_TOKEN must not have write permissions")
     required = (
         "github.event.repository.default_branch",
@@ -212,7 +212,7 @@ def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
             errors.append(f"{path}: trusted authorization workflow is missing required control: {item}")
     if not re.search(r"uses:\s*actions/create-github-app-token@[0-9a-fA-F]{40}(?:\s|$)", content):
         errors.append(f"{path}: dedicated status App action must be pinned to a full commit SHA")
-    permission_inputs = [line.strip() for line in re.findall(r"(?m)^[ \t]*permission-[A-Za-z0-9_-]+:.*$", content)]
+    permission_inputs = [line.strip() for line in re.findall(r"(?m)^[ \t]*['\"]?permission-[A-Za-z0-9_-]+['\"]?:.*$", content)]
     if permission_inputs != ["permission-statuses: write"]:
         errors.append(f"{path}: installation token must request only permission-statuses: write")
     if content.count("if: steps.preflight.outputs.authorized == 'true'") < 2:
@@ -233,7 +233,7 @@ def workflow_policy_errors(path: Path, content: str) -> list[str]:
         errors.append(f"{path}: permissions: write-all is not allowed")
     if re.search(r"^\s*pull_request_target\s*:", content, re.MULTILINE):
         errors.append(f"{path}: pull_request_target requires a separate security design review and is disallowed by default")
-    if re.search(r"^[ \t]*statuses:[ \t]*write[ \t]*$", content, re.MULTILINE):
+    if re.search(r"(?m)^[ \t]*['\"]?statuses['\"]?:[ \t]*['\"]?write(?:-all)?['\"]?[ \t]*(?:#.*)?$", content):
         errors.append(f"{path}: GITHUB_TOKEN statuses: write is prohibited; publish through the dedicated status App token")
     return errors
 
