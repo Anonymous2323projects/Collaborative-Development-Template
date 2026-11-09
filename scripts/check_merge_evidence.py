@@ -138,8 +138,9 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, hea
         errors.append("Include a validation evidence table.")
     if not non_placeholder(field(validation, "Complete diff reviewed")):
         errors.append("Confirm whether the complete diff was reviewed.")
-    if not non_placeholder(field(validation, "Exact commit SHA tested")):
-        errors.append("Record the exact tested commit SHA.")
+    tested_sha = field(validation, "Exact commit SHA tested")
+    if not SHA_RE.fullmatch(tested_sha):
+        errors.append("Record the exact full 40-character SHA that was tested.")
 
     systemic = section(text, "## Systemic recurrence review")
     for label in (
