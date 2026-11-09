@@ -109,6 +109,10 @@ class MergeEvidenceTests(unittest.TestCase):
         errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("Critical blockers remain" in error for error in errors))
 
+    def test_source_host_matching_rejects_suffix_spoof(self):
+        self.assertFalse(gate.host_is_in({"docs.github.com.attacker.invalid"}, "docs.github.com"))
+        self.assertTrue(gate.host_is_in({"api.docs.github.com"}, "docs.github.com"))
+
     def test_missing_residual_risk_fails(self):
         record = valid_record().replace("- Assessment: PASS", "- Assessment: PASS WITH RESIDUAL RISK", 1).replace("- Residual risk and mitigation: none identified", "- Residual risk and mitigation: TODO", 1)
         errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
