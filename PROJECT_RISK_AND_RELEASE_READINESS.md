@@ -37,6 +37,10 @@ After this review, decide whether user involvement is genuinely necessary. If th
 
 A positive assessment is **not** permission to cross an explicit approval boundary. Obtain the required approval before irreversible deletion or history changes, public release, ownership/visibility/access changes, financial commitments, or other consequential external actions. If material uncertainty remains, explain it and pause only the affected decision while continuing safe independent work.
 
+## Code, documentation, and integration consistency
+
+For substantial changes, public releases, and consequential merges, use the [Integration and Merge Review Standard](docs/INTEGRATION_AND_MERGE_REVIEW.md). Check implementation against documentation and documentation against actual supported behavior. Read related documents together and resolve contradictions, paradoxes, circular instructions, conflicting defaults, duplicated sources of truth, and unsupported promises. Validate behavior with relevant tests rather than relying on prose review alone. Record limitations: automated checks can detect mechanical defects but cannot prove semantic consistency, legal soundness, or usability.
+
 ## Change impact and reversibility
 
 The more difficult a change is to undo, the more carefully it must be researched before it is made. This applies to code and documentation as well as data, publication, account settings, access permissions, migrations, releases, and integrations.
