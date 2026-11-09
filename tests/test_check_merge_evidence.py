@@ -71,12 +71,19 @@ def valid_record():
 - Safety-critical work intentionally retained: exact SHA authorization
 
 ## Residual risk and approval
-- Open findings and residual risks: none
+- Open findings and residual risks: none identified
 - Critical blockers: NONE
-- Required user/owner decision: explicit authorization
+- Required user/owner decision: explicit authorization of the exact PR head
 - Merge authorization state: AWAITING EXPLICIT OWNER AUTHORIZATION
-- Any backup/recovery evidence required and verified: not required
-- Post-merge verification plan: check main and workflows
+- Bootstrap change? NO
+- Gate that cannot yet apply: NOT APPLICABLE
+- Existing live controls and compensating manual controls: NOT APPLICABLE
+- Manual owner approval evidence/state: NOT APPLICABLE
+- Post-merge configuration and acceptance-test owner: NOT APPLICABLE
+- Bootstrap deadline/expiry: NOT APPLICABLE
+- Rollback/stop condition if the bootstrap deadline is missed: NOT APPLICABLE
+- Any backup/recovery evidence required and verified: no backup required for this isolated test fixture
+- Post-merge verification plan: verify main and required workflows on the resulting merge commit
 """
 
 class MergeEvidenceTests(unittest.TestCase):
@@ -141,6 +148,48 @@ class MergeEvidenceTests(unittest.TestCase):
         record = valid_record().replace("https://link.springer.com/article/10.1000/example", "no citation")
         errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("peer-reviewed" in error for error in errors))
+
+    def test_bootstrap_exception_requires_complete_time_bound_controls(self):
+        record = valid_record().replace(
+            "- Bootstrap change? NO",
+            "- Bootstrap change? YES",
+        )
+        replacements = {
+            "Gate that cannot yet apply: NOT APPLICABLE": "Gate that cannot yet apply: the exact-head App status cannot run until the trusted workflow is on the default branch",
+            "Existing live controls and compensating manual controls: NOT APPLICABLE": "Existing live controls and compensating manual controls: current hygiene, secret scanning, CodeQL, complete diff review and exact-head manual owner approval",
+            "Manual owner approval evidence/state: NOT APPLICABLE": "Manual owner approval evidence/state: pending; explicit owner approval of this exact PR head is required before merge",
+            "Post-merge configuration and acceptance-test owner: NOT APPLICABLE": "Post-merge configuration and acceptance-test owner: repository owner",
+            "Bootstrap deadline/expiry: NOT APPLICABLE": "Bootstrap deadline/expiry: within 24 hours after merge",
+            "Rollback/stop condition if the bootstrap deadline is missed: NOT APPLICABLE": "Rollback/stop condition if the bootstrap deadline is missed: freeze further merges and revert the bootstrap change until the App and ruleset gates are verified",
+        }
+        for old, new in replacements.items():
+            record = record.replace(old, new)
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
+        self.assertEqual(errors, [])
+
+    def test_bootstrap_exception_without_deadline_fails_closed(self):
+        record = valid_record().replace(
+            "- Bootstrap change? NO",
+            "- Bootstrap change? YES",
+        ).replace(
+            "Bootstrap deadline/expiry: NOT APPLICABLE",
+            "Bootstrap deadline/expiry: when convenient",
+        )
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("concrete date or bounded duration" in error for error in errors))
+
+    def test_non_bootstrap_cannot_hide_bootstrap_controls(self):
+        record = valid_record().replace(
+            "Gate that cannot yet apply: NOT APPLICABLE",
+            "Gate that cannot yet apply: a live ruleset check",
+        )
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("Non-bootstrap change must mark" in error for error in errors))
+
+    def test_missing_residual_approval_fields_fail_closed(self):
+        record = valid_record().replace("- Post-merge verification plan: verify main and required workflows on the resulting merge commit\n", "")
+        errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("Post-merge verification plan" in error for error in errors))
 
     def test_critical_blocker_fails_closed(self):
         record = valid_record().replace("- Critical blockers: NONE", "- Critical blockers: RULESET_NOT_CONFIGURED")
