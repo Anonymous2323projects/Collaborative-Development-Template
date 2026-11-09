@@ -59,6 +59,7 @@ These policies cover different responsibilities. Read the relevant one when the 
 - [Privacy and public publication](PRIVACY_AND_PUBLICATION.md)
 - [Incident response](INCIDENT_RESPONSE.md)
 - [Project risk and release readiness](PROJECT_RISK_AND_RELEASE_READINESS.md)
+- [Change, review, and merge assurance](MERGE_AND_CHANGE_ASSURANCE.md) — research, five-perspective review, systemic recurrence, and technical merge gates
 - [Update and release security](UPDATE_AND_RELEASE_SECURITY.md)
 
 ### Contributing and project information
