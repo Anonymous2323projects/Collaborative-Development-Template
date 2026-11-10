@@ -574,7 +574,7 @@ class MainAuthorizationFlowTests(unittest.TestCase):
         self.assertEqual(result, 1)
         self.assertEqual([call.args[4] for call in publish.call_args_list], ["pending", "failure"])
         self.assertIn("final latest-command check failed", publish.call_args_list[-1].args[5])
-        self.assertEqual(api.call_count, 1)
+        self.assertEqual(api.call_count, 2)
         policy.assert_called_once()
         self.assertEqual(unresolved.call_count, 2)
         evidence.assert_called_once()
