@@ -5,6 +5,7 @@ Notable user-facing changes to the template are recorded here. This is a curated
 ## Unreleased
 
 - Add a least-privilege, Free-compatible setup and acceptance guide for the optional exact-head authorization App, including the expected-source UI prerequisite.
+- Hardened exact-head authorization command ordering: stale jobs no longer cancel in-progress revocations, queued commands are revalidated, and a failed final freshness check cannot leave a stale pending status as the terminal result.
 
 - Tightened PR assurance evidence: high-impact merges require a verified pre-merge recovery snapshot, and bootstrap exceptions require explicit compensating controls, owner state, deadline, post-merge owner, and stop/rollback conditions.
 
