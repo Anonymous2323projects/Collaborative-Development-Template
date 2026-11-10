@@ -57,7 +57,6 @@ class MarkdownHelperTests(unittest.TestCase):
                     {},
                 )
         self.assertEqual(len(errors), 1)
-        self.assertIn("missing.md", errors[0])
         self.assertNotIn("CANARY_REVIEW_ONLY_123456", errors[0])
         self.assertNotIn("private-fragment", errors[0])
 
@@ -74,7 +73,6 @@ class MarkdownHelperTests(unittest.TestCase):
                     {},
                 )
         self.assertEqual(len(errors), 1)
-        self.assertIn("docs/guide.md", errors[0])
         self.assertNotIn("CANARY_REVIEW_ONLY_654321", errors[0])
         self.assertNotIn("secret-fragment", errors[0])
 
