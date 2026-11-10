@@ -139,7 +139,7 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
         errors.append("Risk must be LOW, MODERATE, HIGH, or CRITICAL.")
 
     independent_review = section(text, "## Independent review")
-    if len(re.findall(r"^## Independent review\\s*$", text, re.MULTILINE)) != 1:
+    if len(re.findall(r"^## Independent review\s*$", text, re.MULTILINE)) != 1:
         errors.append("Independent review section must appear exactly once.")
     review_status = field(independent_review, "Independent review status")
     if review_status not in {"REQUIRED", "NOT REQUIRED"}:
