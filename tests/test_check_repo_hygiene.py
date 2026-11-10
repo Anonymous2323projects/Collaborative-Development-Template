@@ -168,6 +168,10 @@ jobs:
   authorize:
     needs: preflight
     if: PREFLIGHT_JOB_CONDITION
+    concurrency:
+      group: merge-authorization-ISSUE_NUMBER_EXPR
+      queue: max
+      cancel-in-progress: false
     environment:
       name: merge-authorizer
     steps:
@@ -196,6 +200,7 @@ jobs:
             ("DEFAULT_BRANCH_EXPR", "$" + "{{ github.event.repository.default_branch }}"),
             ("PREFLIGHT_OUTPUT", "$" + "{{ steps.preflight.outputs.authorized }}"),
             ("PREFLIGHT_JOB_CONDITION", "needs.preflight.outputs.authorized == 'true'"),
+            ("ISSUE_NUMBER_EXPR", "$" + "{{ github.event.issue.number }}"),
             ("GITHUB_TOKEN_EXPR", "$" + "{{ secrets.GITHUB_TOKEN }}"),
             ("MERGE_TOKEN_EXPR", "$" + "{{ steps.status-token.outputs.token }}"),
             ("EVENT_PATH_EXPR", "$" + "{{ github.event_path }}"),
