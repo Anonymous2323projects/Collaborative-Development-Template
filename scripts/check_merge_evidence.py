@@ -158,12 +158,19 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
             if not non_placeholder(field(independent_review, label)):
                 errors.append(f"Independent review section is incomplete: {label}.")
         scope_reviewed = field(independent_review, "Scope reviewed")
-        if risk in {"HIGH", "CRITICAL"} and not re.search(
-            r"\b(?:complete|full)\b.{0,80}\b(?:diff|changed files)\b|\b(?:all|every)\b.{0,80}\b(?:changed files|files)\b",
-            scope_reviewed,
-            re.IGNORECASE,
-        ):
-            errors.append("HIGH/CRITICAL independent review scope must cover the complete exact-head diff.")
+        if risk in {"HIGH", "CRITICAL"}:
+            covers_complete_diff = bool(re.search(
+                r"\b(?:complete|full)\b.{0,80}\b(?:diff|changed files)\b|\b(?:all|every)\b.{0,80}\b(?:changed files|files)\b",
+                scope_reviewed,
+                re.IGNORECASE,
+            ))
+            covers_surrounding_context = bool(re.search(
+                r"\b(?:relevant|surrounding|affected)\b.{0,80}\b(?:implementation|context|system)\b",
+                scope_reviewed,
+                re.IGNORECASE,
+            ))
+            if not covers_complete_diff or not covers_surrounding_context:
+                errors.append("HIGH/CRITICAL independent review scope must cover the complete exact-head diff and relevant surrounding implementation/context.")
         primary_reviewer = field(independent_review, "Primary reviewer/coordinator identity").casefold()
         independent_reviewer = field(independent_review, "Reviewer/agent identity (distinct from the primary reviewer)").casefold()
         if primary_reviewer and independent_reviewer and primary_reviewer == independent_reviewer:
