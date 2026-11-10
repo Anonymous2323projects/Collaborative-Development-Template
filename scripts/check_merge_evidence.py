@@ -159,7 +159,7 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
                 errors.append(f"Independent review section is incomplete: {label}.")
         scope_reviewed = field(independent_review, "Scope reviewed")
         if risk in {"HIGH", "CRITICAL"} and not re.search(
-            r"\\b(?:complete|full)\\b.{0,80}\\b(?:diff|changed files)\\b|\\b(?:all|every)\\b.{0,80}\\b(?:changed files|files)\\b",
+            r"\b(?:complete|full)\b.{0,80}\b(?:diff|changed files)\b|\b(?:all|every)\b.{0,80}\b(?:changed files|files)\b",
             scope_reviewed,
             re.IGNORECASE,
         ):
@@ -246,7 +246,7 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
     if not non_placeholder(complete_diff_reviewed):
         errors.append("Confirm whether the complete diff was reviewed.")
     elif risk in {"HIGH", "CRITICAL"} and not re.match(
-        r"(?i)^YES(?:\\s|$|[:—-])",
+        r"(?i)^YES(?:\s|$|[:—-])",
         complete_diff_reviewed.strip(),
     ):
         errors.append("HIGH/CRITICAL changes require an affirmative complete-diff review by the primary reviewer.")
