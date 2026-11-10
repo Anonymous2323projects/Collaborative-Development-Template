@@ -251,7 +251,7 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
 
     blockers = field(approval, "Critical blockers")
     if not blockers or blockers.strip().startswith("[") or blockers.strip().upper() != "NONE":
-        errors.append(f"Critical blockers remain or are not explicitly cleared: {blockers or 'not recorded'}.")
+        errors.append("Critical blockers remain or are not explicitly cleared.")
 
     bootstrap = field(approval, "Bootstrap change?")
     bootstrap_fields = (
