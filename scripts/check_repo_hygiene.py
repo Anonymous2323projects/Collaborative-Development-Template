@@ -292,6 +292,17 @@ def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
     if not preflight_job or not authorize_job:
         errors.append(f"{path}: require separate preflight and environment-protected authorization jobs")
         return errors
+    concurrency = re.search(r"(?m)^    concurrency:[ \\t]*\\n((?:^      .*\\n?)+)", authorize_job)
+    if not concurrency:
+        errors.append(f"{path}: authorization commands must use a bounded, non-canceling concurrency queue")
+    else:
+        concurrency_block = concurrency.group(1)
+        if "group: merge-authorization-" + "$" + "{{ github.event.issue.number }}" not in concurrency_block:
+            errors.append(f"{path}: authorization concurrency must be scoped to the pull request")
+        if not re.search(r"(?m)^      queue:[ \\t]*max[ \\t]*$", concurrency_block):
+            errors.append(f"{path}: authorization concurrency must retain the bounded queue of up to 100 pending commands")
+        if not re.search(r"(?m)^      cancel-in-progress:[ \\t]*false[ \\t]*$", concurrency_block):
+            errors.append(f"{path}: authorization concurrency must not cancel in-progress commands")
     if re.search(r"(?m)^    environment:", preflight_job):
         errors.append(f"{path}: untrusted-comment preflight job must not request a protected environment")
     if "MERGE_AUTHORIZER_LOGINS: " + "$" + "{{ vars.MERGE_AUTHORIZER_LOGINS }}" not in preflight_job:
