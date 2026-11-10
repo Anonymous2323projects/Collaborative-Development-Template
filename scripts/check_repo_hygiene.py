@@ -387,6 +387,861 @@ def secret_scan_workflow_errors(path: Path, content: str) -> list[str]:
     for item in required:
         if item not in job:
             errors.append(f"{path}: secret scanning is missing required full-range control: {item}")
+    config_blocks = re.findall(
+        r'cat > "\$RUNNER_TEMP/gitleaks\.toml" <<\\'EOF\\'\\n[ \\t]*\\[extend\\]\\n[ \\t]*useDefault = true\\n[ \\t]*EOF',
+        job,
+    )
+    if len(config_blocks) != 3:
+        errors.append(f"{path}: all three scans must use only the fixed built-in Gitleaks rules")
+    if len(re.findall(r'^\s*mkdir "\$RUNNER_TEMP/gitleaks-ignore"\s*    if re.search(r"gitleaks/gitleaks-action@", job):
+        errors.append(f"{path}: the paginated Gitleaks Action must not be used for pull-request scanning")
+    images = re.findall(r"ghcr\.io/gitleaks/gitleaks(?:@[^\s\\]+|:[^\s\\]+)", job)
+    if not images or any(re.fullmatch(r"ghcr\.io/gitleaks/gitleaks@sha256:[0-9a-f]{64}", image) is None for image in images):
+        errors.append(f"{path}: every Gitleaks invocation must use a full SHA-256 image digest")
+    range_guard = re.search(
+        r'if \[\[ "\$commit_count" -lt 1 \]\]; then([\s\S]*?)(?:^\s*fi\s*$|;\s*fi\b)',
+        job,
+        re.MULTILINE,
+    )
+    if not range_guard or not re.search(r"\bexit 1\b", range_guard.group(1)):
+        errors.append(f"{path}: empty pull-request scan ranges must fail closed")
+    scanned_guard = re.search(
+        r'if \[\[ -z "\$scanned" \]\]; then([\s\S]*?)(?:^\s*fi\s*$|;\s*fi\b)',
+        job,
+        re.MULTILINE,
+    )
+    if not scanned_guard or not re.search(r"\bexit 1\b", scanned_guard.group(1)):
+        errors.append(f"{path}: a zero-commit scanner result must fail closed")
+    if "detailed scanner output is suppressed" not in job or ' > "$scan_log" 2>&1' not in job:
+        errors.append(f"{path}: raw Gitleaks output must be captured and suppressed")
+    if "--first-parent" in job or "--no-merges" in job:
+        errors.append(f"{path}: secret scanning must include commits reachable through all parent paths")
+    return errors
+
+
+def workflow_policy_errors(path: Path, content: str) -> list[str]:
+    errors = workflow_environment_errors(path, content)
+    errors.extend(trusted_authorizer_workflow_errors(path, content))
+    errors.extend(secret_scan_workflow_errors(path, content))
+    if not re.search(r"^permissions\s*:", content, re.MULTILINE):
+        errors.append(f"{path}: explicit top-level GITHUB_TOKEN permissions are required")
+    if re.search(r"^\s*(?:-\s*)?uses:\s*[^\s#]+@(?![0-9a-fA-F]{40}(?:\s|$))", content, re.MULTILINE):
+        errors.append(f"{path}: external actions must be pinned to a full 40-character commit SHA")
+    if re.search(r"^\s*permissions:\s*write-all\s*$", content, re.MULTILINE):
+        errors.append(f"{path}: permissions: write-all is not allowed")
+    if re.search(r"^\s*pull_request_target\s*:", content, re.MULTILINE):
+        errors.append(f"{path}: pull_request_target requires a separate security design review and is disallowed by default")
+    if re.search(r"(?m)^[ \t]*['\"]?statuses['\"]?:[ \t]*['\"]?write(?:-all)?['\"]?[ \t]*(?:#.*)?$", content):
+        errors.append(f"{path}: GITHUB_TOKEN statuses: write is prohibited; publish through the dedicated status App token")
+    return errors
+
+
+REQUIRED_ASSURANCE_SECTIONS = (
+    "1. Scope and risk-based depth",
+    "2. Research standard",
+    "3. Hazard and system analysis",
+    "4. Five-perspective assessment",
+    "5. Systemic recurrence rule",
+    "6. Documentation-to-implementation assurance",
+    "7. Technical enforcement architecture",
+)
+ASSURANCE_REFERENCES = {
+    Path("AGENTS.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("docs/DEVELOPMENT_WORKFLOW.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("PROJECT_RISK_AND_RELEASE_READINESS.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("docs/EXACT_HEAD_AUTHORIZATION_SETUP.md"): "../MERGE_AND_CHANGE_ASSURANCE.md",
+}
+
+def assurance_document_errors(root: Path = ROOT) -> list[str]:
+    """Keep the canonical assurance standard and its governing references present."""
+    errors = []
+    standard = root / "MERGE_AND_CHANGE_ASSURANCE.md"
+    if not standard.is_file():
+        errors.append("MERGE_AND_CHANGE_ASSURANCE.md: required canonical assurance standard is missing")
+    else:
+        try:
+            content = strip_fenced_code(standard.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: cannot read canonical standard: {exc}")
+        else:
+            for section in REQUIRED_ASSURANCE_SECTIONS:
+                pattern = rf"^## {re.escape(section)}\s*$"
+                if not re.search(pattern, content, re.MULTILINE):
+                    errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: required core section is missing: {section}")
+            if "recoverable snapshot of the exact pre-merge head" not in content.lower():
+                errors.append("MERGE_AND_CHANGE_ASSURANCE.md: require a verified recoverable snapshot of the exact pre-merge head for high-impact or hard-to-reverse merges")
+            setup_link = r"\]\(docs/EXACT_HEAD_AUTHORIZATION_SETUP\.md(?:#[^)]*)?\)"
+            if not re.search(setup_link, content):
+                errors.append("MERGE_AND_CHANGE_ASSURANCE.md: must link to docs/EXACT_HEAD_AUTHORIZATION_SETUP.md")
+    for path, reference in ASSURANCE_REFERENCES.items():
+        target = root / path
+        if not target.is_file():
+            errors.append(f"{path}: required governing document is missing")
+            continue
+        try:
+            content = strip_fenced_code(target.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"{path}: cannot read governing document: {exc}")
+            continue
+        link_pattern = rf"\]\([^)]*{re.escape(reference)}(?:#[^)]*)?\)"
+        if not re.search(link_pattern, content):
+            errors.append(f"{path}: must contain a Markdown link to the canonical {reference}")
+    return errors
+
+def safe_error_categories(errors: list[str]) -> dict[str, int]:
+    """Return fixed, non-sensitive issue categories without echoing repository-controlled text."""
+    counts = {
+        "documentation links and anchors": 0,
+        "workflow and authorization policy": 0,
+        "sensitive paths": 0,
+        "assurance documentation": 0,
+        "file access and encoding": 0,
+        "other": 0,
+    }
+    for error in errors:
+        lowered = error.lower()
+        if "link" in lowered or "anchor" in lowered:
+            category = "documentation links and anchors"
+        elif any(term in lowered for term in ("workflow", "gitleaks", "secret scanning", "authorization", "protected policy")):
+            category = "workflow and authorization policy"
+        elif "sensitive" in lowered or "credential" in lowered:
+            category = "sensitive paths"
+        elif "assurance" in lowered:
+            category = "assurance documentation"
+        elif "cannot read" in lowered or "cannot decode" in lowered:
+            category = "file access and encoding"
+        else:
+            category = "other"
+        counts[category] += 1
+    return {name: count for name, count in counts.items() if count}
+
+
+def main() -> int:
+    files = tracked_files()
+    errors = assurance_document_errors(ROOT)
+    file_cache = {}
+    for path in files:
+        if sensitive_path(path):
+            errors.append(f"{path}: potentially sensitive filename or directory")
+        if path.suffix.lower() == ".md":
+            full_path = ROOT / path
+            try:
+                content = full_path.read_text(encoding="utf-8")
+            except (OSError, UnicodeError) as exc:
+                errors.append(f"{path}: cannot read as UTF-8: {exc}")
+                continue
+            file_cache[path] = content
+            errors.extend(markdown_link_errors(path, content, file_cache))
+        if path.parts[:2] == WORKFLOW_DIR.parts and path.suffix.lower() in {".yml", ".yaml"}:
+            try:
+                content = (ROOT / path).read_text(encoding="utf-8")
+            except (OSError, UnicodeError) as exc:
+                errors.append(f"{path}: cannot read workflow: {exc}")
+                continue
+            errors.extend(workflow_policy_errors(path, content))
+    if errors:
+        print("Repository hygiene checks failed.")
+        print(
+            f"{len(errors)} issue(s) detected; detailed diagnostics are suppressed "
+            "to prevent untrusted repository content from entering CI logs."
+        )
+        categories = safe_error_categories(errors)
+        if categories:
+            summary = ", ".join(f"{name}: {count}" for name, count in categories.items())
+            print(f"Safe issue categories: {summary}.")
+        return 1
+    workflow_count = sum(1 for path in files if path.parts[:2] == WORKFLOW_DIR.parts and path.suffix.lower() in {".yml", ".yaml"})
+    print(f"Repository hygiene checks passed for {len(files)} tracked files.")
+    print("Checked sensitive paths, local Markdown links and heading anchors,")
+    print(f"and baseline workflow safety conventions in {workflow_count} workflow file(s).")
+    print("This does not parse YAML, render Markdown, scan file contents for secrets, verify action provenance,")
+    print("check remote URLs, or constitute a complete security, privacy, or legal audit.")
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
+, job, re.MULTILINE)) != 3:
+        errors.append(f"{path}: every scan must use a fresh empty Gitleaks ignore directory")
+    exact_commands = (
+        r'^\s*git --log-opts="\$\{BASE_SHA\}\.\.\$\{HEAD_SHA\} --diff-merges=first-parent" --config=/tmp/gitleaks\.toml --gitleaks-ignore-path=/tmp/gitleaks-ignore --ignore-gitleaks-allow --redact --verbose \. > "\$scan_log" 2>&1; then\s*    if re.search(r"gitleaks/gitleaks-action@", job):
+        errors.append(f"{path}: the paginated Gitleaks Action must not be used for pull-request scanning")
+    images = re.findall(r"ghcr\.io/gitleaks/gitleaks(?:@[^\s\\]+|:[^\s\\]+)", job)
+    if not images or any(re.fullmatch(r"ghcr\.io/gitleaks/gitleaks@sha256:[0-9a-f]{64}", image) is None for image in images):
+        errors.append(f"{path}: every Gitleaks invocation must use a full SHA-256 image digest")
+    range_guard = re.search(
+        r'if \[\[ "\$commit_count" -lt 1 \]\]; then([\s\S]*?)(?:^\s*fi\s*$|;\s*fi\b)',
+        job,
+        re.MULTILINE,
+    )
+    if not range_guard or not re.search(r"\bexit 1\b", range_guard.group(1)):
+        errors.append(f"{path}: empty pull-request scan ranges must fail closed")
+    scanned_guard = re.search(
+        r'if \[\[ -z "\$scanned" \]\]; then([\s\S]*?)(?:^\s*fi\s*$|;\s*fi\b)',
+        job,
+        re.MULTILINE,
+    )
+    if not scanned_guard or not re.search(r"\bexit 1\b", scanned_guard.group(1)):
+        errors.append(f"{path}: a zero-commit scanner result must fail closed")
+    if "detailed scanner output is suppressed" not in job or ' > "$scan_log" 2>&1' not in job:
+        errors.append(f"{path}: raw Gitleaks output must be captured and suppressed")
+    if "--first-parent" in job or "--no-merges" in job:
+        errors.append(f"{path}: secret scanning must include commits reachable through all parent paths")
+    return errors
+
+
+def workflow_policy_errors(path: Path, content: str) -> list[str]:
+    errors = workflow_environment_errors(path, content)
+    errors.extend(trusted_authorizer_workflow_errors(path, content))
+    errors.extend(secret_scan_workflow_errors(path, content))
+    if not re.search(r"^permissions\s*:", content, re.MULTILINE):
+        errors.append(f"{path}: explicit top-level GITHUB_TOKEN permissions are required")
+    if re.search(r"^\s*(?:-\s*)?uses:\s*[^\s#]+@(?![0-9a-fA-F]{40}(?:\s|$))", content, re.MULTILINE):
+        errors.append(f"{path}: external actions must be pinned to a full 40-character commit SHA")
+    if re.search(r"^\s*permissions:\s*write-all\s*$", content, re.MULTILINE):
+        errors.append(f"{path}: permissions: write-all is not allowed")
+    if re.search(r"^\s*pull_request_target\s*:", content, re.MULTILINE):
+        errors.append(f"{path}: pull_request_target requires a separate security design review and is disallowed by default")
+    if re.search(r"(?m)^[ \t]*['\"]?statuses['\"]?:[ \t]*['\"]?write(?:-all)?['\"]?[ \t]*(?:#.*)?$", content):
+        errors.append(f"{path}: GITHUB_TOKEN statuses: write is prohibited; publish through the dedicated status App token")
+    return errors
+
+
+REQUIRED_ASSURANCE_SECTIONS = (
+    "1. Scope and risk-based depth",
+    "2. Research standard",
+    "3. Hazard and system analysis",
+    "4. Five-perspective assessment",
+    "5. Systemic recurrence rule",
+    "6. Documentation-to-implementation assurance",
+    "7. Technical enforcement architecture",
+)
+ASSURANCE_REFERENCES = {
+    Path("AGENTS.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("docs/DEVELOPMENT_WORKFLOW.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("PROJECT_RISK_AND_RELEASE_READINESS.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("docs/EXACT_HEAD_AUTHORIZATION_SETUP.md"): "../MERGE_AND_CHANGE_ASSURANCE.md",
+}
+
+def assurance_document_errors(root: Path = ROOT) -> list[str]:
+    """Keep the canonical assurance standard and its governing references present."""
+    errors = []
+    standard = root / "MERGE_AND_CHANGE_ASSURANCE.md"
+    if not standard.is_file():
+        errors.append("MERGE_AND_CHANGE_ASSURANCE.md: required canonical assurance standard is missing")
+    else:
+        try:
+            content = strip_fenced_code(standard.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: cannot read canonical standard: {exc}")
+        else:
+            for section in REQUIRED_ASSURANCE_SECTIONS:
+                pattern = rf"^## {re.escape(section)}\s*$"
+                if not re.search(pattern, content, re.MULTILINE):
+                    errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: required core section is missing: {section}")
+            if "recoverable snapshot of the exact pre-merge head" not in content.lower():
+                errors.append("MERGE_AND_CHANGE_ASSURANCE.md: require a verified recoverable snapshot of the exact pre-merge head for high-impact or hard-to-reverse merges")
+            setup_link = r"\]\(docs/EXACT_HEAD_AUTHORIZATION_SETUP\.md(?:#[^)]*)?\)"
+            if not re.search(setup_link, content):
+                errors.append("MERGE_AND_CHANGE_ASSURANCE.md: must link to docs/EXACT_HEAD_AUTHORIZATION_SETUP.md")
+    for path, reference in ASSURANCE_REFERENCES.items():
+        target = root / path
+        if not target.is_file():
+            errors.append(f"{path}: required governing document is missing")
+            continue
+        try:
+            content = strip_fenced_code(target.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"{path}: cannot read governing document: {exc}")
+            continue
+        link_pattern = rf"\]\([^)]*{re.escape(reference)}(?:#[^)]*)?\)"
+        if not re.search(link_pattern, content):
+            errors.append(f"{path}: must contain a Markdown link to the canonical {reference}")
+    return errors
+
+def safe_error_categories(errors: list[str]) -> dict[str, int]:
+    """Return fixed, non-sensitive issue categories without echoing repository-controlled text."""
+    counts = {
+        "documentation links and anchors": 0,
+        "workflow and authorization policy": 0,
+        "sensitive paths": 0,
+        "assurance documentation": 0,
+        "file access and encoding": 0,
+        "other": 0,
+    }
+    for error in errors:
+        lowered = error.lower()
+        if "link" in lowered or "anchor" in lowered:
+            category = "documentation links and anchors"
+        elif any(term in lowered for term in ("workflow", "gitleaks", "secret scanning", "authorization", "protected policy")):
+            category = "workflow and authorization policy"
+        elif "sensitive" in lowered or "credential" in lowered:
+            category = "sensitive paths"
+        elif "assurance" in lowered:
+            category = "assurance documentation"
+        elif "cannot read" in lowered or "cannot decode" in lowered:
+            category = "file access and encoding"
+        else:
+            category = "other"
+        counts[category] += 1
+    return {name: count for name, count in counts.items() if count}
+
+
+def main() -> int:
+    files = tracked_files()
+    errors = assurance_document_errors(ROOT)
+    file_cache = {}
+    for path in files:
+        if sensitive_path(path):
+            errors.append(f"{path}: potentially sensitive filename or directory")
+        if path.suffix.lower() == ".md":
+            full_path = ROOT / path
+            try:
+                content = full_path.read_text(encoding="utf-8")
+            except (OSError, UnicodeError) as exc:
+                errors.append(f"{path}: cannot read as UTF-8: {exc}")
+                continue
+            file_cache[path] = content
+            errors.extend(markdown_link_errors(path, content, file_cache))
+        if path.parts[:2] == WORKFLOW_DIR.parts and path.suffix.lower() in {".yml", ".yaml"}:
+            try:
+                content = (ROOT / path).read_text(encoding="utf-8")
+            except (OSError, UnicodeError) as exc:
+                errors.append(f"{path}: cannot read workflow: {exc}")
+                continue
+            errors.extend(workflow_policy_errors(path, content))
+    if errors:
+        print("Repository hygiene checks failed.")
+        print(
+            f"{len(errors)} issue(s) detected; detailed diagnostics are suppressed "
+            "to prevent untrusted repository content from entering CI logs."
+        )
+        categories = safe_error_categories(errors)
+        if categories:
+            summary = ", ".join(f"{name}: {count}" for name, count in categories.items())
+            print(f"Safe issue categories: {summary}.")
+        return 1
+    workflow_count = sum(1 for path in files if path.parts[:2] == WORKFLOW_DIR.parts and path.suffix.lower() in {".yml", ".yaml"})
+    print(f"Repository hygiene checks passed for {len(files)} tracked files.")
+    print("Checked sensitive paths, local Markdown links and heading anchors,")
+    print(f"and baseline workflow safety conventions in {workflow_count} workflow file(s).")
+    print("This does not parse YAML, render Markdown, scan file contents for secrets, verify action provenance,")
+    print("check remote URLs, or constitute a complete security, privacy, or legal audit.")
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
+,
+        r'^\s*git --log-opts="\$log_opts --diff-merges=first-parent" --config=/tmp/gitleaks\.toml --gitleaks-ignore-path=/tmp/gitleaks-ignore --ignore-gitleaks-allow --redact --verbose \. > "\$scan_log" 2>&1; then\s*    if re.search(r"gitleaks/gitleaks-action@", job):
+        errors.append(f"{path}: the paginated Gitleaks Action must not be used for pull-request scanning")
+    images = re.findall(r"ghcr\.io/gitleaks/gitleaks(?:@[^\s\\]+|:[^\s\\]+)", job)
+    if not images or any(re.fullmatch(r"ghcr\.io/gitleaks/gitleaks@sha256:[0-9a-f]{64}", image) is None for image in images):
+        errors.append(f"{path}: every Gitleaks invocation must use a full SHA-256 image digest")
+    range_guard = re.search(
+        r'if \[\[ "\$commit_count" -lt 1 \]\]; then([\s\S]*?)(?:^\s*fi\s*$|;\s*fi\b)',
+        job,
+        re.MULTILINE,
+    )
+    if not range_guard or not re.search(r"\bexit 1\b", range_guard.group(1)):
+        errors.append(f"{path}: empty pull-request scan ranges must fail closed")
+    scanned_guard = re.search(
+        r'if \[\[ -z "\$scanned" \]\]; then([\s\S]*?)(?:^\s*fi\s*$|;\s*fi\b)',
+        job,
+        re.MULTILINE,
+    )
+    if not scanned_guard or not re.search(r"\bexit 1\b", scanned_guard.group(1)):
+        errors.append(f"{path}: a zero-commit scanner result must fail closed")
+    if "detailed scanner output is suppressed" not in job or ' > "$scan_log" 2>&1' not in job:
+        errors.append(f"{path}: raw Gitleaks output must be captured and suppressed")
+    if "--first-parent" in job or "--no-merges" in job:
+        errors.append(f"{path}: secret scanning must include commits reachable through all parent paths")
+    return errors
+
+
+def workflow_policy_errors(path: Path, content: str) -> list[str]:
+    errors = workflow_environment_errors(path, content)
+    errors.extend(trusted_authorizer_workflow_errors(path, content))
+    errors.extend(secret_scan_workflow_errors(path, content))
+    if not re.search(r"^permissions\s*:", content, re.MULTILINE):
+        errors.append(f"{path}: explicit top-level GITHUB_TOKEN permissions are required")
+    if re.search(r"^\s*(?:-\s*)?uses:\s*[^\s#]+@(?![0-9a-fA-F]{40}(?:\s|$))", content, re.MULTILINE):
+        errors.append(f"{path}: external actions must be pinned to a full 40-character commit SHA")
+    if re.search(r"^\s*permissions:\s*write-all\s*$", content, re.MULTILINE):
+        errors.append(f"{path}: permissions: write-all is not allowed")
+    if re.search(r"^\s*pull_request_target\s*:", content, re.MULTILINE):
+        errors.append(f"{path}: pull_request_target requires a separate security design review and is disallowed by default")
+    if re.search(r"(?m)^[ \t]*['\"]?statuses['\"]?:[ \t]*['\"]?write(?:-all)?['\"]?[ \t]*(?:#.*)?$", content):
+        errors.append(f"{path}: GITHUB_TOKEN statuses: write is prohibited; publish through the dedicated status App token")
+    return errors
+
+
+REQUIRED_ASSURANCE_SECTIONS = (
+    "1. Scope and risk-based depth",
+    "2. Research standard",
+    "3. Hazard and system analysis",
+    "4. Five-perspective assessment",
+    "5. Systemic recurrence rule",
+    "6. Documentation-to-implementation assurance",
+    "7. Technical enforcement architecture",
+)
+ASSURANCE_REFERENCES = {
+    Path("AGENTS.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("docs/DEVELOPMENT_WORKFLOW.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("PROJECT_RISK_AND_RELEASE_READINESS.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("docs/EXACT_HEAD_AUTHORIZATION_SETUP.md"): "../MERGE_AND_CHANGE_ASSURANCE.md",
+}
+
+def assurance_document_errors(root: Path = ROOT) -> list[str]:
+    """Keep the canonical assurance standard and its governing references present."""
+    errors = []
+    standard = root / "MERGE_AND_CHANGE_ASSURANCE.md"
+    if not standard.is_file():
+        errors.append("MERGE_AND_CHANGE_ASSURANCE.md: required canonical assurance standard is missing")
+    else:
+        try:
+            content = strip_fenced_code(standard.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: cannot read canonical standard: {exc}")
+        else:
+            for section in REQUIRED_ASSURANCE_SECTIONS:
+                pattern = rf"^## {re.escape(section)}\s*$"
+                if not re.search(pattern, content, re.MULTILINE):
+                    errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: required core section is missing: {section}")
+            if "recoverable snapshot of the exact pre-merge head" not in content.lower():
+                errors.append("MERGE_AND_CHANGE_ASSURANCE.md: require a verified recoverable snapshot of the exact pre-merge head for high-impact or hard-to-reverse merges")
+            setup_link = r"\]\(docs/EXACT_HEAD_AUTHORIZATION_SETUP\.md(?:#[^)]*)?\)"
+            if not re.search(setup_link, content):
+                errors.append("MERGE_AND_CHANGE_ASSURANCE.md: must link to docs/EXACT_HEAD_AUTHORIZATION_SETUP.md")
+    for path, reference in ASSURANCE_REFERENCES.items():
+        target = root / path
+        if not target.is_file():
+            errors.append(f"{path}: required governing document is missing")
+            continue
+        try:
+            content = strip_fenced_code(target.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"{path}: cannot read governing document: {exc}")
+            continue
+        link_pattern = rf"\]\([^)]*{re.escape(reference)}(?:#[^)]*)?\)"
+        if not re.search(link_pattern, content):
+            errors.append(f"{path}: must contain a Markdown link to the canonical {reference}")
+    return errors
+
+def safe_error_categories(errors: list[str]) -> dict[str, int]:
+    """Return fixed, non-sensitive issue categories without echoing repository-controlled text."""
+    counts = {
+        "documentation links and anchors": 0,
+        "workflow and authorization policy": 0,
+        "sensitive paths": 0,
+        "assurance documentation": 0,
+        "file access and encoding": 0,
+        "other": 0,
+    }
+    for error in errors:
+        lowered = error.lower()
+        if "link" in lowered or "anchor" in lowered:
+            category = "documentation links and anchors"
+        elif any(term in lowered for term in ("workflow", "gitleaks", "secret scanning", "authorization", "protected policy")):
+            category = "workflow and authorization policy"
+        elif "sensitive" in lowered or "credential" in lowered:
+            category = "sensitive paths"
+        elif "assurance" in lowered:
+            category = "assurance documentation"
+        elif "cannot read" in lowered or "cannot decode" in lowered:
+            category = "file access and encoding"
+        else:
+            category = "other"
+        counts[category] += 1
+    return {name: count for name, count in counts.items() if count}
+
+
+def main() -> int:
+    files = tracked_files()
+    errors = assurance_document_errors(ROOT)
+    file_cache = {}
+    for path in files:
+        if sensitive_path(path):
+            errors.append(f"{path}: potentially sensitive filename or directory")
+        if path.suffix.lower() == ".md":
+            full_path = ROOT / path
+            try:
+                content = full_path.read_text(encoding="utf-8")
+            except (OSError, UnicodeError) as exc:
+                errors.append(f"{path}: cannot read as UTF-8: {exc}")
+                continue
+            file_cache[path] = content
+            errors.extend(markdown_link_errors(path, content, file_cache))
+        if path.parts[:2] == WORKFLOW_DIR.parts and path.suffix.lower() in {".yml", ".yaml"}:
+            try:
+                content = (ROOT / path).read_text(encoding="utf-8")
+            except (OSError, UnicodeError) as exc:
+                errors.append(f"{path}: cannot read workflow: {exc}")
+                continue
+            errors.extend(workflow_policy_errors(path, content))
+    if errors:
+        print("Repository hygiene checks failed.")
+        print(
+            f"{len(errors)} issue(s) detected; detailed diagnostics are suppressed "
+            "to prevent untrusted repository content from entering CI logs."
+        )
+        categories = safe_error_categories(errors)
+        if categories:
+            summary = ", ".join(f"{name}: {count}" for name, count in categories.items())
+            print(f"Safe issue categories: {summary}.")
+        return 1
+    workflow_count = sum(1 for path in files if path.parts[:2] == WORKFLOW_DIR.parts and path.suffix.lower() in {".yml", ".yaml"})
+    print(f"Repository hygiene checks passed for {len(files)} tracked files.")
+    print("Checked sensitive paths, local Markdown links and heading anchors,")
+    print(f"and baseline workflow safety conventions in {workflow_count} workflow file(s).")
+    print("This does not parse YAML, render Markdown, scan file contents for secrets, verify action provenance,")
+    print("check remote URLs, or constitute a complete security, privacy, or legal audit.")
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
+,
+        r'^\s*git --log-opts="--all --diff-merges=first-parent" --config=/tmp/gitleaks\.toml --gitleaks-ignore-path=/tmp/gitleaks-ignore --ignore-gitleaks-allow --redact --verbose \. > "\$scan_log" 2>&1; then\s*    if re.search(r"gitleaks/gitleaks-action@", job):
+        errors.append(f"{path}: the paginated Gitleaks Action must not be used for pull-request scanning")
+    images = re.findall(r"ghcr\.io/gitleaks/gitleaks(?:@[^\s\\]+|:[^\s\\]+)", job)
+    if not images or any(re.fullmatch(r"ghcr\.io/gitleaks/gitleaks@sha256:[0-9a-f]{64}", image) is None for image in images):
+        errors.append(f"{path}: every Gitleaks invocation must use a full SHA-256 image digest")
+    range_guard = re.search(
+        r'if \[\[ "\$commit_count" -lt 1 \]\]; then([\s\S]*?)(?:^\s*fi\s*$|;\s*fi\b)',
+        job,
+        re.MULTILINE,
+    )
+    if not range_guard or not re.search(r"\bexit 1\b", range_guard.group(1)):
+        errors.append(f"{path}: empty pull-request scan ranges must fail closed")
+    scanned_guard = re.search(
+        r'if \[\[ -z "\$scanned" \]\]; then([\s\S]*?)(?:^\s*fi\s*$|;\s*fi\b)',
+        job,
+        re.MULTILINE,
+    )
+    if not scanned_guard or not re.search(r"\bexit 1\b", scanned_guard.group(1)):
+        errors.append(f"{path}: a zero-commit scanner result must fail closed")
+    if "detailed scanner output is suppressed" not in job or ' > "$scan_log" 2>&1' not in job:
+        errors.append(f"{path}: raw Gitleaks output must be captured and suppressed")
+    if "--first-parent" in job or "--no-merges" in job:
+        errors.append(f"{path}: secret scanning must include commits reachable through all parent paths")
+    return errors
+
+
+def workflow_policy_errors(path: Path, content: str) -> list[str]:
+    errors = workflow_environment_errors(path, content)
+    errors.extend(trusted_authorizer_workflow_errors(path, content))
+    errors.extend(secret_scan_workflow_errors(path, content))
+    if not re.search(r"^permissions\s*:", content, re.MULTILINE):
+        errors.append(f"{path}: explicit top-level GITHUB_TOKEN permissions are required")
+    if re.search(r"^\s*(?:-\s*)?uses:\s*[^\s#]+@(?![0-9a-fA-F]{40}(?:\s|$))", content, re.MULTILINE):
+        errors.append(f"{path}: external actions must be pinned to a full 40-character commit SHA")
+    if re.search(r"^\s*permissions:\s*write-all\s*$", content, re.MULTILINE):
+        errors.append(f"{path}: permissions: write-all is not allowed")
+    if re.search(r"^\s*pull_request_target\s*:", content, re.MULTILINE):
+        errors.append(f"{path}: pull_request_target requires a separate security design review and is disallowed by default")
+    if re.search(r"(?m)^[ \t]*['\"]?statuses['\"]?:[ \t]*['\"]?write(?:-all)?['\"]?[ \t]*(?:#.*)?$", content):
+        errors.append(f"{path}: GITHUB_TOKEN statuses: write is prohibited; publish through the dedicated status App token")
+    return errors
+
+
+REQUIRED_ASSURANCE_SECTIONS = (
+    "1. Scope and risk-based depth",
+    "2. Research standard",
+    "3. Hazard and system analysis",
+    "4. Five-perspective assessment",
+    "5. Systemic recurrence rule",
+    "6. Documentation-to-implementation assurance",
+    "7. Technical enforcement architecture",
+)
+ASSURANCE_REFERENCES = {
+    Path("AGENTS.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("docs/DEVELOPMENT_WORKFLOW.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("PROJECT_RISK_AND_RELEASE_READINESS.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("docs/EXACT_HEAD_AUTHORIZATION_SETUP.md"): "../MERGE_AND_CHANGE_ASSURANCE.md",
+}
+
+def assurance_document_errors(root: Path = ROOT) -> list[str]:
+    """Keep the canonical assurance standard and its governing references present."""
+    errors = []
+    standard = root / "MERGE_AND_CHANGE_ASSURANCE.md"
+    if not standard.is_file():
+        errors.append("MERGE_AND_CHANGE_ASSURANCE.md: required canonical assurance standard is missing")
+    else:
+        try:
+            content = strip_fenced_code(standard.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: cannot read canonical standard: {exc}")
+        else:
+            for section in REQUIRED_ASSURANCE_SECTIONS:
+                pattern = rf"^## {re.escape(section)}\s*$"
+                if not re.search(pattern, content, re.MULTILINE):
+                    errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: required core section is missing: {section}")
+            if "recoverable snapshot of the exact pre-merge head" not in content.lower():
+                errors.append("MERGE_AND_CHANGE_ASSURANCE.md: require a verified recoverable snapshot of the exact pre-merge head for high-impact or hard-to-reverse merges")
+            setup_link = r"\]\(docs/EXACT_HEAD_AUTHORIZATION_SETUP\.md(?:#[^)]*)?\)"
+            if not re.search(setup_link, content):
+                errors.append("MERGE_AND_CHANGE_ASSURANCE.md: must link to docs/EXACT_HEAD_AUTHORIZATION_SETUP.md")
+    for path, reference in ASSURANCE_REFERENCES.items():
+        target = root / path
+        if not target.is_file():
+            errors.append(f"{path}: required governing document is missing")
+            continue
+        try:
+            content = strip_fenced_code(target.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"{path}: cannot read governing document: {exc}")
+            continue
+        link_pattern = rf"\]\([^)]*{re.escape(reference)}(?:#[^)]*)?\)"
+        if not re.search(link_pattern, content):
+            errors.append(f"{path}: must contain a Markdown link to the canonical {reference}")
+    return errors
+
+def safe_error_categories(errors: list[str]) -> dict[str, int]:
+    """Return fixed, non-sensitive issue categories without echoing repository-controlled text."""
+    counts = {
+        "documentation links and anchors": 0,
+        "workflow and authorization policy": 0,
+        "sensitive paths": 0,
+        "assurance documentation": 0,
+        "file access and encoding": 0,
+        "other": 0,
+    }
+    for error in errors:
+        lowered = error.lower()
+        if "link" in lowered or "anchor" in lowered:
+            category = "documentation links and anchors"
+        elif any(term in lowered for term in ("workflow", "gitleaks", "secret scanning", "authorization", "protected policy")):
+            category = "workflow and authorization policy"
+        elif "sensitive" in lowered or "credential" in lowered:
+            category = "sensitive paths"
+        elif "assurance" in lowered:
+            category = "assurance documentation"
+        elif "cannot read" in lowered or "cannot decode" in lowered:
+            category = "file access and encoding"
+        else:
+            category = "other"
+        counts[category] += 1
+    return {name: count for name, count in counts.items() if count}
+
+
+def main() -> int:
+    files = tracked_files()
+    errors = assurance_document_errors(ROOT)
+    file_cache = {}
+    for path in files:
+        if sensitive_path(path):
+            errors.append(f"{path}: potentially sensitive filename or directory")
+        if path.suffix.lower() == ".md":
+            full_path = ROOT / path
+            try:
+                content = full_path.read_text(encoding="utf-8")
+            except (OSError, UnicodeError) as exc:
+                errors.append(f"{path}: cannot read as UTF-8: {exc}")
+                continue
+            file_cache[path] = content
+            errors.extend(markdown_link_errors(path, content, file_cache))
+        if path.parts[:2] == WORKFLOW_DIR.parts and path.suffix.lower() in {".yml", ".yaml"}:
+            try:
+                content = (ROOT / path).read_text(encoding="utf-8")
+            except (OSError, UnicodeError) as exc:
+                errors.append(f"{path}: cannot read workflow: {exc}")
+                continue
+            errors.extend(workflow_policy_errors(path, content))
+    if errors:
+        print("Repository hygiene checks failed.")
+        print(
+            f"{len(errors)} issue(s) detected; detailed diagnostics are suppressed "
+            "to prevent untrusted repository content from entering CI logs."
+        )
+        categories = safe_error_categories(errors)
+        if categories:
+            summary = ", ".join(f"{name}: {count}" for name, count in categories.items())
+            print(f"Safe issue categories: {summary}.")
+        return 1
+    workflow_count = sum(1 for path in files if path.parts[:2] == WORKFLOW_DIR.parts and path.suffix.lower() in {".yml", ".yaml"})
+    print(f"Repository hygiene checks passed for {len(files)} tracked files.")
+    print("Checked sensitive paths, local Markdown links and heading anchors,")
+    print(f"and baseline workflow safety conventions in {workflow_count} workflow file(s).")
+    print("This does not parse YAML, render Markdown, scan file contents for secrets, verify action provenance,")
+    print("check remote URLs, or constitute a complete security, privacy, or legal audit.")
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
+,
+    )
+    command_lines = re.findall(r'^\s*git --log-opts=.*    if re.search(r"gitleaks/gitleaks-action@", job):
+        errors.append(f"{path}: the paginated Gitleaks Action must not be used for pull-request scanning")
+    images = re.findall(r"ghcr\.io/gitleaks/gitleaks(?:@[^\s\\]+|:[^\s\\]+)", job)
+    if not images or any(re.fullmatch(r"ghcr\.io/gitleaks/gitleaks@sha256:[0-9a-f]{64}", image) is None for image in images):
+        errors.append(f"{path}: every Gitleaks invocation must use a full SHA-256 image digest")
+    range_guard = re.search(
+        r'if \[\[ "\$commit_count" -lt 1 \]\]; then([\s\S]*?)(?:^\s*fi\s*$|;\s*fi\b)',
+        job,
+        re.MULTILINE,
+    )
+    if not range_guard or not re.search(r"\bexit 1\b", range_guard.group(1)):
+        errors.append(f"{path}: empty pull-request scan ranges must fail closed")
+    scanned_guard = re.search(
+        r'if \[\[ -z "\$scanned" \]\]; then([\s\S]*?)(?:^\s*fi\s*$|;\s*fi\b)',
+        job,
+        re.MULTILINE,
+    )
+    if not scanned_guard or not re.search(r"\bexit 1\b", scanned_guard.group(1)):
+        errors.append(f"{path}: a zero-commit scanner result must fail closed")
+    if "detailed scanner output is suppressed" not in job or ' > "$scan_log" 2>&1' not in job:
+        errors.append(f"{path}: raw Gitleaks output must be captured and suppressed")
+    if "--first-parent" in job or "--no-merges" in job:
+        errors.append(f"{path}: secret scanning must include commits reachable through all parent paths")
+    return errors
+
+
+def workflow_policy_errors(path: Path, content: str) -> list[str]:
+    errors = workflow_environment_errors(path, content)
+    errors.extend(trusted_authorizer_workflow_errors(path, content))
+    errors.extend(secret_scan_workflow_errors(path, content))
+    if not re.search(r"^permissions\s*:", content, re.MULTILINE):
+        errors.append(f"{path}: explicit top-level GITHUB_TOKEN permissions are required")
+    if re.search(r"^\s*(?:-\s*)?uses:\s*[^\s#]+@(?![0-9a-fA-F]{40}(?:\s|$))", content, re.MULTILINE):
+        errors.append(f"{path}: external actions must be pinned to a full 40-character commit SHA")
+    if re.search(r"^\s*permissions:\s*write-all\s*$", content, re.MULTILINE):
+        errors.append(f"{path}: permissions: write-all is not allowed")
+    if re.search(r"^\s*pull_request_target\s*:", content, re.MULTILINE):
+        errors.append(f"{path}: pull_request_target requires a separate security design review and is disallowed by default")
+    if re.search(r"(?m)^[ \t]*['\"]?statuses['\"]?:[ \t]*['\"]?write(?:-all)?['\"]?[ \t]*(?:#.*)?$", content):
+        errors.append(f"{path}: GITHUB_TOKEN statuses: write is prohibited; publish through the dedicated status App token")
+    return errors
+
+
+REQUIRED_ASSURANCE_SECTIONS = (
+    "1. Scope and risk-based depth",
+    "2. Research standard",
+    "3. Hazard and system analysis",
+    "4. Five-perspective assessment",
+    "5. Systemic recurrence rule",
+    "6. Documentation-to-implementation assurance",
+    "7. Technical enforcement architecture",
+)
+ASSURANCE_REFERENCES = {
+    Path("AGENTS.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("docs/DEVELOPMENT_WORKFLOW.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("PROJECT_RISK_AND_RELEASE_READINESS.md"): "MERGE_AND_CHANGE_ASSURANCE.md",
+    Path("docs/EXACT_HEAD_AUTHORIZATION_SETUP.md"): "../MERGE_AND_CHANGE_ASSURANCE.md",
+}
+
+def assurance_document_errors(root: Path = ROOT) -> list[str]:
+    """Keep the canonical assurance standard and its governing references present."""
+    errors = []
+    standard = root / "MERGE_AND_CHANGE_ASSURANCE.md"
+    if not standard.is_file():
+        errors.append("MERGE_AND_CHANGE_ASSURANCE.md: required canonical assurance standard is missing")
+    else:
+        try:
+            content = strip_fenced_code(standard.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: cannot read canonical standard: {exc}")
+        else:
+            for section in REQUIRED_ASSURANCE_SECTIONS:
+                pattern = rf"^## {re.escape(section)}\s*$"
+                if not re.search(pattern, content, re.MULTILINE):
+                    errors.append(f"MERGE_AND_CHANGE_ASSURANCE.md: required core section is missing: {section}")
+            if "recoverable snapshot of the exact pre-merge head" not in content.lower():
+                errors.append("MERGE_AND_CHANGE_ASSURANCE.md: require a verified recoverable snapshot of the exact pre-merge head for high-impact or hard-to-reverse merges")
+            setup_link = r"\]\(docs/EXACT_HEAD_AUTHORIZATION_SETUP\.md(?:#[^)]*)?\)"
+            if not re.search(setup_link, content):
+                errors.append("MERGE_AND_CHANGE_ASSURANCE.md: must link to docs/EXACT_HEAD_AUTHORIZATION_SETUP.md")
+    for path, reference in ASSURANCE_REFERENCES.items():
+        target = root / path
+        if not target.is_file():
+            errors.append(f"{path}: required governing document is missing")
+            continue
+        try:
+            content = strip_fenced_code(target.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"{path}: cannot read governing document: {exc}")
+            continue
+        link_pattern = rf"\]\([^)]*{re.escape(reference)}(?:#[^)]*)?\)"
+        if not re.search(link_pattern, content):
+            errors.append(f"{path}: must contain a Markdown link to the canonical {reference}")
+    return errors
+
+def safe_error_categories(errors: list[str]) -> dict[str, int]:
+    """Return fixed, non-sensitive issue categories without echoing repository-controlled text."""
+    counts = {
+        "documentation links and anchors": 0,
+        "workflow and authorization policy": 0,
+        "sensitive paths": 0,
+        "assurance documentation": 0,
+        "file access and encoding": 0,
+        "other": 0,
+    }
+    for error in errors:
+        lowered = error.lower()
+        if "link" in lowered or "anchor" in lowered:
+            category = "documentation links and anchors"
+        elif any(term in lowered for term in ("workflow", "gitleaks", "secret scanning", "authorization", "protected policy")):
+            category = "workflow and authorization policy"
+        elif "sensitive" in lowered or "credential" in lowered:
+            category = "sensitive paths"
+        elif "assurance" in lowered:
+            category = "assurance documentation"
+        elif "cannot read" in lowered or "cannot decode" in lowered:
+            category = "file access and encoding"
+        else:
+            category = "other"
+        counts[category] += 1
+    return {name: count for name, count in counts.items() if count}
+
+
+def main() -> int:
+    files = tracked_files()
+    errors = assurance_document_errors(ROOT)
+    file_cache = {}
+    for path in files:
+        if sensitive_path(path):
+            errors.append(f"{path}: potentially sensitive filename or directory")
+        if path.suffix.lower() == ".md":
+            full_path = ROOT / path
+            try:
+                content = full_path.read_text(encoding="utf-8")
+            except (OSError, UnicodeError) as exc:
+                errors.append(f"{path}: cannot read as UTF-8: {exc}")
+                continue
+            file_cache[path] = content
+            errors.extend(markdown_link_errors(path, content, file_cache))
+        if path.parts[:2] == WORKFLOW_DIR.parts and path.suffix.lower() in {".yml", ".yaml"}:
+            try:
+                content = (ROOT / path).read_text(encoding="utf-8")
+            except (OSError, UnicodeError) as exc:
+                errors.append(f"{path}: cannot read workflow: {exc}")
+                continue
+            errors.extend(workflow_policy_errors(path, content))
+    if errors:
+        print("Repository hygiene checks failed.")
+        print(
+            f"{len(errors)} issue(s) detected; detailed diagnostics are suppressed "
+            "to prevent untrusted repository content from entering CI logs."
+        )
+        categories = safe_error_categories(errors)
+        if categories:
+            summary = ", ".join(f"{name}: {count}" for name, count in categories.items())
+            print(f"Safe issue categories: {summary}.")
+        return 1
+    workflow_count = sum(1 for path in files if path.parts[:2] == WORKFLOW_DIR.parts and path.suffix.lower() in {".yml", ".yaml"})
+    print(f"Repository hygiene checks passed for {len(files)} tracked files.")
+    print("Checked sensitive paths, local Markdown links and heading anchors,")
+    print(f"and baseline workflow safety conventions in {workflow_count} workflow file(s).")
+    print("This does not parse YAML, render Markdown, scan file contents for secrets, verify action provenance,")
+    print("check remote URLs, or constitute a complete security, privacy, or legal audit.")
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
+, job, re.MULTILINE)
+    if len(command_lines) != 3 or any(
+        re.search(pattern, job, re.MULTILINE) is None for pattern in exact_commands
+    ):
+        errors.append(f"{path}: Gitleaks commands must match the exact trusted full-range invocations")
+    if any(flag in job for flag in ("--baseline-path", "--enable-rule", "--exit-code", "--max-decode-depth")):
+        errors.append(f"{path}: custom Gitleaks baselines, rule narrowing or scan-disabling flags are forbidden")
     if re.search(r"gitleaks/gitleaks-action@", job):
         errors.append(f"{path}: the paginated Gitleaks Action must not be used for pull-request scanning")
     images = re.findall(r"ghcr\.io/gitleaks/gitleaks(?:@[^\s\\]+|:[^\s\\]+)", job)
