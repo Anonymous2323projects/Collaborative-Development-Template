@@ -89,11 +89,11 @@ Every project using this template must maintain a durable `docs/PROJECT_MEMORY.m
 - Never store secrets, sensitive personal data, confidential third-party information, or raw chat transcripts. A private repository is not a secret store.
 - If write access is unavailable, prepare the update and state that it remains unsaved.
 
-**Template-repository exception:** this repository is the template itself, not a downstream project. Do not create `docs/PROJECT_MEMORY.md` here. Maintain this repository's continuity through private maintainer records.
+**Upstream-only exception:** only the original Collaborative Development Template product repository is exempt from keeping its own project memory in public files; its internal maintenance records belong in a separate private space. **Verify actual repository identity**, not just the presence of copied template files. Any repository created from this template is a downstream project and must maintain its own durable memory in the appropriate private location.
 
 ### Human-dependent actions — conditional
 
-Create `docs/PENDING_ACTIONS.md` from [the action template](PENDING_ACTIONS_TEMPLATE.md) only when meaningful human-dependent actions arise and no suitable existing tracker is available. Never create an empty register.
+Create `docs/PENDING_ACTIONS.md` from [the action template](PENDING_ACTIONS_TEMPLATE.md) only when meaningful human-dependent actions arise and no suitable existing tracker is available. Never create an empty register. For a public code/product repository, keep internal pending-action records in its separate private coordination repository or private tracker, not in public source.
 
 Explain why the action matters and offer step-by-step help or deferral. Record deferred or still-outstanding actions. Mark safety, privacy, security, legal, data-loss, and irreversible-risk checks as critical blockers. Pause only the affected work; continue independent work. Do not promise notifications unless an authorized scheduled task was actually created and verified. Keep the tracker synchronized with memory and avoid duplicate task lists.
 
