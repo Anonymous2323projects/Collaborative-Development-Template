@@ -448,9 +448,11 @@ def main() -> int:
                 continue
             errors.extend(workflow_policy_errors(path, content))
     if errors:
-        print("Repository hygiene checks failed:")
-        for error in errors:
-            print(f"- {error}")
+        print("Repository hygiene checks failed.")
+        print(
+            f"{len(errors)} issue(s) detected; detailed diagnostics are suppressed "
+            "to prevent untrusted repository content from entering CI logs."
+        )
         return 1
     workflow_count = sum(1 for path in files if path.parts[:2] == WORKFLOW_DIR.parts and path.suffix.lower() in {".yml", ".yaml"})
     print(f"Repository hygiene checks passed for {len(files)} tracked files.")
