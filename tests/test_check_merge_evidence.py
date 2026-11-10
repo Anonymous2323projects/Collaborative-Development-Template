@@ -42,6 +42,7 @@ def valid_record():
 
 ## Independent review
 - Independent review status: REQUIRED
+- Primary reviewer/coordinator identity: primary-review-coordinator
 - Reviewer/agent identity (distinct from the primary reviewer): independent-review-agent-2
 - Reviewer type: AI
 - Exact code SHA reviewed: {REVIEWED}
@@ -108,6 +109,14 @@ class MergeEvidenceTests(unittest.TestCase):
         )
         errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("HIGH/CRITICAL changes require an independent review" in error for error in errors))
+
+    def test_independent_reviewer_must_differ_from_primary_reviewer(self):
+        content = valid_record().replace(
+            "- Reviewer/agent identity (distinct from the primary reviewer): independent-review-agent-2",
+            "- Reviewer/agent identity (distinct from the primary reviewer): primary-review-coordinator",
+        )
+        errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("must differ from the primary reviewer" in error for error in errors))
 
     def test_independent_review_must_bind_to_exact_reviewed_sha(self):
         content = valid_record().replace(
