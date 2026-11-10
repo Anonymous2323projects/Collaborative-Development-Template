@@ -99,6 +99,8 @@ def unresolved_threads(owner: str, repo: str, number: int, token: str) -> bool:
 
 PROTECTED_POLICY_PATHS = {
     "CODEOWNERS",
+    "CODE_OF_CONDUCT.md",
+    "LICENSE",
     "AGENTS.md",
     "AI_SAFETY_AND_MODEL_SPEC.md",
     "CHATGPT_ONBOARDING.md",
