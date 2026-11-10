@@ -370,11 +370,17 @@ jobs:
           git cat-file -e "${HEAD_SHA}^{commit}"
           commit_count="$(git rev-list --count "${BASE_SHA}..${HEAD_SHA}")"
           if [[ "$commit_count" -lt 1 ]]; then exit 1; fi
-          docker run --rm \\
+          scan_log="$RUNNER_TEMP/gitleaks.log"
+          if ! docker run --rm \\
             --volume "$GITHUB_WORKSPACE:/repo:ro" \\
             --workdir /repo \\
             ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \\
-            git --log-opts="${BASE_SHA}..${HEAD_SHA}" --redact --verbose .
+            git --log-opts="${BASE_SHA}..${HEAD_SHA} --diff-merges=first-parent" --redact --verbose . > "$scan_log" 2>&1; then
+            echo "Gitleaks reported findings or failed; detailed scanner output is suppressed."
+            exit 1
+          fi
+          scanned="$(grep -Eo '[1-9][0-9]* commits scanned' "$scan_log" | tail -n 1 || true)"
+          if [[ -z "$scanned" ]]; then exit 1; fi
 """
 
     def test_secret_scan_requires_exact_full_pr_commit_range(self):
@@ -399,6 +405,14 @@ jobs:
         )
         errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
         self.assertTrue(any("all parent paths" in error for error in errors))
+
+    def test_secret_scan_requires_merge_commit_diff_coverage(self):
+        content = self.secret_scan_workflow_fixture().replace(
+            " --diff-merges=first-parent",
+            "",
+        )
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
+        self.assertTrue(any("missing required full-range control" in error and "diff-merges" in error for error in errors))
 
     def test_secret_scan_rejects_mutable_or_unpinned_image(self):
         content = self.secret_scan_workflow_fixture().replace(
