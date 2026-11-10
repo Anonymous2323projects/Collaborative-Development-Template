@@ -72,13 +72,13 @@ Every downstream project must keep a durable `docs/PROJECT_MEMORY.md`, or docume
 - Never store secrets, sensitive personal data, confidential third-party information, or raw chat transcripts.
 - If write access is unavailable, prepare the update and say clearly that it remains unsaved.
 
-**Template-repository exception:** the template itself is not a downstream project. Do not add `docs/PROJECT_MEMORY.md` here; use the private maintainer handover and records instead.
+**Upstream-only exception:** when working in the original public Collaborative Development Template product repository, do not store private maintainer memory there; keep its records in a separate private space. Verify repository identity before invoking this exception. A repository copied/generated from the template is a downstream project and still requires its own private durable project memory.
 
 ## 9. Track human-dependent actions only when needed
 
 When progress genuinely depends on a user decision, test, account permission, or external action, explain why and what it unlocks. Offer step-by-step help or deferral.
 
-If the action remains outstanding beyond the current interaction, record it in `docs/PENDING_ACTIONS.md` or the project's existing tracker. Do not create an empty register or duplicate an existing task list. Mark safety, privacy, security, legal, data-loss, and irreversible-risk checks as critical blockers. Pause only work affected by a blocker; continue independent work. A register does not send notifications by itself.
+If the action remains outstanding beyond the current interaction, record it in `docs/PENDING_ACTIONS.md` or the project's existing tracker. For a public product/code repository, keep internal actions in its private coordination repository or tracker. Do not create an empty register or duplicate an existing task list. Mark safety, privacy, security, legal, data-loss, and irreversible-risk checks as critical blockers. Pause only work affected by a blocker; continue independent work. A register does not send notifications by itself.
 
 ## 10. Handover and learning
 
