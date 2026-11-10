@@ -171,6 +171,10 @@ class AuthorizationPolicyTests(unittest.TestCase):
             {"filename": "docs/TEMPLATE_UPDATE_GUIDE.md"},
             {"filename": ".gitleaks.toml"},
             {"filename": ".gitleaksignore"},
+            {"filename": "gitleaks.toml"},
+            {"filename": "gitleaksignore"},
+            {"filename": ".secretlintignore"},
+            {"filename": ".trufflehog.yml"},
         ]
         with patch.object(auth, "api_request", return_value=changed):
             protected = auth.reject_policy_changes("owner", "repo", 12, "read-token")
