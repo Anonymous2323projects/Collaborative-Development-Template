@@ -46,7 +46,7 @@ def valid_record():
 - Reviewer/agent identity (distinct from the primary reviewer): independent-review-agent-2
 - Reviewer type: AI
 - Exact code SHA reviewed: {REVIEWED}
-- Scope reviewed: complete exact-head diff and relevant authorization controls
+- Scope reviewed: complete exact-head diff and relevant surrounding implementation and authorization controls
 - Report/reference: https://example.invalid/independent-review-report
 - Findings and disposition: no unresolved findings; observations reconciled
 - Independence and limitations: separate review context; not human approval
@@ -119,7 +119,7 @@ class MergeEvidenceTests(unittest.TestCase):
 
     def test_high_critical_independent_scope_must_cover_complete_diff(self):
         content = valid_record().replace(
-            "- Scope reviewed: complete exact-head diff and relevant authorization controls",
+            "- Scope reviewed: complete exact-head diff and relevant surrounding implementation and authorization controls",
             "- Scope reviewed: selected authorization workflow only",
         )
         errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
@@ -140,6 +140,14 @@ class MergeEvidenceTests(unittest.TestCase):
         )
         errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("exact reviewed code SHA" in error for error in errors))
+
+    def test_high_critical_independent_scope_must_include_surrounding_implementation(self):
+        content = valid_record().replace(
+            "- Scope reviewed: complete exact-head diff and relevant surrounding implementation and authorization controls",
+            "- Scope reviewed: complete exact-head diff only",
+        )
+        errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("relevant surrounding implementation/context" in error for error in errors))
 
     def test_low_risk_record_may_omit_independent_review_with_reason(self):
         content = valid_record().replace("- Risk: HIGH", "- Risk: LOW")
