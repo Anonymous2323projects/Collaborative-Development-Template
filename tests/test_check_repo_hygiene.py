@@ -215,6 +215,19 @@ jobs:
             [],
         )
 
+    def test_trusted_authorizer_queues_commands_without_cancelling_in_progress_runs(self):
+        content = self.trusted_authorizer_workflow_fixture()
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), content)
+        self.assertEqual(errors, [])
+
+        unsafe = content.replace("queue: max", "queue: single")
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), unsafe)
+        self.assertTrue(any("bounded queue" in error for error in errors))
+
+        unsafe = content.replace("cancel-in-progress: false", "cancel-in-progress: true")
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/merge-authorization.yml"), unsafe)
+        self.assertTrue(any("must not cancel in-progress" in error for error in errors))
+
     def test_token_creation_job_itself_requires_authorized_preflight(self):
         content = self.trusted_authorizer_workflow_fixture().replace(
             "if: needs.preflight.outputs.authorized == 'true'",
