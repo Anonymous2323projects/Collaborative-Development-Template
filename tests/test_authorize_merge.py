@@ -555,7 +555,7 @@ class MainAuthorizationFlowTests(unittest.TestCase):
         )
         self.assertEqual(result, 1)
         self.assertEqual([call.args[4] for call in publish.call_args_list], ["pending", "success", "failure"])
-        self.assertIn("during status publication", publish.call_args_list[-1].args[5])
+        self.assertIn("recheck did not complete cleanly", publish.call_args_list[-1].args[5])
         self.assertEqual(api.call_count, 2)
         policy.assert_called_once()
         self.assertEqual(unresolved.call_count, 2)
