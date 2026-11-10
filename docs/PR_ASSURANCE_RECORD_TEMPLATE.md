@@ -23,6 +23,18 @@
 - Alternatives considered and why this option was selected:
 - If external research was not needed, explain why the change is genuinely low risk:
 
+## Independent review
+
+- Independent review status: REQUIRED / NOT REQUIRED
+- Reviewer/agent identity (distinct from the primary reviewer):
+- Reviewer type: HUMAN / AI / NOT REQUIRED
+- Exact code SHA reviewed:
+- Scope reviewed:
+- Report/reference:
+- Findings and disposition:
+- Independence and limitations:
+- If not required, why:
+
 ## Five-perspective assessment
 
 ### Safety and security
