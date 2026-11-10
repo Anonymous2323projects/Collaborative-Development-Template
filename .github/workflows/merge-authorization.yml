@@ -38,11 +38,14 @@ jobs:
   authorize:
     needs: preflight
     if: needs.preflight.outputs.authorized == 'true'
-    # Only allowlisted maintainer commands enter this group. A newer command
-    # cancels an older authorization/revocation job; ordinary comments cannot.
+    # Serialize allowlisted commands without canceling an in-progress run.
+    # Queue order is based on when jobs start waiting, not comment creation time;
+    # the trusted script rechecks the latest authorized command before status writes.
+    # GitHub retains up to 100 pending jobs; a canceled/saturated run is not authorization.
     concurrency:
       group: merge-authorization-${{ github.event.issue.number }}
-      cancel-in-progress: true
+      queue: max
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 5
     environment:
