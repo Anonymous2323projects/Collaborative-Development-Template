@@ -93,7 +93,7 @@
 |---|---|---|---|
 | | | PASS / FAIL / NOT RUN | |
 
-- Complete diff reviewed: YES / NO — HIGH/CRITICAL changes must be YES; if NO, explain the proportionate review scope.
+- Complete diff reviewed: YES — required for every substantive change; the primary reviewer must inspect the complete exact-head diff.
 - Checks not run and why:
 - Exact commit SHA tested:
 
