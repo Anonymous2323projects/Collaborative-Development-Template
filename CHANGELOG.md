@@ -8,6 +8,7 @@ Notable user-facing changes to the template are recorded here. This is a curated
 - Hardened exact-head authorization command ordering: stale jobs no longer cancel in-progress revocations, queued commands are revalidated, and a failed final freshness check cannot leave a stale pending status as the terminal result.
 
 - Tightened PR assurance evidence: high-impact merges require a verified pre-merge recovery snapshot, and bootstrap exceptions require explicit compensating controls, owner state, deadline, post-merge owner, and stop/rollback conditions.
+- Tightened HIGH/CRITICAL review evidence: the primary reviewer must affirm complete-diff review, and the independent reviewer scope must cover the complete exact-head diff.
 
 - Added a project-wide change-assurance standard with risk-based research, system-level hazard analysis, five separate review perspectives, documentation-to-implementation traceability, systemic recurrence review, and an efficiency audit.
 - Added a PR-specific fail-closed evidence validator and exact-head maintainer authorization workflow. The validator binds the assurance record to the reviewed code commit and requires a separate evidence-only final commit to avoid self-referential SHA claims.
