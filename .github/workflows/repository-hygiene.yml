@@ -46,12 +46,22 @@ jobs:
             echo "The exact pull-request range contains no commits; refusing to report a clean scan."
             exit 1
           fi
-          echo "Scanning $commit_count commits in the exact pull-request range."
-          docker run --rm \
+          echo "Scanning $commit_count commits in the exact pull-request range, including merge-commit first-parent diffs."
+          scan_log="$RUNNER_TEMP/gitleaks.log"
+          if ! docker run --rm \
             --volume "$GITHUB_WORKSPACE:/repo:ro" \
             --workdir /repo \
             ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
-            git --log-opts="${BASE_SHA}..${HEAD_SHA}" --redact --verbose .
+            git --log-opts="${BASE_SHA}..${HEAD_SHA} --diff-merges=first-parent" --redact --verbose . > "$scan_log" 2>&1; then
+            echo "Gitleaks reported findings or failed; detailed scanner output is suppressed."
+            exit 1
+          fi
+          scanned="$(grep -Eo '[1-9][0-9]* commits scanned' "$scan_log" | tail -n 1 || true)"
+          if [[ -z "$scanned" ]]; then
+            echo "Gitleaks did not confirm scanning any commits; refusing a clean result."
+            exit 1
+          fi
+          echo "Gitleaks completed successfully: $scanned."
 
       - name: Scan pushed commits with Gitleaks
         if: github.event_name == 'push'
@@ -69,18 +79,38 @@ jobs:
             log_opts="${BEFORE_SHA}..${HEAD_SHA}"
           fi
           git cat-file -e "${HEAD_SHA}^{commit}"
-          docker run --rm \
+          scan_log="$RUNNER_TEMP/gitleaks.log"
+          if ! docker run --rm \
             --volume "$GITHUB_WORKSPACE:/repo:ro" \
             --workdir /repo \
             ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
-            git --log-opts="$log_opts" --redact --verbose .
+            git --log-opts="$log_opts --diff-merges=first-parent" --redact --verbose . > "$scan_log" 2>&1; then
+            echo "Gitleaks reported findings or failed; detailed scanner output is suppressed."
+            exit 1
+          fi
+          scanned="$(grep -Eo '[1-9][0-9]* commits scanned' "$scan_log" | tail -n 1 || true)"
+          if [[ -z "$scanned" ]]; then
+            echo "Gitleaks did not confirm scanning any commits; refusing a clean result."
+            exit 1
+          fi
+          echo "Gitleaks completed successfully: $scanned."
 
       - name: Scan all available history with Gitleaks
         if: github.event_name == 'workflow_dispatch'
         run: |
           set -euo pipefail
-          docker run --rm \
+          scan_log="$RUNNER_TEMP/gitleaks.log"
+          if ! docker run --rm \
             --volume "$GITHUB_WORKSPACE:/repo:ro" \
             --workdir /repo \
             ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
-            git --log-opts=--all --redact --verbose .
+            git --log-opts="--all --diff-merges=first-parent" --redact --verbose . > "$scan_log" 2>&1; then
+            echo "Gitleaks reported findings or failed; detailed scanner output is suppressed."
+            exit 1
+          fi
+          scanned="$(grep -Eo '[1-9][0-9]* commits scanned' "$scan_log" | tail -n 1 || true)"
+          if [[ -z "$scanned" ]]; then
+            echo "Gitleaks did not confirm scanning any commits; refusing a clean result."
+            exit 1
+          fi
+          echo "Gitleaks completed successfully: $scanned."
