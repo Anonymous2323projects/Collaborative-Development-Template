@@ -58,4 +58,4 @@ Use the project's decision, research, and risk records for detail. Do not copy t
 6. If information is missing, mark it unknown or ask only when it blocks safe progress.
 7. If write access is unavailable, prepare the exact update and say that it remains unsaved. Never claim it was saved until the change is committed and verified.
 
-**Template-repository exception:** the Collaborative Development Template itself is not a project using the template. Do not create `docs/PROJECT_MEMORY.md` in the template repository; use its private maintainer records instead.
+**Upstream-only exception:** the original public Collaborative Development Template product repository does not store its internal project memory in public files. This exception does **not** apply to a new repository created from the template; always verify which repository is being maintained. A public downstream code repository keeps its mandatory project memory in a separate private coordination repository.
