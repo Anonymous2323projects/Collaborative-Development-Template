@@ -110,7 +110,7 @@ def markdown_link_errors(path: Path, content: str, file_cache: dict[Path, str]) 
             try:
                 target_path = Path(resolved.relative_to(ROOT.resolve()))
             except ValueError:
-                errors.append(f"{path}: link escapes repository: {target}")
+                errors.append(f"{path}: link escapes repository")
                 continue
         absolute = ROOT / target_path
         # Never echo raw link targets: query strings and fragments may contain
