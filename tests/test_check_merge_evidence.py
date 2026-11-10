@@ -208,10 +208,12 @@ class MergeEvidenceTests(unittest.TestCase):
         errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("verified recoverable pre-merge snapshot or backup" in error for error in errors))
 
-    def test_critical_blocker_fails_closed(self):
-        record = valid_record().replace("- Critical blockers: NONE", "- Critical blockers: RULESET_NOT_CONFIGURED")
+    def test_critical_blocker_fails_closed_without_echoing_untrusted_value(self):
+        canary = "CANARY_UNTRUSTED_EVIDENCE_987654"
+        record = valid_record().replace("- Critical blockers: NONE", f"- Critical blockers: {canary}")
         errors = gate.validate_record(record, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("Critical blockers remain" in error for error in errors))
+        self.assertNotIn(canary, "\n".join(errors))
 
     def test_source_host_matching_rejects_suffix_spoof(self):
         self.assertFalse(gate.host_is_in({"docs.github.com.attacker.invalid"}, "docs.github.com"))
