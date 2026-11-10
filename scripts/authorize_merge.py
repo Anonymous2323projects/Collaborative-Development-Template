@@ -457,6 +457,22 @@ def main() -> int:
     # Recheck immediately before publishing so a queued stale run cannot restore success.
     is_current_authorized_command(owner, repo, number, comment, allowed, read_token)
     publish_status(owner, repo, current_sha, status_token, state, description, target_url)
+
+    # The final pre-publication read and status POST are not atomic. Recheck
+    # immediately after publishing success and compensate if a newer command
+    # (especially a revoke) arrived while the POST was in flight. This narrows
+    # the consistency window but cannot make the GitHub API operations atomic.
+    if state == "success":
+        try:
+            is_current_authorized_command(owner, repo, number, comment, allowed, read_token)
+        except AuthorizationError:
+            state = "failure"
+            description = (
+                "A newer authorized maintainer command superseded this request during status publication; "
+                "authorization remains blocked."
+            )
+            publish_status(owner, repo, current_sha, status_token, state, description, target_url)
+
     print(f"Set '{CONTEXT}' to {state} for {current_sha}.")
     return 0 if state == "success" else 1
 

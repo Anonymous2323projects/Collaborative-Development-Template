@@ -513,7 +513,7 @@ class MainAuthorizationFlowTests(unittest.TestCase):
         self.addCleanup(Path(handle.name).unlink, missing_ok=True)
         return handle.name
 
-    def run_flow(self, command, actor="maintainer", pull_requests=None, thread_results=None):
+    def run_flow(self, command, actor="maintainer", pull_requests=None, thread_results=None, current_command_results=None):
         event_path = self.write_event(command, actor)
         responses = pull_requests if pull_requests is not None else [valid_pr(), valid_pr()]
         threads = thread_results if thread_results is not None else [False, False]
@@ -529,6 +529,8 @@ class MainAuthorizationFlowTests(unittest.TestCase):
                  patch.object(auth, "unresolved_threads", side_effect=threads) as unresolved, \
                  patch.object(auth, "verify_evidence", return_value=(PARENT, "record")) as evidence, \
                  patch.object(auth, "is_current_authorized_command", return_value=True) as current_command:
+                if current_command_results is not None:
+                    current_command.side_effect = current_command_results
                 result = auth.main()
         return result, api, publish, policy, unresolved, evidence
 
@@ -541,6 +543,23 @@ class MainAuthorizationFlowTests(unittest.TestCase):
         policy.assert_called_once_with("maintainer", "repo", 12, "read-token")
         self.assertEqual(unresolved.call_count, 2)
         evidence.assert_called_once_with("maintainer", "repo", 12, valid_pr(), "read-token")
+
+    def test_revoke_arriving_during_success_status_publication_is_compensated(self):
+        result, api, publish, policy, unresolved, evidence = self.run_flow(
+            "/authorize-merge " + HEAD,
+            current_command_results=[
+                True,  # Initial command check.
+                True,  # Final check immediately before the success POST.
+                auth.AuthorizationError("A newer authorized maintainer command superseded this request."),
+            ],
+        )
+        self.assertEqual(result, 1)
+        self.assertEqual([call.args[4] for call in publish.call_args_list], ["pending", "success", "failure"])
+        self.assertIn("during status publication", publish.call_args_list[-1].args[5])
+        self.assertEqual(api.call_count, 2)
+        policy.assert_called_once()
+        unresolved.assert_called_once()
+        evidence.assert_called_once()
 
     def test_stale_requested_sha_publishes_failure_without_evidence_validation(self):
         stale = "d" * 40
