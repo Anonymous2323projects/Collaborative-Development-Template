@@ -440,6 +440,22 @@ jobs:
 
 
 
+    def test_safe_error_categories_never_echo_untrusted_details(self):
+        errors = [
+            "README.md: missing link target https://example.invalid/?token=SYNTHETIC-CANARY",
+            ".github/workflows/example.yml: secret scanning workflow is incomplete",
+            "LICENSE: potentially sensitive filename",
+            "AGENTS.md: missing assurance section",
+        ]
+        categories = hygiene.safe_error_categories(errors)
+        self.assertEqual(categories["documentation links and anchors"], 1)
+        self.assertEqual(categories["workflow and authorization policy"], 1)
+        self.assertEqual(categories["sensitive paths"], 1)
+        self.assertEqual(categories["assurance documentation"], 1)
+        self.assertNotIn("SYNTHETIC-CANARY", repr(categories))
+        self.assertNotIn("example.invalid", repr(categories))
+
+
 
 class AssuranceDocumentTests(unittest.TestCase):
     def setUp(self):
