@@ -135,6 +135,7 @@ class AuthorizationPolicyTests(unittest.TestCase):
         with patch.object(auth.urllib.request, "urlopen", side_effect=error):
             with self.assertRaises(auth.AuthorizationError) as raised:
                 auth.api_request("GET", "/repos/owner/repo/pulls/12/files", "read-token")
+        error.close()
         self.assertIn("HTTP 422", str(raised.exception))
         self.assertNotIn(canary, str(raised.exception))
 
