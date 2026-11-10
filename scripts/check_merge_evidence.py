@@ -252,11 +252,11 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
     complete_diff_reviewed = field(validation, "Complete diff reviewed")
     if not non_placeholder(complete_diff_reviewed):
         errors.append("Confirm whether the complete diff was reviewed.")
-    elif risk in {"HIGH", "CRITICAL"} and not re.match(
+    elif not re.match(
         r"(?i)^YES(?:\s|$|[:—-])",
         complete_diff_reviewed.strip(),
     ):
-        errors.append("HIGH/CRITICAL changes require an affirmative complete-diff review by the primary reviewer.")
+        errors.append("All substantive changes require an affirmative complete-diff review by the primary reviewer.")
     tested_sha = field(validation, "Exact commit SHA tested")
     if tested_sha != reviewed_code_sha:
         errors.append("The exact commit SHA tested must equal the reviewed code SHA.")
