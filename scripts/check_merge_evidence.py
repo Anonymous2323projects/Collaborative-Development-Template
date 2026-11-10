@@ -148,6 +148,7 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
         errors.append("HIGH/CRITICAL changes require an independent review.")
     if review_status == "REQUIRED":
         for label in (
+            "Primary reviewer/coordinator identity",
             "Reviewer/agent identity (distinct from the primary reviewer)",
             "Scope reviewed",
             "Report/reference",
@@ -156,6 +157,10 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
         ):
             if not non_placeholder(field(independent_review, label)):
                 errors.append(f"Independent review section is incomplete: {label}.")
+        primary_reviewer = field(independent_review, "Primary reviewer/coordinator identity").casefold()
+        independent_reviewer = field(independent_review, "Reviewer/agent identity (distinct from the primary reviewer)").casefold()
+        if primary_reviewer and independent_reviewer and primary_reviewer == independent_reviewer:
+            errors.append("Independent reviewer identity must differ from the primary reviewer.")
         reviewer_type = field(independent_review, "Reviewer type")
         if reviewer_type not in {"HUMAN", "AI"}:
             errors.append("Independent review reviewer type must be HUMAN or AI.")
