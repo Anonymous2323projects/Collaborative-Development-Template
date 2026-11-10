@@ -115,19 +115,18 @@ def markdown_link_errors(path: Path, content: str, file_cache: dict[Path, str]) 
         absolute = ROOT / target_path
         # Never echo raw link targets: query strings and fragments may contain
         # credentials or other sensitive values supplied by repository content.
-        safe_target = target_path.as_posix()
         if not absolute.exists():
-            errors.append(f"{path}: missing local link target: {safe_target}")
+            errors.append(f"{path}: missing local link target")
             continue
         if fragment and absolute.is_file() and absolute.suffix.lower() == ".md":
             if target_path not in file_cache:
                 try:
                     file_cache[target_path] = absolute.read_text(encoding="utf-8")
                 except (OSError, UnicodeError):
-                    errors.append(f"{path}: cannot read Markdown link target: {safe_target}")
+                    errors.append(f"{path}: cannot read Markdown link target")
                     continue
             if fragment not in markdown_anchors(file_cache[target_path]):
-                errors.append(f"{path}: missing Markdown heading anchor: {safe_target}")
+                errors.append(f"{path}: missing Markdown heading anchor")
     return errors
 
 def workflow_events(content: str) -> list[str]:
