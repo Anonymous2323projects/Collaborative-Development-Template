@@ -129,6 +129,12 @@ Before describing the gate as technically enforced, use separate test PRs to ver
 
 If any test fails or cannot be performed, record the limitation and retain a manual owner gate. Do not claim technical enforcement.
 
+### Authorization command ordering and queue behavior
+
+The authorization job uses one concurrency group per pull request with `queue: max` and `cancel-in-progress: false`. This prevents a later-starting workflow from canceling an authorization or revocation that is already running. GitHub permits up to 100 pending jobs in this group. Queue order is based on when jobs start waiting, not the timestamp of the issue comment, so the script independently enumerates authorized maintainer commands and accepts only the latest one before publishing a result.
+
+A stale queued command must not authorize anything. If a command workflow is canceled, fails, or is not observed to complete, treat the command as unprocessed. In particular, do not assume a revocation succeeded merely because its comment exists: wait for the corresponding workflow to complete and verify the exact-head status is `failure`. If the queue is saturated or the status remains pending/ambiguous, do not merge; wait for the queue to clear and repeat the exact command if needed. This is a fail-closed operational requirement, not an atomic transaction guarantee.
+
 ## 9. Recovery and rotation
 
 If the App key may be exposed:
