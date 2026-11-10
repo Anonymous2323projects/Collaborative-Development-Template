@@ -6,7 +6,7 @@ Before using it, read the short [Important Notice and Disclaimer](DISCLAIMER.md)
 
 ## 1. Protect your project before adding private information
 
-This repository is the **public starter template**. When you create your own project from it, GitHub creates a separate repository for your project. That new repository is where your project files and notes will live.
+This repository is the **public starter template**. When you create your own project from it, GitHub creates a separate repository for your project. If you keep the project private, its files and internal records can normally live together there. If you publish the project's code, put only publishable material in the public repository and store private project records separately.
 
 **Choose the arrangement that fits the project's visibility.** For a project that stays private, one private GitHub repository is normally enough. If the project's code or product repository will be **public**, use a **two-repository setup**: one public repository for publishable code and documentation, and a separate **private coordination repository** for project memory, decisions, handovers, internal discussions, and other non-public records. Reuse a suitable existing private repository rather than creating a duplicate. Never put private coordination records into the public repository.
 
