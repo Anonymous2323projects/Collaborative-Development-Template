@@ -358,6 +358,27 @@ jobs:
         uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
         with:
           fetch-depth: 0
+      - name: Prove pinned Gitleaks image detects a test secret
+        run: |
+          set -euo pipefail
+          canary="$RUNNER_TEMP/gitleaks-canary"
+          mkdir -p "$canary"
+          prefix='ghp'
+          body='0123456789abcdefghijABCDEFGHIJ012345'
+          printf 'token = "%s_%s"\\n' "$prefix" "$body" > "$canary/canary.go"
+          scan_log="$RUNNER_TEMP/gitleaks-canary.log"
+          if docker run --rm \\
+            --volume "$canary:/canary:ro" \\
+            ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \\
+            dir /canary --redact --no-banner > "$scan_log" 2>&1; then
+            echo "::error::Pinned Gitleaks image did not detect the known test secret."
+            exit 1
+          fi
+          if ! grep -Eq 'leaks found: [1-9][0-9]*' "$scan_log"; then
+            echo "::error::Gitleaks canary exited non-zero without confirming a finding."
+            exit 1
+          fi
+          echo "Gitleaks canary detected the known test secret."
       - name: Scan complete PR range
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -440,6 +461,14 @@ jobs:
             hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content),
             [],
         )
+
+    def test_secret_scan_requires_functional_gitleaks_canary(self):
+        content = self.secret_scan_workflow_fixture().replace(
+            "dir /canary --redact --no-banner",
+            "dir /canary --no-banner",
+        )
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
+        self.assertTrue(any("functional Gitleaks canary" in error for error in errors))
 
     def test_secret_scan_rejects_paginated_gitleaks_action(self):
         content = self.secret_scan_workflow_fixture().replace(
