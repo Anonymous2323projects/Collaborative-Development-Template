@@ -93,7 +93,7 @@ GitHub's ruleset UI requires the App to be installed, have the required status p
 3. Confirm that the status **Explicit maintainer merge authorization** is published by the dedicated App on that exact SHA.
 4. Open the ruleset editor and verify that the App is offered as the expected source for that exact status context.
 
-**Stop if the App or context is not selectable.** The current workflow publishes a commit status. GitHub's documentation also refers to a recently submitted check run when describing expected-source selection. Do not guess that a commit status satisfies this UI prerequisite. Do not add `checks:write` or broaden App permissions as a workaround. Research and review a minimal Checks API alternative first; it may require a different status implementation and new adversarial tests.
+**Stop if the App or context is not selectable.** The current workflow publishes a commit status. GitHub's documentation also refers to a recently submitted check run when describing expected-source selection. Do not guess that a commit status satisfies this UI prerequisite. Creating or updating a check run through the REST API requires the GitHub App permission `checks:write` ([Checks API permission requirements](https://docs.github.com/en/rest/checks/runs)). The currently proposed App intentionally requests only `statuses:write`, so it cannot create that check-run prerequisite itself. Do not add `checks:write` or broaden App permissions as a workaround. Research and review a minimal Checks API alternative first; it may require a different status implementation and new adversarial tests, plus separate explicit owner approval for the permission change.
 
 Do not use a real production PR as the first setup test if a disposable test PR can be used.
 
