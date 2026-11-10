@@ -26,6 +26,7 @@
 ## Independent review
 
 - Independent review status: REQUIRED / NOT REQUIRED
+- Primary reviewer/coordinator identity:
 - Reviewer/agent identity (distinct from the primary reviewer):
 - Reviewer type: HUMAN / AI / NOT REQUIRED
 - Exact code SHA reviewed:
