@@ -454,8 +454,17 @@ def main() -> int:
             description = str(exc)
 
     # A later authorized command (especially /revoke-merge) supersedes this run.
-    # Recheck immediately before publishing so a queued stale run cannot restore success.
-    is_current_authorized_command(owner, repo, number, comment, allowed, read_token)
+    # If the final freshness read fails, publish failure rather than leaving the
+    # earlier pending state indefinitely. Queued commands will then be rechecked
+    # in turn; queue order is not treated as command order.
+    try:
+        is_current_authorized_command(owner, repo, number, comment, allowed, read_token)
+    except (AuthorizationError, KeyError, TypeError, ValueError, OSError):
+        state = "failure"
+        description = (
+            "The final latest-command check failed or a newer command superseded this request; "
+            "authorization remains blocked."
+        )
     publish_status(owner, repo, current_sha, status_token, state, description, target_url)
 
     # The final pre-publication read and status POST are not atomic. Recheck
