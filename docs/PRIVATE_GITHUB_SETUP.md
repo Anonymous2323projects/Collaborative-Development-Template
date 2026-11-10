@@ -44,10 +44,17 @@ For a new GitHub project repository, **Private** is the default recommendation. 
 
 **Choose the setup before publishing:**
 - **Private project:** use one suitable private project repository. No extra coordination repository is needed just because the template is used.
-- **Public product/code:** use a public repository only for publishable material, plus a separate private coordination repository for non-public project memory, decisions, handovers, internal communication, and work records. Verify both repositories' owners, visibility, access and connected apps. Reuse an existing suitable private coordination repository when possible. Establish this private space before transferring or publishing project material; moving files out of a public repository later does not reliably erase history.
+- **Public product/code:** keep only publishable material in the public repository, plus a separate private coordination repository for non-public project memory, decisions, handovers, internal communication, and work records. Do this **before publishing any product material**. Never assume moving a file out of a public repository later removes its history.
 - **No remote repository needed yet:** continue idea exploration or safe local work. Offer GitHub when it provides a real benefit.
 
-Do not create either repository, alter visibility, link access or publish without informed user authorization. For a public product, complete the [privacy review](../PRIVACY_AND_PUBLICATION.md) and [release-readiness assessment](../PROJECT_RISK_AND_RELEASE_READINESS.md) before release.
+For a project intended to become public, guide the user through these steps at the appropriate time:
+1. Check whether suitable public and private repositories already exist. If so, verify owners, visibility, collaborators, connected apps, and the user's intended use; do not duplicate them.
+2. If the private coordination space is missing, propose a **Private** repository for it, explain its purpose and obtain explicit approval before creating it. Keep project memory, private decisions, handovers, internal communication and pending actions there.
+3. Propose or verify a separate public product repository. Review its initial files, metadata, commit identity, history, issues and PRs for non-public material **before** the first public push or visibility change.
+4. Record privately which repository is the public product and which is the private coordination space. Keep the ChatGPT Project's sharing permissions separately restricted and confirm its Project Instructions point to the correct record location.
+5. Complete the [privacy review](../PRIVACY_AND_PUBLICATION.md) and [release-readiness assessment](../PROJECT_RISK_AND_RELEASE_READINESS.md) before public release; obtain the user's explicit publication authorization.
+
+Do not create either repository, alter visibility, link access or publish without informed user authorization.
 
 1. Open [Create a new repository](https://github.com/new).
 2. Choose a clear name and add a description if useful.
