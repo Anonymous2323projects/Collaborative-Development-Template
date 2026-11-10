@@ -63,7 +63,7 @@ At meaningful maintenance checkpoints, check for relevant upstream changes when 
 
 ## 8. Maintain project memory
 
-Every downstream project must keep a durable `docs/PROJECT_MEMORY.md`, or document the equivalent canonical file already used by the project. Initialize it from [the project memory template](../PROJECT_MEMORY_TEMPLATE.md).
+Every downstream project must keep a durable `docs/PROJECT_MEMORY.md`, or document the equivalent canonical file already used by the project. Initialize it from [the project memory template](../PROJECT_MEMORY_TEMPLATE.md). For a publicly visible code/product repository, maintain the memory and other private work records in the separate private coordination repository, not alongside public code.
 
 - Read it at the start of each work session and verify important facts against the live project.
 - Update it after meaningful changes to scope, decisions, architecture, verified work, research, risks, lessons, or next steps.
