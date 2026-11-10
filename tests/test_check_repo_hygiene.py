@@ -497,6 +497,24 @@ jobs:
         errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
         self.assertTrue(any("missing required full-range control" in error and "ignore-gitleaks-allow" in error for error in errors))
 
+    def test_secret_scan_rejects_custom_allowlist_config(self):
+        content = self.secret_scan_workflow_fixture().replace(
+            "          useDefault = true\\n          EOF",
+            '          useDefault = true\\n          [allowlist]\\n          paths = [".*"]\\n          EOF',
+            1,
+        )
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
+        self.assertTrue(any("fixed built-in Gitleaks rules" in error for error in errors))
+
+    def test_secret_scan_rejects_custom_baseline(self):
+        content = self.secret_scan_workflow_fixture().replace(
+            "--redact --verbose .",
+            "--baseline-path=/tmp/baseline --redact --verbose .",
+        )
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
+        self.assertTrue(any("custom Gitleaks baselines" in error for error in errors))
+
+
     def test_secret_scan_rejects_empty_commit_range_success(self):
         content = self.secret_scan_workflow_fixture().replace(
             'if [[ "$commit_count" -lt 1 ]]; then exit 1; fi',
