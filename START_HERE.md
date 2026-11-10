@@ -110,7 +110,7 @@ Official product details can change. Check the current [Projects guide](https://
 
 ## 7. Project memory and human actions
 
-**Project memory is required for every downstream project.** Maintain `docs/PROJECT_MEMORY.md`, initialized from [the memory template](PROJECT_MEMORY_TEMPLATE.md), or document the equivalent canonical file already used by the project.
+**Project memory is required for every downstream project.** Maintain `docs/PROJECT_MEMORY.md`, initialized from [the memory template](PROJECT_MEMORY_TEMPLATE.md), or document the equivalent canonical file already used by the project. For a **public code/product repository**, keep this memory file in the project's **private coordination repository**; never publish it with the public product.
 
 Keep it concise and update it after meaningful changes to goals, decisions, architecture, verified work, research, risks, lessons, or next steps. Read it at the start of each work session and check important facts against the live project. Link to detailed records rather than copying them. Never store secrets, sensitive personal data, confidential third-party information, or raw chat transcripts.
 
