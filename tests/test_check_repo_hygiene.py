@@ -430,6 +430,15 @@ jobs:
         errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
         self.assertTrue(any("fail closed" in error for error in errors))
 
+    def test_secret_scan_rejects_zero_scanned_commit_success(self):
+        content = self.secret_scan_workflow_fixture().replace(
+            'if [[ -z "$scanned" ]]; then exit 1; fi',
+            'if [[ -z "$scanned" ]]; then exit 0; fi',
+        )
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
+        self.assertTrue(any("zero-commit scanner result must fail closed" in error for error in errors))
+
+
 
 
 class AssuranceDocumentTests(unittest.TestCase):
