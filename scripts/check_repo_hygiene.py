@@ -387,6 +387,11 @@ def secret_scan_workflow_errors(path: Path, content: str) -> list[str]:
     range_guard = re.search(r'if \[\[ "\$commit_count" -lt 1 \]\]; then([\s\S]*?)fi', job)
     if not range_guard or not re.search(r"\bexit 1\b", range_guard.group(1)):
         errors.append(f"{path}: empty pull-request scan ranges must fail closed")
+    scanned_guard = re.search(r'if \[\[ -z "\$scanned" \]\]; then([\s\S]*?)fi', job)
+    if not scanned_guard or not re.search(r"\bexit 1\b", scanned_guard.group(1)):
+        errors.append(f"{path}: a zero-commit scanner result must fail closed")
+    if "detailed scanner output is suppressed" not in job or ' > "$scan_log" 2>&1' not in job:
+        errors.append(f"{path}: raw Gitleaks output must be captured and suppressed")
     if "--first-parent" in job or "--no-merges" in job:
         errors.append(f"{path}: secret scanning must include commits reachable through all parent paths")
     return errors
