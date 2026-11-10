@@ -443,7 +443,9 @@ class AuthorizationPolicyTests(unittest.TestCase):
         self.assertNotIn("\nconcurrency:\n", workflow.split("jobs:", 1)[0])
         authorize_job = workflow.split("  authorize:", 1)[1]
         self.assertIn("group: merge-authorization-" + "$" + "{{ github.event.issue.number }}", authorize_job)
-        self.assertIn("cancel-in-progress: true", authorize_job)
+        self.assertIn("queue: max", authorize_job)
+        self.assertIn("cancel-in-progress: false", authorize_job)
+        self.assertNotIn("cancel-in-progress: true", authorize_job)
         self.assertNotIn("github.event.pull_request.head.sha", workflow)
         self.assertNotIn("pull_request_target:", workflow)
 
@@ -557,6 +559,22 @@ class MainAuthorizationFlowTests(unittest.TestCase):
         self.assertEqual([call.args[4] for call in publish.call_args_list], ["pending", "success", "failure"])
         self.assertIn("recheck did not complete cleanly", publish.call_args_list[-1].args[5])
         self.assertEqual(api.call_count, 2)
+        policy.assert_called_once()
+        self.assertEqual(unresolved.call_count, 2)
+        evidence.assert_called_once()
+
+    def test_newer_command_at_final_prepublication_check_replaces_pending_with_failure(self):
+        result, api, publish, policy, unresolved, evidence = self.run_flow(
+            "/authorize-merge " + HEAD,
+            current_command_results=[
+                True,  # Initial command check.
+                auth.AuthorizationError("A newer authorized maintainer command superseded this request."),
+            ],
+        )
+        self.assertEqual(result, 1)
+        self.assertEqual([call.args[4] for call in publish.call_args_list], ["pending", "failure"])
+        self.assertIn("final latest-command check failed", publish.call_args_list[-1].args[5])
+        self.assertEqual(api.call_count, 1)
         policy.assert_called_once()
         self.assertEqual(unresolved.call_count, 2)
         evidence.assert_called_once()
