@@ -394,5 +394,105 @@ class AuthorizationPolicyTests(unittest.TestCase):
         self.assertNotIn("pull_request_target:", workflow)
 
 
+class MainAuthorizationFlowTests(unittest.TestCase):
+    def write_event(self, command, actor="maintainer"):
+        event = {
+            "issue": {"number": 12, "pull_request": {"url": "https://api.github.com/repos/owner/repo/pulls/12"}},
+            "comment": {
+                "body": command,
+                "user": {"login": actor},
+                "html_url": "https://github.com/owner/repo/pull/12#issuecomment-123",
+            },
+            "repository": {
+                "owner": {"type": "User", "login": "maintainer"},
+                "name": "repo",
+                "default_branch": "main",
+            },
+        }
+        handle = tempfile.NamedTemporaryFile("w", encoding="utf-8", delete=False)
+        json.dump(event, handle)
+        handle.close()
+        self.addCleanup(Path(handle.name).unlink, missing_ok=True)
+        return handle.name
+
+    def run_flow(self, command, actor="maintainer", pull_requests=None, thread_results=None):
+        event_path = self.write_event(command, actor)
+        responses = pull_requests if pull_requests is not None else [valid_pr(), valid_pr()]
+        threads = thread_results if thread_results is not None else [False, False]
+        with patch.dict(os.environ, {
+            "GITHUB_EVENT_PATH": event_path,
+            "GITHUB_TOKEN": "read-token",
+            "MERGE_AUTH_TOKEN": "status-token",
+            "MERGE_AUTHORIZER_LOGINS": "",
+        }):
+            with patch.object(auth, "api_request", side_effect=responses) as api, \
+                 patch.object(auth, "publish_status") as publish, \
+                 patch.object(auth, "reject_policy_changes", return_value=[]) as policy, \
+                 patch.object(auth, "unresolved_threads", side_effect=threads) as unresolved, \
+                 patch.object(auth, "verify_evidence", return_value=(PARENT, "record")) as evidence:
+                result = auth.main()
+        return result, api, publish, policy, unresolved, evidence
+
+    def test_authorized_exact_head_publishes_pending_then_success(self):
+        result, api, publish, policy, unresolved, evidence = self.run_flow("/authorize-merge " + HEAD)
+        self.assertEqual(result, 0)
+        self.assertEqual(api.call_count, 2)
+        self.assertEqual([call.args[4] for call in publish.call_args_list], ["pending", "success"])
+        self.assertEqual(publish.call_args_list[-1].args[:4], ("maintainer", "repo", HEAD, "status-token"))
+        policy.assert_called_once_with("maintainer", "repo", 12, "read-token")
+        self.assertEqual(unresolved.call_count, 2)
+        evidence.assert_called_once_with("maintainer", "repo", 12, valid_pr(), "read-token")
+
+    def test_stale_requested_sha_publishes_failure_without_evidence_validation(self):
+        stale = "d" * 40
+        result, api, publish, policy, unresolved, evidence = self.run_flow("/authorize-merge " + stale, pull_requests=[valid_pr()])
+        self.assertEqual(result, 1)
+        self.assertEqual(api.call_count, 1)
+        self.assertEqual([call.args[4] for call in publish.call_args_list], ["pending", "failure"])
+        policy.assert_not_called()
+        unresolved.assert_not_called()
+        evidence.assert_not_called()
+        self.assertIn("did not match", publish.call_args_list[-1].args[5])
+
+    def test_head_change_during_validation_prevents_success(self):
+        changed = valid_pr()
+        changed["head"] = {"sha": "d" * 40}
+        result, api, publish, policy, unresolved, evidence = self.run_flow(
+            "/authorize-merge " + HEAD,
+            pull_requests=[valid_pr(), changed],
+            thread_results=[False],
+        )
+        self.assertEqual(result, 1)
+        self.assertEqual(api.call_count, 2)
+        self.assertEqual([call.args[4] for call in publish.call_args_list], ["pending", "failure"])
+        self.assertIn("changed during validation", publish.call_args_list[-1].args[5])
+        evidence.assert_called_once()
+        unresolved.assert_called_once()
+
+    def test_revoke_command_publishes_failure_for_current_head(self):
+        result, api, publish, policy, unresolved, evidence = self.run_flow("/revoke-merge " + HEAD, pull_requests=[valid_pr()])
+        self.assertEqual(result, 1)
+        self.assertEqual(api.call_count, 1)
+        self.assertEqual([call.args[4] for call in publish.call_args_list], ["pending", "failure"])
+        self.assertIn("revoked authorization", publish.call_args_list[-1].args[5])
+        policy.assert_not_called()
+        unresolved.assert_not_called()
+        evidence.assert_not_called()
+
+    def test_unauthorized_actor_cannot_publish_any_status(self):
+        event_path = self.write_event("/authorize-merge " + HEAD, actor="outsider")
+        with patch.dict(os.environ, {
+            "GITHUB_EVENT_PATH": event_path,
+            "GITHUB_TOKEN": "read-token",
+            "MERGE_AUTH_TOKEN": "status-token",
+            "MERGE_AUTHORIZER_LOGINS": "",
+        }):
+            with patch.object(auth, "api_request") as api, patch.object(auth, "publish_status") as publish:
+                with self.assertRaisesRegex(auth.AuthorizationError, "not an authorized maintainer"):
+                    auth.main()
+        api.assert_not_called()
+        publish.assert_not_called()
+
+
 if __name__ == "__main__":
     unittest.main()
