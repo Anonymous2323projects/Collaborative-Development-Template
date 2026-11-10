@@ -558,7 +558,7 @@ class MainAuthorizationFlowTests(unittest.TestCase):
         self.assertIn("during status publication", publish.call_args_list[-1].args[5])
         self.assertEqual(api.call_count, 2)
         policy.assert_called_once()
-        unresolved.assert_called_once()
+        self.assertEqual(unresolved.call_count, 2)
         evidence.assert_called_once()
 
     def test_stale_requested_sha_publishes_failure_without_evidence_validation(self):
