@@ -1,6 +1,6 @@
 # Project Memory
 
-**Required for every project using this template.** This is the durable, concise record that lets future sessions continue safely. It is not a chat transcript or a replacement for source code, tests, or specialist records.
+**Required for every project using this template.** This is the durable, concise record that lets future sessions continue safely. It is not a chat transcript or a replacement for source code, tests, or specialist records. **If the code/product repository is public, store this record in the separate private coordination repository instead of committing it to public code.**
 
 Keep only information that is useful later. Remove sections that do not apply; mark unknowns honestly. Never store secrets, sensitive personal data, confidential third-party information, or raw private conversations. A private repository is not a secret store.
 
