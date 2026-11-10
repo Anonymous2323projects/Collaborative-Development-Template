@@ -40,6 +40,17 @@ def valid_record():
 - Methodological limits, conflicts, or evidence gaps: noted
 - Alternatives considered and why this option was selected: least privilege and exact-head status
 
+## Independent review
+- Independent review status: REQUIRED
+- Reviewer/agent identity (distinct from the primary reviewer): independent-review-agent-2
+- Reviewer type: AI
+- Exact code SHA reviewed: {REVIEWED}
+- Scope reviewed: complete exact-head diff and relevant authorization controls
+- Report/reference: https://example.invalid/independent-review-report
+- Findings and disposition: no unresolved findings; observations reconciled
+- Independence and limitations: separate review context; not human approval
+- If not required, why: NOT APPLICABLE
+
 ## Five-perspective assessment
 {''.join(lenses)}
 ## Documentation-to-implementation traceability
@@ -87,6 +98,48 @@ def valid_record():
 """
 
 class MergeEvidenceTests(unittest.TestCase):
+    def test_high_risk_record_requires_independent_review(self):
+        content = valid_record().replace(
+            "- Independent review status: REQUIRED",
+            "- Independent review status: NOT REQUIRED",
+        ).replace(
+            "- If not required, why: NOT APPLICABLE",
+            "- If not required, why: not applicable",
+        )
+        errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("HIGH/CRITICAL changes require an independent review" in error for error in errors))
+
+    def test_independent_review_must_bind_to_exact_reviewed_sha(self):
+        content = valid_record().replace(
+            f"- Exact code SHA reviewed: {REVIEWED}",
+            f"- Exact code SHA reviewed: {BASE}",
+        )
+        errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("exact reviewed code SHA" in error for error in errors))
+
+    def test_low_risk_record_may_omit_independent_review_with_reason(self):
+        content = valid_record().replace("- Risk: HIGH", "- Risk: LOW")
+        content = content.replace("- Independent review status: REQUIRED", "- Independent review status: NOT REQUIRED")
+        content = content.replace("- If not required, why: NOT APPLICABLE", "- If not required, why: genuinely low-risk documentation-only change")
+        errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
+        self.assertEqual(errors, [])
+
+    def test_missing_independent_review_section_is_rejected(self):
+        content = valid_record()
+        start = content.index("## Independent review")
+        end = content.index("## Five-perspective assessment")
+        content = content[:start] + content[end:]
+        errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("Independent review section must appear exactly once" in error for error in errors))
+
+    def test_incomplete_independent_review_is_rejected(self):
+        content = valid_record().replace(
+            "- Report/reference: https://example.invalid/independent-review-report",
+            "- Report/reference: TBD",
+        )
+        errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("Independent review section is incomplete: Report/reference" in error for error in errors))
+
     def test_complete_record_passes(self):
         errors = gate.validate_record(valid_record(), 12, "main", BASE, REVIEWED)
         self.assertEqual(errors, [])
