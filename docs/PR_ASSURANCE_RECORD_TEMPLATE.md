@@ -30,7 +30,7 @@
 - Reviewer/agent identity (distinct from the primary reviewer):
 - Reviewer type: HUMAN / AI / NOT REQUIRED
 - Exact code SHA reviewed:
-- Scope reviewed:
+- Scope reviewed: state whether the complete exact-head diff and relevant surrounding implementation were reviewed; HIGH/CRITICAL changes must cover the complete diff.
 - Report/reference:
 - Findings and disposition:
 - Independence and limitations:
@@ -93,7 +93,7 @@
 |---|---|---|---|
 | | | PASS / FAIL / NOT RUN | |
 
-- Complete diff reviewed:
+- Complete diff reviewed: YES / NO — HIGH/CRITICAL changes must be YES; if NO, explain the proportionate review scope.
 - Checks not run and why:
 - Exact commit SHA tested:
 
