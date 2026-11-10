@@ -170,6 +170,7 @@ class AuthorizationPolicyTests(unittest.TestCase):
             {"filename": "docs/HANDOVER_TEMPLATE.md"},
             {"filename": "docs/TEMPLATE_UPDATE_GUIDE.md"},
             {"filename": ".gitleaks.toml"},
+            {"filename": ".gitleaksignore"},
         ]
         with patch.object(auth, "api_request", return_value=changed):
             protected = auth.reject_policy_changes("owner", "repo", 12, "read-token")
@@ -202,12 +203,17 @@ class AuthorizationPolicyTests(unittest.TestCase):
                 "previous_filename": "CODE_OF_CONDUCT.md",
                 "status": "renamed",
             },
+            {
+                "filename": "docs/secret-ignore.md",
+                "previous_filename": ".gitleaksignore",
+                "status": "renamed",
+            },
         ]
         with patch.object(auth, "api_request", return_value=changed):
             protected = auth.reject_policy_changes("owner", "repo", 12, "read-token")
         self.assertEqual(
             protected,
-            [".github/workflows/merge-authorization.yml", "CODEOWNERS", "CODE_OF_CONDUCT.md", "LICENSE", "scripts/authorize_merge.py"],
+            [".github/workflows/merge-authorization.yml", ".gitleaksignore", "CODEOWNERS", "CODE_OF_CONDUCT.md", "LICENSE", "scripts/authorize_merge.py"],
         )
 
     def test_ordinary_source_and_documentation_changes_do_not_trigger_policy_block(self):
