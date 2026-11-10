@@ -110,8 +110,8 @@ class MergeEvidenceTests(unittest.TestCase):
         errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
         self.assertTrue(any("HIGH/CRITICAL changes require an independent review" in error for error in errors))
 
-    def test_high_critical_changes_require_affirmative_complete_diff_review(self):
-        for risk in ("HIGH", "CRITICAL"):
+    def test_all_risk_levels_require_affirmative_complete_diff_review(self):
+        for risk in ("LOW", "MODERATE", "HIGH", "CRITICAL"):
             content = valid_record().replace("- Risk: HIGH", f"- Risk: {risk}")
             content = content.replace("- Complete diff reviewed: yes", "- Complete diff reviewed: NO — only selected files reviewed")
             errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
@@ -153,7 +153,6 @@ class MergeEvidenceTests(unittest.TestCase):
         content = valid_record().replace("- Risk: HIGH", "- Risk: LOW")
         content = content.replace("- Independent review status: REQUIRED", "- Independent review status: NOT REQUIRED")
         content = content.replace("- If not required, why: NOT APPLICABLE", "- If not required, why: genuinely low-risk documentation-only change")
-        content = content.replace("- Complete diff reviewed: yes", "- Complete diff reviewed: NO — proportionate review of the limited documentation-only change")
         errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
         self.assertEqual(errors, [])
 
