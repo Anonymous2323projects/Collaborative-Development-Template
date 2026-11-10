@@ -364,6 +364,11 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
+          cat > "$RUNNER_TEMP/gitleaks.toml" <<'EOF'
+          [extend]
+          useDefault = true
+          EOF
+          mkdir "$RUNNER_TEMP/gitleaks-ignore"
           [[ "$BASE_SHA" =~ ^[0-9a-f]{40}$ ]]
           [[ "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]
           git cat-file -e "${BASE_SHA}^{commit}"
@@ -373,9 +378,11 @@ jobs:
           scan_log="$RUNNER_TEMP/gitleaks.log"
           if ! docker run --rm \\
             --volume "$GITHUB_WORKSPACE:/repo:ro" \\
+            --volume "$RUNNER_TEMP/gitleaks.toml:/tmp/gitleaks.toml:ro" \\
+            --volume "$RUNNER_TEMP/gitleaks-ignore:/tmp/gitleaks-ignore:ro" \\
             --workdir /repo \\
             ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \\
-            git --log-opts="${BASE_SHA}..${HEAD_SHA} --diff-merges=first-parent" --redact --verbose . > "$scan_log" 2>&1; then
+            git --log-opts="${BASE_SHA}..${HEAD_SHA} --diff-merges=first-parent" --config=/tmp/gitleaks.toml --gitleaks-ignore-path=/tmp/gitleaks-ignore --redact --verbose . > "$scan_log" 2>&1; then
             echo "Gitleaks reported findings or failed; detailed scanner output is suppressed."
             exit 1
           fi
@@ -421,6 +428,22 @@ jobs:
         )
         errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
         self.assertTrue(any("SHA-256 image digest" in error for error in errors))
+
+    def test_secret_scan_rejects_pr_controlled_gitleaks_config(self):
+        content = self.secret_scan_workflow_fixture().replace(
+            "--config=/tmp/gitleaks.toml",
+            "",
+        )
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
+        self.assertTrue(any("missing required full-range control" in error and "config" in error for error in errors))
+
+    def test_secret_scan_rejects_pr_controlled_gitleaks_ignore_file(self):
+        content = self.secret_scan_workflow_fixture().replace(
+            "--gitleaks-ignore-path=/tmp/gitleaks-ignore",
+            "",
+        )
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
+        self.assertTrue(any("missing required full-range control" in error and "ignore-path" in error for error in errors))
 
     def test_secret_scan_rejects_empty_commit_range_success(self):
         content = self.secret_scan_workflow_fixture().replace(
