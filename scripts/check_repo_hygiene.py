@@ -380,12 +380,12 @@ def secret_scan_workflow_errors(path: Path, content: str) -> list[str]:
             errors.append(f"{path}: secret scanning is missing required full-range control: {item}")
     if re.search(r"gitleaks/gitleaks-action@", job):
         errors.append(f"{path}: the paginated Gitleaks Action must not be used for pull-request scanning")
-    if re.search(r"ghcr\\.io/gitleaks/gitleaks@sha256:[0-9a-f]{64}", job) is None:
-        errors.append(f"{path}: Gitleaks container must be pinned to a full SHA-256 image digest")
+    if len(re.findall(r"ghcr\.io/gitleaks/gitleaks@sha256:[0-9a-f]{64}", job)) != 3:
+        errors.append(f"{path}: every Gitleaks invocation must use a full SHA-256 image digest")
+    if not re.search(r'if \[\[ "\$commit_count" -lt 1 \]\]; then[\s\S]*?\bexit 1\b[\s\S]*?fi', job):
+        errors.append(f"{path}: empty pull-request scan ranges must fail closed")
     if "--first-parent" in job or "--no-merges" in job:
         errors.append(f"{path}: secret scanning must include commits reachable through all parent paths")
-    if "commit_count" not in job or '[[ "$commit_count" -lt 1 ]]' not in job:
-        errors.append(f"{path}: empty pull-request scan ranges must fail closed")
     return errors
 
 
