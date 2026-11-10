@@ -356,9 +356,43 @@ def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
     return errors
 
 
+def secret_scan_workflow_errors(path: Path, content: str) -> list[str]:
+    """Require a complete, exact-SHA Gitleaks range instead of a paginated PR API list."""
+    if path.as_posix() != ".github/workflows/repository-hygiene.yml":
+        return []
+    errors = []
+    job = workflow_job_blocks(content).get("secret-scan", "")
+    if not job:
+        return [f"{path}: required secret-scan job is missing"]
+    required = (
+        "fetch-depth: 0",
+        "BASE_SHA: " + "$" + "{{ github.event.pull_request.base.sha }}",
+        "HEAD_SHA: " + "$" + "{{ github.event.pull_request.head.sha }}",
+        'git cat-file -e "${BASE_SHA}^{commit}"',
+        'git cat-file -e "${HEAD_SHA}^{commit}"',
+        'git rev-list --count "${BASE_SHA}..${HEAD_SHA}"',
+        'gitleaks/gitleaks@sha256:',
+        'git --log-opts="${BASE_SHA}..${HEAD_SHA}" --redact --verbose .',
+        '--volume "$GITHUB_WORKSPACE:/repo:ro"',
+    )
+    for item in required:
+        if item not in job:
+            errors.append(f"{path}: secret scanning is missing required full-range control: {item}")
+    if re.search(r"gitleaks/gitleaks-action@", job):
+        errors.append(f"{path}: the paginated Gitleaks Action must not be used for pull-request scanning")
+    if re.search(r"(?m)^\\s*ghcr\\.io/gitleaks/gitleaks@sha256:[0-9a-f]{64}\\s*\\\\?$", job) is None:
+        errors.append(f"{path}: Gitleaks container must be pinned to a full SHA-256 image digest")
+    if "--first-parent" in job or "--no-merges" in job:
+        errors.append(f"{path}: secret scanning must include commits reachable through all parent paths")
+    if "commit_count" not in job or '[[ "$commit_count" -lt 1 ]]' not in job:
+        errors.append(f"{path}: empty pull-request scan ranges must fail closed")
+    return errors
+
+
 def workflow_policy_errors(path: Path, content: str) -> list[str]:
     errors = workflow_environment_errors(path, content)
     errors.extend(trusted_authorizer_workflow_errors(path, content))
+    errors.extend(secret_scan_workflow_errors(path, content))
     if not re.search(r"^permissions\s*:", content, re.MULTILINE):
         errors.append(f"{path}: explicit top-level GITHUB_TOKEN permissions are required")
     if re.search(r"^\s*(?:-\s*)?uses:\s*[^\s#]+@(?![0-9a-fA-F]{40}(?:\s|$))", content, re.MULTILINE):
