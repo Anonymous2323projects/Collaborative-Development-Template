@@ -384,10 +384,18 @@ def secret_scan_workflow_errors(path: Path, content: str) -> list[str]:
     images = re.findall(r"ghcr\.io/gitleaks/gitleaks(?:@[^\s\\]+|:[^\s\\]+)", job)
     if not images or any(re.fullmatch(r"ghcr\.io/gitleaks/gitleaks@sha256:[0-9a-f]{64}", image) is None for image in images):
         errors.append(f"{path}: every Gitleaks invocation must use a full SHA-256 image digest")
-    range_guard = re.search(r'if \[\[ "\$commit_count" -lt 1 \]\]; then([\s\S]*?)fi', job)
+    range_guard = re.search(
+        r'if \[\[ "\$commit_count" -lt 1 \]\]; then([\s\S]*?)(?:^\s*fi\s*$|;\s*fi\b)',
+        job,
+        re.MULTILINE,
+    )
     if not range_guard or not re.search(r"\bexit 1\b", range_guard.group(1)):
         errors.append(f"{path}: empty pull-request scan ranges must fail closed")
-    scanned_guard = re.search(r'if \[\[ -z "\$scanned" \]\]; then([\s\S]*?)fi', job)
+    scanned_guard = re.search(
+        r'if \[\[ -z "\$scanned" \]\]; then([\s\S]*?)(?:^\s*fi\s*$|;\s*fi\b)',
+        job,
+        re.MULTILINE,
+    )
     if not scanned_guard or not re.search(r"\bexit 1\b", scanned_guard.group(1)):
         errors.append(f"{path}: a zero-commit scanner result must fail closed")
     if "detailed scanner output is suppressed" not in job or ' > "$scan_log" 2>&1' not in job:
