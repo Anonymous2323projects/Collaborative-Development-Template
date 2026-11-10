@@ -470,6 +470,23 @@ jobs:
         errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
         self.assertTrue(any("functional Gitleaks canary" in error for error in errors))
 
+    def test_secret_scan_rejects_canary_with_different_image_digest(self):
+        content = self.secret_scan_workflow_fixture().replace(
+            "ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f",
+            "ghcr.io/gitleaks/gitleaks@sha256:" + "0" * 64,
+            1,
+        )
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
+        self.assertTrue(any("functional Gitleaks canary" in error for error in errors))
+
+    def test_secret_scan_requires_read_only_canary_mount(self):
+        content = self.secret_scan_workflow_fixture().replace(
+            '--volume "$canary:/canary:ro"',
+            '--volume "$canary:/canary:rw"',
+        )
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
+        self.assertTrue(any("functional Gitleaks canary" in error for error in errors))
+
     def test_secret_scan_rejects_paginated_gitleaks_action(self):
         content = self.secret_scan_workflow_fixture().replace(
             "docker run --rm",
