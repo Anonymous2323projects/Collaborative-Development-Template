@@ -159,6 +159,8 @@ class AuthorizationPolicyTests(unittest.TestCase):
             {"filename": "MERGE_AND_CHANGE_ASSURANCE.md"},
             {"filename": "GOVERNANCE.md"},
             {"filename": "CODEOWNERS"},
+            {"filename": "CODE_OF_CONDUCT.md"},
+            {"filename": "LICENSE"},
             {"filename": "SECURITY.md"},
             {"filename": "CHATGPT_ONBOARDING.md"},
             {"filename": "START_HERE.md"},
