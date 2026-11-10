@@ -67,6 +67,61 @@ def authorized_logins(repository: dict, configured: str) -> set[str]:
     )
 
 
+def is_current_authorized_command(
+    owner: str,
+    repo: str,
+    number: int,
+    event_comment: dict,
+    allowed: set[str],
+    token: str,
+) -> bool:
+    """Fail closed unless this is the latest authorized command on the PR.
+
+    Ordinary comments and commands from non-allowlisted users do not supersede
+    an owner's authorization or revocation request. The bounded pagination
+    limit prevents an incomplete read from being treated as authoritative.
+    """
+    event_id = event_comment.get("id")
+    event_body = event_comment.get("body", "").strip()
+    event_actor = event_comment.get("user", {}).get("login", "").lower()
+    if not isinstance(event_id, int) or event_id <= 0 or not COMMAND_RE.fullmatch(event_body):
+        raise AuthorizationError("The authorization event comment is incomplete or invalid.")
+    if event_actor not in allowed:
+        raise AuthorizationError("Comment author is not an authorized maintainer.")
+
+    latest = None
+    for page in range(1, 21):
+        comments = api_request(
+            "GET",
+            f"/repos/{owner}/{repo}/issues/{number}/comments?per_page=100&page={page}",
+            token,
+        )
+        if not isinstance(comments, list):
+            raise AuthorizationError("Could not enumerate maintainer commands; authorization fails closed.")
+        for item in comments:
+            body = item.get("body", "").strip()
+            if not COMMAND_RE.fullmatch(body):
+                continue
+            actor = item.get("user", {}).get("login", "").lower()
+            if actor not in allowed:
+                continue
+            comment_id = item.get("id")
+            created_at = item.get("created_at", "")
+            if not isinstance(comment_id, int) or comment_id <= 0 or not created_at:
+                raise AuthorizationError("A maintainer command comment lacks stable ordering metadata.")
+            key = (created_at, comment_id)
+            if latest is None or key > latest[0]:
+                latest = (key, comment_id, body, actor)
+        if len(comments) < 100:
+            break
+    else:
+        raise AuthorizationError("More than 2,000 comments exist; latest-command verification fails closed.")
+
+    if latest is None or latest[1] != event_id or latest[2] != event_body or latest[3] != event_actor:
+        raise AuthorizationError("A newer authorized maintainer command superseded this request; no status was changed.")
+    return True
+
+
 def unresolved_threads(owner: str, repo: str, number: int, token: str) -> bool:
     query = """query($owner:String!, $repo:String!, $number:Int!) {
       repository(owner:$owner, name:$repo) {
@@ -335,6 +390,7 @@ def main() -> int:
     allowed = authorized_logins(repository, os.getenv("MERGE_AUTHORIZER_LOGINS", ""))
     if actor not in allowed:
         raise AuthorizationError("Comment author is not an authorized maintainer; no status was changed.")
+    is_current_authorized_command(owner, repo, number, comment, allowed, read_token)
 
     pr = api_request("GET", f"/repos/{owner}/{repo}/pulls/{number}", read_token)
     current_sha = pr.get("head", {}).get("sha", "")
@@ -397,6 +453,9 @@ def main() -> int:
         except AuthorizationError as exc:
             description = str(exc)
 
+    # A later authorized command (especially /revoke-merge) supersedes this run.
+    # Recheck immediately before publishing so a queued stale run cannot restore success.
+    is_current_authorized_command(owner, repo, number, comment, allowed, read_token)
     publish_status(owner, repo, current_sha, status_token, state, description, target_url)
     print(f"Set '{CONTEXT}' to {state} for {current_sha}.")
     return 0 if state == "success" else 1
