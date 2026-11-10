@@ -384,7 +384,8 @@ def secret_scan_workflow_errors(path: Path, content: str) -> list[str]:
     images = re.findall(r"ghcr\.io/gitleaks/gitleaks(?:@[^\s\\]+|:[^\s\\]+)", job)
     if not images or any(re.fullmatch(r"ghcr\.io/gitleaks/gitleaks@sha256:[0-9a-f]{64}", image) is None for image in images):
         errors.append(f"{path}: every Gitleaks invocation must use a full SHA-256 image digest")
-    if not re.search(r'if \[\[ "\$commit_count" -lt 1 \]\]; then[\s\S]*?\bexit 1\b[\s\S]*?fi', job):
+    range_guard = re.search(r'if \[\[ "\$commit_count" -lt 1 \]\]; then([\s\S]*?)fi', job)
+    if not range_guard or not re.search(r"\bexit 1\b", range_guard.group(1)):
         errors.append(f"{path}: empty pull-request scan ranges must fail closed")
     if "--first-parent" in job or "--no-merges" in job:
         errors.append(f"{path}: secret scanning must include commits reachable through all parent paths")
