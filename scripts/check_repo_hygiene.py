@@ -387,13 +387,29 @@ def secret_scan_workflow_errors(path: Path, content: str) -> list[str]:
     for item in required:
         if item not in job:
             errors.append(f"{path}: secret scanning is missing required full-range control: {item}")
-    config_blocks = re.findall(
-        r'cat > "\$RUNNER_TEMP/gitleaks\.toml" <<\\'EOF\\'\\n[ \\t]*\\[extend\\]\\n[ \\t]*useDefault = true\\n[ \\t]*EOF',
-        job,
-    )
-    if len(config_blocks) != 3:
+    lines = job.splitlines()
+    config_blocks = []
+    for index, line in enumerate(lines):
+        if line.strip() == "cat > \"$RUNNER_TEMP/gitleaks.toml\" <<'EOF'":
+            if index + 3 < len(lines):
+                config_blocks.append(tuple(part.strip() for part in lines[index + 1:index + 4]))
+    if len(config_blocks) != 3 or any(
+        block != ("[extend]", "useDefault = true", "EOF") for block in config_blocks
+    ):
         errors.append(f"{path}: all three scans must use only the fixed built-in Gitleaks rules")
-    if len(re.findall(r'^\s*mkdir "\$RUNNER_TEMP/gitleaks-ignore"\s*    if re.search(r"gitleaks/gitleaks-action@", job):
+    if sum(line.strip() == 'mkdir "$RUNNER_TEMP/gitleaks-ignore"' for line in lines) != 3:
+        errors.append(f"{path}: every scan must use a fresh empty Gitleaks ignore directory")
+    expected_commands = {
+        'git --log-opts="${BASE_SHA}..${HEAD_SHA} --diff-merges=first-parent" --config=/tmp/gitleaks.toml --gitleaks-ignore-path=/tmp/gitleaks-ignore --ignore-gitleaks-allow --redact --verbose . > "$scan_log" 2>&1; then',
+        'git --log-opts="$log_opts --diff-merges=first-parent" --config=/tmp/gitleaks.toml --gitleaks-ignore-path=/tmp/gitleaks-ignore --ignore-gitleaks-allow --redact --verbose . > "$scan_log" 2>&1; then',
+        'git --log-opts="--all --diff-merges=first-parent" --config=/tmp/gitleaks.toml --gitleaks-ignore-path=/tmp/gitleaks-ignore --ignore-gitleaks-allow --redact --verbose . > "$scan_log" 2>&1; then',
+    }
+    command_lines = {line.strip() for line in lines if line.strip().startswith("git --log-opts=")}
+    if command_lines != expected_commands:
+        errors.append(f"{path}: Gitleaks commands must match the exact trusted full-range invocations")
+    if any(flag in job for flag in ("--baseline-path", "--enable-rule", "--exit-code", "--max-decode-depth")):
+        errors.append(f"{path}: custom Gitleaks baselines, rule narrowing or scan-disabling flags are forbidden")
+    if re.search(r"gitleaks/gitleaks-action@", job):
         errors.append(f"{path}: the paginated Gitleaks Action must not be used for pull-request scanning")
     images = re.findall(r"ghcr\.io/gitleaks/gitleaks(?:@[^\s\\]+|:[^\s\\]+)", job)
     if not images or any(re.fullmatch(r"ghcr\.io/gitleaks/gitleaks@sha256:[0-9a-f]{64}", image) is None for image in images):
