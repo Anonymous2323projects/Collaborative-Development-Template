@@ -380,7 +380,8 @@ def secret_scan_workflow_errors(path: Path, content: str) -> list[str]:
             errors.append(f"{path}: secret scanning is missing required full-range control: {item}")
     if re.search(r"gitleaks/gitleaks-action@", job):
         errors.append(f"{path}: the paginated Gitleaks Action must not be used for pull-request scanning")
-    if len(re.findall(r"ghcr\.io/gitleaks/gitleaks@sha256:[0-9a-f]{64}", job)) != 3:
+    images = re.findall(r"ghcr\.io/gitleaks/gitleaks(?:@[^\s\\]+|:[^\s\\]+)", job)
+    if not images or any(re.fullmatch(r"ghcr\.io/gitleaks/gitleaks@sha256:[0-9a-f]{64}", image) is None for image in images):
         errors.append(f"{path}: every Gitleaks invocation must use a full SHA-256 image digest")
     if not re.search(r'if \[\[ "\$commit_count" -lt 1 \]\]; then[\s\S]*?\bexit 1\b[\s\S]*?fi', job):
         errors.append(f"{path}: empty pull-request scan ranges must fail closed")
