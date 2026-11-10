@@ -20,10 +20,11 @@ From the account that owns the repository:
 3. Set the homepage to the repository URL.
 4. Select **Only on this account** for app visibility. This workflow does not need to be installable by other accounts.
 5. Disable webhooks; this App does not receive webhook events.
-6. Under **Repository permissions**, grant only:
-   - **Commit statuses: Read and write**
+6. Under **Repository permissions**, grant:
+   - **Commit statuses: Read and write** (used by the current implementation)
    - **Metadata: Read-only** (GitHub's required baseline permission)
-7. Leave all other permissions at **No access**. Do not grant Contents, Pull requests, Checks, Actions, Administration, or organization permissions for this design.
+   - **Checks: Read and write** only if the owner separately approves the Check Runs candidate after disposable acceptance; the current implementation does not request this permission.
+7. Leave all other permissions at **No access**. Do not grant Contents, Pull requests, Actions, Administration, or organization permissions. Do not add Checks permission merely to make the UI option appear; first complete the lifecycle and revocation acceptance tests below.
 8. Create the App and record its **Client ID**. The Client ID is used as a workflow variable; it is not the private key.
 
 The App must not be installed across all repositories. Its installation is restricted to the one repository in step 3.
@@ -62,7 +63,7 @@ Do not move the App Client ID or private key out of the protected environment. T
 - Do not upload the PEM file to ChatGPT or Codex.
 - Keep the downloaded PEM in a secure temporary location only long enough to add the environment secret; do not leave it in Downloads, the repository, or a synced project folder.
 - GitHub App private keys do not expire automatically. They must be manually rotated or revoked. Treat this as a long-lived credential and keep its access limited.
-- The workflow mints an installation token scoped to this repository with only the explicitly requested write permission `statuses:write`; GitHub's Metadata read-only baseline remains. The token is revoked by the action after the job and expires after one hour even if not revoked.
+- The current workflow mints an installation token scoped to this repository with only the explicitly requested write permission `statuses:write`; GitHub's Metadata read-only baseline remains. The proposed Check Runs design additionally requires `checks:write`, but that permission is not currently granted or implemented. The token is revoked by the action after the job and expires after one hour even if not revoked.
 
 The Actions environment is a practical least-privilege control, not a hardware-backed key vault. A dedicated key vault with signing-only access can provide stronger protection, but requires a separately reviewed integration. Do not overstate the protection provided by an Actions environment secret.
 
@@ -78,7 +79,7 @@ Confirm the default-branch workflow:
 - does not execute PR code or workflows;
 - uses `GITHUB_TOKEN` only with read permissions;
 - references the App credentials only in the trusted authorization workflow;
-- scopes the installation token to this repository and `permission-statuses: write`;
+- scopes the installation token to this repository and `permission-statuses: write`; it may request `permission-checks: write` only after the separate Check Runs design is approved and implemented;
 - sets `skip-token-revoke: false`;
 - pins the token action to a reviewed full commit SHA.
 
@@ -102,7 +103,11 @@ Therefore:
 3. Confirm that the status **Explicit maintainer merge authorization** is published by the dedicated App on the exact status-target SHA (head or test-merge commit, as established above).
 4. Open the ruleset editor and verify that the App is offered as the expected source for that exact status context.
 
-**Stop if the App or context is not selectable.** The current workflow publishes a commit status. GitHub's expected-source documentation also requires the App to have recently submitted a check run associated with a pre-existing required status check. Creating or updating a check run through the REST API requires the GitHub App permission `checks:write` ([Checks API permission requirements](https://docs.github.com/en/rest/checks/runs)). The currently proposed App intentionally requests only `statuses:write`, so it cannot create that check-run prerequisite itself. Also, if a check run and a commit status share the same required name, GitHub requires **both** to pass ([required-status troubleshooting](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks)). Therefore, do not assume that a one-time check run can simply seed the expected-source picker while production continues updating only a same-named commit status. A cleaner candidate is to publish a single Check Run through the Checks API on the exact SHA that GitHub currently evaluates for the PR (head or test-merge commit), while binding the run to the exact PR head and base. Use a dedicated App with the documented `checks:write` and expected-source `statuses:write` permissions. This is a design candidate only; it needs a disposable-repository acceptance test, adversarial tests for stale/duplicate runs and a separate explicit owner approval for the permission change. Do not add permissions or alter the live ruleset as a workaround.
+**Stop if the App or context is not selectable.** The current workflow publishes a Commit Status. GitHub's expected-source documentation also requires the App to have recently submitted a Check Run associated with a pre-existing required status check. Creating Check Runs through the REST API requires the GitHub App permission `checks:write` ([Checks API permission requirements](https://docs.github.com/en/rest/checks/runs)). The current App intentionally requests only `statuses:write`, so it cannot create that prerequisite. Also, if a Check Run and Commit Status share the same required name, GitHub requires **both** to pass ([required-status troubleshooting](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks)); do not assume a one-time successful Check Run can safely seed the picker while production continues updating a same-named Commit Status.
+
+A candidate design is to publish a **new Check Run for each accepted authorization or revocation command**, on the exact SHA GitHub evaluates for the PR, with one stable required name and a unique external ID. Start the new run as `in_progress`; complete it as `success` only after all evidence and final PR/head/base/command freshness checks pass, otherwise complete it as `failure`. Do not attempt to reopen or mutate a completed Check Run. A later command must create a new run with the same required name. This relies on GitHub selecting the current same-name run within the Check Suite; duplicate-name selection and suite-conclusion aggregation are not a formal guarantee in the REST documentation and must be proven in a disposable repository. GitHub documents a 1,000 same-name run limit per Check Suite. Test that a new in-progress run supersedes a prior success, that failure can be replaced by a later success, and that the required status is evaluated as expected.
+
+The protected-environment approval delay is a separate residual: a revoke command may wait for environment approval before the App can create its new run, leaving a previous success visible on the same head during that delay. Do not remove environment protection or expose the App key to untrusted workflows as a shortcut. Address this with a separately reviewed trusted preflight/webhook design, or explicitly retain the manual owner gate until the risk is accepted. This Check Runs design is a candidate only; it requires disposable-repository acceptance and separate explicit owner approval for `checks:write` and any live ruleset change. No permission or live ruleset change is authorized by this guide.
 
 Do not use a real production PR as the first setup test if a disposable test PR can be used.
 
@@ -131,9 +136,13 @@ Before describing the gate as technically enforced, use separate test PRs to ver
 - ordinary authorization is rejected when protected policy files change;
 - the policy-change route requires the additional protected-policy evidence and explicit owner decision;
 - a PR-controlled workflow on a pull-request ref cannot access the environment secret;
-- the App status is accepted only from the expected App identity;
-- a revoke command changes the current status to failure;
-- if status publication/revocation is unavailable, an older success may remain; the owner must verify revocation or invalidate the old head before treating it as revoked;
+- a Check Run is accepted only from the expected App identity;
+- every accepted authorization/revocation command creates a new Check Run on the exact current status-target SHA;
+- a revoke command creates a new same-name Check Run whose conclusion is failure;
+- a later authorization creates a new same-name Check Run whose success correctly supersedes the prior failure;
+- duplicate-name Check Run selection and Check Suite conclusion aggregation behave as expected, including the 1,000-run limit;
+- if Check Run creation is delayed by protected-environment approval, an older success may remain visible until the new run exists; verify that the design blocks merges during this interval or retain a manual owner gate;
+- if Check Run publication/revocation is unavailable, an older success may remain; the owner must verify revocation or invalidate the old head before treating it as revoked;
 - the token is revoked after the workflow job.
 
 If any test fails or cannot be performed, record the limitation and retain a manual owner gate. Do not claim technical enforcement.
