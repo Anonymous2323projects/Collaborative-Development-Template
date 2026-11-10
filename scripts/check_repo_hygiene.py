@@ -292,16 +292,22 @@ def trusted_authorizer_workflow_errors(path: Path, content: str) -> list[str]:
     if not preflight_job or not authorize_job:
         errors.append(f"{path}: require separate preflight and environment-protected authorization jobs")
         return errors
-    concurrency = re.search(r"(?m)^    concurrency:[ \\t]*\\n((?:^      .*\\n?)+)", authorize_job)
-    if not concurrency:
+    concurrency_header = re.search(r"(?m)^    concurrency:[ ]*$", authorize_job)
+    if not concurrency_header:
         errors.append(f"{path}: authorization commands must use a bounded, non-canceling concurrency queue")
     else:
-        concurrency_block = concurrency.group(1)
-        if "group: merge-authorization-" + "$" + "{{ github.event.issue.number }}" not in concurrency_block:
-            errors.append(f"{path}: authorization concurrency must be scoped to the pull request")
-        if not re.search(r"(?m)^      queue:[ \\t]*max[ \\t]*$", concurrency_block):
+        concurrency_lines = []
+        for line in authorize_job[concurrency_header.end():].splitlines():
+            if line.strip() and not line.startswith("      "):
+                break
+            if line.startswith("      "):
+                concurrency_lines.append(line.strip())
+        expected_group = "group: merge-authorization-" + "$" + "{{ github.event.issue.number }}"
+        if [line for line in concurrency_lines if line.startswith("group:")] != [expected_group]:
+            errors.append(f"{path}: authorization concurrency must have exactly one pull-request-scoped group")
+        if [line for line in concurrency_lines if line.startswith("queue:")] != ["queue: max"]:
             errors.append(f"{path}: authorization concurrency must retain the bounded queue of up to 100 pending commands")
-        if not re.search(r"(?m)^      cancel-in-progress:[ \\t]*false[ \\t]*$", concurrency_block):
+        if [line for line in concurrency_lines if line.startswith("cancel-in-progress:")] != ["cancel-in-progress: false"]:
             errors.append(f"{path}: authorization concurrency must not cancel in-progress commands")
     if re.search(r"(?m)^    environment:", preflight_job):
         errors.append(f"{path}: untrusted-comment preflight job must not request a protected environment")
