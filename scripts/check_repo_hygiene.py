@@ -466,6 +466,34 @@ def assurance_document_errors(root: Path = ROOT) -> list[str]:
             errors.append(f"{path}: must contain a Markdown link to the canonical {reference}")
     return errors
 
+def safe_error_categories(errors: list[str]) -> dict[str, int]:
+    """Return fixed, non-sensitive issue categories without echoing repository-controlled text."""
+    counts = {
+        "documentation links and anchors": 0,
+        "workflow and authorization policy": 0,
+        "sensitive paths": 0,
+        "assurance documentation": 0,
+        "file access and encoding": 0,
+        "other": 0,
+    }
+    for error in errors:
+        lowered = error.lower()
+        if "link" in lowered or "anchor" in lowered:
+            category = "documentation links and anchors"
+        elif any(term in lowered for term in ("workflow", "gitleaks", "secret scanning", "authorization", "protected policy")):
+            category = "workflow and authorization policy"
+        elif "sensitive" in lowered or "credential" in lowered:
+            category = "sensitive paths"
+        elif "assurance" in lowered:
+            category = "assurance documentation"
+        elif "cannot read" in lowered or "cannot decode" in lowered:
+            category = "file access and encoding"
+        else:
+            category = "other"
+        counts[category] += 1
+    return {name: count for name, count in counts.items() if count}
+
+
 def main() -> int:
     files = tracked_files()
     errors = assurance_document_errors(ROOT)
@@ -495,6 +523,10 @@ def main() -> int:
             f"{len(errors)} issue(s) detected; detailed diagnostics are suppressed "
             "to prevent untrusted repository content from entering CI logs."
         )
+        categories = safe_error_categories(errors)
+        if categories:
+            summary = ", ".join(f"{name}: {count}" for name, count in categories.items())
+            print(f"Safe issue categories: {summary}.")
         return 1
     workflow_count = sum(1 for path in files if path.parts[:2] == WORKFLOW_DIR.parts and path.suffix.lower() in {".yml", ".yaml"})
     print(f"Repository hygiene checks passed for {len(files)} tracked files.")
