@@ -157,6 +157,13 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
         ):
             if not non_placeholder(field(independent_review, label)):
                 errors.append(f"Independent review section is incomplete: {label}.")
+        scope_reviewed = field(independent_review, "Scope reviewed")
+        if risk in {"HIGH", "CRITICAL"} and not re.search(
+            r"\\b(?:complete|full)\\b.{0,80}\\b(?:diff|changed files)\\b|\\b(?:all|every)\\b.{0,80}\\b(?:changed files|files)\\b",
+            scope_reviewed,
+            re.IGNORECASE,
+        ):
+            errors.append("HIGH/CRITICAL independent review scope must cover the complete exact-head diff.")
         primary_reviewer = field(independent_review, "Primary reviewer/coordinator identity").casefold()
         independent_reviewer = field(independent_review, "Reviewer/agent identity (distinct from the primary reviewer)").casefold()
         if primary_reviewer and independent_reviewer and primary_reviewer == independent_reviewer:
@@ -235,8 +242,14 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
     validation = section(text, "## Validation evidence")
     if "|" not in validation or "Command/check" not in validation:
         errors.append("Include a validation evidence table.")
-    if not non_placeholder(field(validation, "Complete diff reviewed")):
+    complete_diff_reviewed = field(validation, "Complete diff reviewed")
+    if not non_placeholder(complete_diff_reviewed):
         errors.append("Confirm whether the complete diff was reviewed.")
+    elif risk in {"HIGH", "CRITICAL"} and not re.match(
+        r"(?i)^YES(?:\\s|$|[:—-])",
+        complete_diff_reviewed.strip(),
+    ):
+        errors.append("HIGH/CRITICAL changes require an affirmative complete-diff review by the primary reviewer.")
     tested_sha = field(validation, "Exact commit SHA tested")
     if tested_sha != reviewed_code_sha:
         errors.append("The exact commit SHA tested must equal the reviewed code SHA.")
