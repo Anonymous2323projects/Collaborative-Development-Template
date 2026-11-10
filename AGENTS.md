@@ -80,7 +80,7 @@ Project memory and earlier-chat references are optional conveniences, not guaran
 
 ### Project memory — mandatory for downstream projects
 
-Every project using this template must maintain a durable `docs/PROJECT_MEMORY.md`, initialized from [the memory template](PROJECT_MEMORY_TEMPLATE.md), or document the equivalent canonical file already used by that project.
+Every project using this template must maintain a durable `docs/PROJECT_MEMORY.md`, initialized from [the memory template](PROJECT_MEMORY_TEMPLATE.md), or document the equivalent canonical file already used by that project. **If the project's code repository is public, this memory file and any other private project records belong in the separate private coordination repository, not in the public code repository.**
 
 - Read it at the start of each work session and verify important facts against the live project.
 - Update it after meaningful changes to vision, scope, decisions, architecture, verified work, research, risks, lessons, relevant preferences, milestone status, or next steps.
