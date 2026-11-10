@@ -114,9 +114,9 @@ Official product details can change. Check the current [Projects guide](https://
 
 Keep it concise and update it after meaningful changes to goals, decisions, architecture, verified work, research, risks, lessons, or next steps. Read it at the start of each work session and check important facts against the live project. Link to detailed records rather than copying them. Never store secrets, sensitive personal data, confidential third-party information, or raw chat transcripts.
 
-**Template-repository exception:** this repository is the template itself. Do not create `docs/PROJECT_MEMORY.md` here; its continuity belongs in private maintainer records.
+**Upstream-only exception:** the original Collaborative Development Template public starter does not keep internal project memory in its public repository. Verify the actual repository before applying this exception. If you created your own project from the template, the exception does **not** apply: maintain your own durable project memory in the appropriate private location.
 
-Create `docs/PENDING_ACTIONS.md` only when meaningful human-dependent actions arise and no existing tracker is suitable. Do not create an empty register. Explain why the action matters, offer step-by-step help or deferral, and record actions that remain outstanding. Pause only the work genuinely blocked by the action; continue independent work.
+Create `docs/PENDING_ACTIONS.md` only when meaningful human-dependent actions arise and no existing tracker is suitable. Do not create an empty register. For public code/product repositories, keep non-public actions in the **private coordination repository**, not the public repository. Explain why an action matters, offer step-by-step help or deferral, and record outstanding actions. Pause only the affected work; continue independent work.
 
 Use a [handover](docs/HANDOVER_TEMPLATE.md) when work changes hands or a session needs a durable transfer. Keep it short and link to the canonical records.
 
