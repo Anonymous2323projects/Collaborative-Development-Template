@@ -366,6 +366,14 @@ def secret_scan_workflow_errors(path: Path, content: str) -> list[str]:
         return [f"{path}: required secret-scan job is missing"]
     required = (
         "fetch-depth: 0",
+        'cat > "$RUNNER_TEMP/gitleaks.toml" <<\'EOF\'',
+        "[extend]",
+        "useDefault = true",
+        'mkdir "$RUNNER_TEMP/gitleaks-ignore"',
+        '--config=/tmp/gitleaks.toml',
+        '--gitleaks-ignore-path=/tmp/gitleaks-ignore',
+        '--volume "$RUNNER_TEMP/gitleaks.toml:/tmp/gitleaks.toml:ro"',
+        '--volume "$RUNNER_TEMP/gitleaks-ignore:/tmp/gitleaks-ignore:ro"',
         "BASE_SHA: " + "$" + "{{ github.event.pull_request.base.sha }}",
         "HEAD_SHA: " + "$" + "{{ github.event.pull_request.head.sha }}",
         'git cat-file -e "${BASE_SHA}^{commit}"',
