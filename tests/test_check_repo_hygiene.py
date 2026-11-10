@@ -499,8 +499,8 @@ jobs:
 
     def test_secret_scan_rejects_custom_allowlist_config(self):
         content = self.secret_scan_workflow_fixture().replace(
-            "          useDefault = true\\n          EOF",
-            '          useDefault = true\\n          [allowlist]\\n          paths = [".*"]\\n          EOF',
+            "          useDefault = true\n          EOF",
+            '          useDefault = true\n          [allowlist]\n          paths = [".*"]\n          EOF',
             1,
         )
         errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
