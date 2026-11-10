@@ -86,14 +86,23 @@ The expected status context is **Explicit maintainer merge authorization**. Do n
 
 ## 6. Publish a test status before selecting the expected source
 
-GitHub's ruleset UI requires the App to be installed, have the required status permission, and have recently submitted a check run associated with a pre-existing required status check. Therefore:
+GitHub's ruleset UI requires the App to be installed, have the required status permission, and have recently submitted a check run associated with a pre-existing required status check.
 
-1. Use a disposable, non-production test PR with a known exact head SHA and a valid assurance record.
+**First determine which commit SHA the pull request's ruleset evaluates.** Use the pull request's checks box and read-only API evidence:
+- If GitHub says **Showing checks for the merge commit**, the required status must be published on the current test-merge commit SHA.
+- If the test-merge commit has no status/check and GitHub shows checks for the latest head commit, publish on the exact PR head SHA.
+- Confirm the result by checking the check runs and commit statuses for both the current head SHA and the PR's current `merge_commit_sha`. Re-evaluate after either the base or head changes; a previous SHA's success does not carry forward.
+
+The `issue_comment` event runs from the default branch, but workflow-job checks created by an `issue_comment` workflow are not eligible to satisfy a required PR check. The restriction applies to workflow-job checks, not to a status or Check Run published directly by an external GitHub App through the REST API. The dedicated App publication must target the SHA identified above.
+
+Therefore:
+
+1. Use a disposable, non-production test PR with a known exact head SHA, base SHA, status-target SHA and a valid assurance record.
 2. From the authorized owner account, post the exact authorization command for that test PR and full 40-character head SHA.
-3. Confirm that the status **Explicit maintainer merge authorization** is published by the dedicated App on that exact SHA.
+3. Confirm that the status **Explicit maintainer merge authorization** is published by the dedicated App on the exact status-target SHA (head or test-merge commit, as established above).
 4. Open the ruleset editor and verify that the App is offered as the expected source for that exact status context.
 
-**Stop if the App or context is not selectable.** The current workflow publishes a commit status. GitHub's expected-source documentation also requires the App to have recently submitted a check run associated with a pre-existing required status check. Creating or updating a check run through the REST API requires the GitHub App permission `checks:write` ([Checks API permission requirements](https://docs.github.com/en/rest/checks/runs)). The currently proposed App intentionally requests only `statuses:write`, so it cannot create that check-run prerequisite itself. Also, if a check run and a commit status share the same required name, GitHub requires **both** to pass ([required-status troubleshooting](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks)). Therefore, do not assume that a one-time check run can simply seed the expected-source picker while production continues updating only a same-named commit status. A cleaner candidate is to publish a single exact-head Check Run through the Checks API, using a dedicated App with the documented `checks:write` and expected-source `statuses:write` permissions. This is a design candidate only; it needs a disposable-repository acceptance test, adversarial tests for stale/duplicate runs and a separate explicit owner approval for the permission change. Do not add permissions or alter the live ruleset as a workaround.
+**Stop if the App or context is not selectable.** The current workflow publishes a commit status. GitHub's expected-source documentation also requires the App to have recently submitted a check run associated with a pre-existing required status check. Creating or updating a check run through the REST API requires the GitHub App permission `checks:write` ([Checks API permission requirements](https://docs.github.com/en/rest/checks/runs)). The currently proposed App intentionally requests only `statuses:write`, so it cannot create that check-run prerequisite itself. Also, if a check run and a commit status share the same required name, GitHub requires **both** to pass ([required-status troubleshooting](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks)). Therefore, do not assume that a one-time check run can simply seed the expected-source picker while production continues updating only a same-named commit status. A cleaner candidate is to publish a single Check Run through the Checks API on the exact SHA that GitHub currently evaluates for the PR (head or test-merge commit), while binding the run to the exact PR head and base. Use a dedicated App with the documented `checks:write` and expected-source `statuses:write` permissions. This is a design candidate only; it needs a disposable-repository acceptance test, adversarial tests for stale/duplicate runs and a separate explicit owner approval for the permission change. Do not add permissions or alter the live ruleset as a workaround.
 
 Do not use a real production PR as the first setup test if a disposable test PR can be used.
 
