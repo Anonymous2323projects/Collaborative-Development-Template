@@ -345,6 +345,77 @@ on:
         errors = hygiene.workflow_policy_errors(Path("workflow.yml"), content)
         self.assertTrue(any("pull_request_target" in error for error in errors))
 
+    def secret_scan_workflow_fixture(self):
+        return """permissions:
+  contents: read
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  secret-scan:
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@0123456789abcdef0123456789abcdef01234567
+        with:
+          fetch-depth: 0
+      - name: Scan complete PR range
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          [[ "$BASE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]
+          git cat-file -e "${BASE_SHA}^{commit}"
+          git cat-file -e "${HEAD_SHA}^{commit}"
+          commit_count="$(git rev-list --count "${BASE_SHA}..${HEAD_SHA}")"
+          if [[ "$commit_count" -lt 1 ]]; then exit 1; fi
+          docker run --rm \\
+            --volume "$GITHUB_WORKSPACE:/repo:ro" \\
+            --workdir /repo \\
+            ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \\
+            git --log-opts="${BASE_SHA}..${HEAD_SHA}" --redact --verbose .
+"""
+
+    def test_secret_scan_requires_exact_full_pr_commit_range(self):
+        content = self.secret_scan_workflow_fixture()
+        self.assertEqual(
+            hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content),
+            [],
+        )
+
+    def test_secret_scan_rejects_paginated_gitleaks_action(self):
+        content = self.secret_scan_workflow_fixture().replace(
+            "docker run --rm",
+            "uses: gitleaks/gitleaks-action@0123456789abcdef0123456789abcdef01234567\\n          docker run --rm",
+        )
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
+        self.assertTrue(any("paginated Gitleaks Action" in error for error in errors))
+
+    def test_secret_scan_rejects_first_parent_only_coverage(self):
+        content = self.secret_scan_workflow_fixture().replace(
+            '--log-opts="${BASE_SHA}..${HEAD_SHA}"',
+            '--log-opts="--first-parent ${BASE_SHA}..${HEAD_SHA}"',
+        )
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
+        self.assertTrue(any("all parent paths" in error for error in errors))
+
+    def test_secret_scan_rejects_mutable_or_unpinned_image(self):
+        content = self.secret_scan_workflow_fixture().replace(
+            "ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f",
+            "ghcr.io/gitleaks/gitleaks:latest",
+        )
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
+        self.assertTrue(any("SHA-256 image digest" in error for error in errors))
+
+    def test_secret_scan_rejects_empty_commit_range_success(self):
+        content = self.secret_scan_workflow_fixture().replace(
+            'if [[ "$commit_count" -lt 1 ]]; then exit 1; fi',
+            'if [[ "$commit_count" -lt 1 ]]; then exit 0; fi',
+        )
+        errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
+        self.assertTrue(any("fail closed" in error for error in errors))
+
 
 
 class AssuranceDocumentTests(unittest.TestCase):
