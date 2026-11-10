@@ -1,9 +1,11 @@
 """Unit tests for exact-head maintainer authorization policy."""
 import base64
+import io
 import importlib.util
 import json
 import os
 import tempfile
+import urllib.error
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -112,11 +114,36 @@ class AuthorizationPolicyTests(unittest.TestCase):
             with self.assertRaisesRegex(auth.AuthorizationError, "base64 content"):
                 auth.verify_evidence("owner", "repo", 12, valid_pr(), "read-token")
 
-    def test_invalid_evidence_record_blocks_authorization(self):
+    def test_invalid_evidence_record_blocks_without_echoing_untrusted_content(self):
+        canary = "CANARY_UNTRUSTED_EVIDENCE_987654"
         with patch.object(auth, "api_request", side_effect=[commit_response(), content_response()]), \
-             patch.object(auth, "validate_record", return_value=["critical blocker remains"]):
-            with self.assertRaisesRegex(auth.AuthorizationError, "critical blocker remains"):
+             patch.object(auth, "validate_record", return_value=[f"critical blocker remains: {canary}"]):
+            with self.assertRaises(auth.AuthorizationError) as raised:
                 auth.verify_evidence("owner", "repo", 12, valid_pr(), "read-token")
+        self.assertIn("diagnostics are suppressed", str(raised.exception))
+        self.assertNotIn(canary, str(raised.exception))
+
+    def test_api_http_error_body_is_not_echoed(self):
+        canary = "CANARY_GITHUB_API_ERROR_987654"
+        error = urllib.error.HTTPError(
+            "https://api.github.com/repos/owner/repo/pulls/12/files",
+            422,
+            "Unprocessable Entity",
+            {},
+            io.BytesIO(canary.encode("utf-8")),
+        )
+        with patch.object(auth.urllib.request, "urlopen", side_effect=error):
+            with self.assertRaises(auth.AuthorizationError) as raised:
+                auth.api_request("GET", "/repos/owner/repo/pulls/12/files", "read-token")
+        self.assertIn("HTTP 422", str(raised.exception))
+        self.assertNotIn(canary, str(raised.exception))
+
+    def test_protected_path_error_does_not_echo_pr_controlled_path(self):
+        canary_path = "scripts/CANARY_UNTRUSTED_PATH_987654.py"
+        with self.assertRaises(auth.AuthorizationError) as raised:
+            auth.enforce_policy_change_command("authorize-merge", [canary_path])
+        self.assertNotIn(canary_path, str(raised.exception))
+        self.assertIn("protected-path evidence", str(raised.exception))
 
     def test_invalid_base_sha_fails_closed(self):
         pr = valid_pr()
