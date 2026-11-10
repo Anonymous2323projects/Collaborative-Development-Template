@@ -400,8 +400,8 @@ jobs:
 
     def test_secret_scan_rejects_first_parent_only_coverage(self):
         content = self.secret_scan_workflow_fixture().replace(
-            '--log-opts="${BASE_SHA}..${HEAD_SHA}"',
-            '--log-opts="--first-parent ${BASE_SHA}..${HEAD_SHA}"',
+            '--log-opts="${BASE_SHA}..${HEAD_SHA} --diff-merges=first-parent"',
+            '--log-opts="--first-parent ${BASE_SHA}..${HEAD_SHA} --diff-merges=first-parent"',
         )
         errors = hygiene.workflow_policy_errors(Path(".github/workflows/repository-hygiene.yml"), content)
         self.assertTrue(any("all parent paths" in error for error in errors))
