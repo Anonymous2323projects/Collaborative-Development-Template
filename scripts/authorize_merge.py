@@ -52,8 +52,8 @@ def api_request(method: str, path: str, token: str, payload: dict | None = None)
             body = response.read()
             return json.loads(body) if body else {}
     except urllib.error.HTTPError as exc:
-        detail = exc.read().decode("utf-8", "replace")[:500]
-        raise AuthorizationError(f"GitHub API returned HTTP {exc.code}: {detail}") from exc
+        # GitHub error bodies may echo untrusted PR-controlled values; never log or publish them.
+        raise AuthorizationError(f"GitHub API returned HTTP {exc.code}; response body suppressed.") from exc
 
 
 def authorized_logins(repository: dict, configured: str) -> set[str]:
@@ -160,8 +160,7 @@ def enforce_policy_change_command(command: str, protected_paths: list[str]) -> N
         raise AuthorizationError("No protected policy files changed; use /authorize-merge for an ordinary PR.")
     if command == "authorize-merge" and protected_paths:
         raise AuthorizationError(
-            "This PR changes protected policy files; use /authorize-policy-change with the additional evidence fields: "
-            + ", ".join(protected_paths)
+            "This PR changes protected policy files; use /authorize-policy-change with the required protected-path evidence."
         )
 
 
@@ -249,7 +248,10 @@ def verify_evidence(owner: str, repo: str, number: int, pr: dict, token: str) ->
 
     errors = validate_record(record, number, base_ref, base_sha, reviewed_code_sha)
     if errors:
-        raise AuthorizationError("Evidence validation failed: " + "; ".join(errors[:3]))
+        # Validation errors may contain values copied from the untrusted PR record.
+        raise AuthorizationError(
+            f"Evidence validation failed ({len(errors)} issue(s)); detailed diagnostics are suppressed because the PR record is untrusted."
+        )
     return reviewed_code_sha, record
 
 
