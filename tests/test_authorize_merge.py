@@ -440,7 +440,7 @@ class AuthorizationPolicyTests(unittest.TestCase):
         self.assertIn("skip-token-revoke: false", workflow)
         self.assertIn("MERGE_AUTH_TOKEN:", workflow)
         self.assertNotIn("statuses: write", workflow.split("jobs:", 1)[0])
-        self.assertNotIn("\\nconcurrency:\\n", workflow.split("jobs:", 1)[0])
+        self.assertNotIn("\nconcurrency:\n", workflow.split("jobs:", 1)[0])
         authorize_job = workflow.split("  authorize:", 1)[1]
         self.assertIn("group: merge-authorization-" + "$" + "{{ github.event.issue.number }}", authorize_job)
         self.assertIn("cancel-in-progress: true", authorize_job)
