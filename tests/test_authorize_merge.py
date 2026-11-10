@@ -440,8 +440,55 @@ class AuthorizationPolicyTests(unittest.TestCase):
         self.assertIn("skip-token-revoke: false", workflow)
         self.assertIn("MERGE_AUTH_TOKEN:", workflow)
         self.assertNotIn("statuses: write", workflow.split("jobs:", 1)[0])
+        self.assertNotIn("\\nconcurrency:\\n", workflow.split("jobs:", 1)[0])
+        authorize_job = workflow.split("  authorize:", 1)[1]
+        self.assertIn("group: merge-authorization-" + "$" + "{{ github.event.issue.number }}", authorize_job)
+        self.assertIn("cancel-in-progress: true", authorize_job)
         self.assertNotIn("github.event.pull_request.head.sha", workflow)
         self.assertNotIn("pull_request_target:", workflow)
+
+
+class LatestAuthorizedCommandTests(unittest.TestCase):
+    def event_comment(self, command="/authorize-merge " + HEAD, comment_id=100, actor="maintainer"):
+        return {"id": comment_id, "body": command, "user": {"login": actor}}
+
+    def comment(self, command, comment_id, created_at, actor="maintainer"):
+        return {
+            "id": comment_id,
+            "body": command,
+            "created_at": created_at,
+            "user": {"login": actor},
+        }
+
+    def test_newer_revoke_supersedes_an_older_authorization(self):
+        event = self.event_comment()
+        comments = [
+            self.comment("/authorize-merge " + HEAD, 100, "2026-11-10T10:00:00Z"),
+            self.comment("/revoke-merge " + HEAD, 101, "2026-11-10T10:01:00Z"),
+        ]
+        with patch.object(auth, "api_request", return_value=comments):
+            with self.assertRaisesRegex(auth.AuthorizationError, "newer authorized maintainer command"):
+                auth.is_current_authorized_command("owner", "repo", 12, event, {"maintainer"}, "token")
+
+    def test_ordinary_and_unauthorized_comments_do_not_supersede_owner_command(self):
+        event = self.event_comment()
+        comments = [
+            self.comment("/authorize-merge " + HEAD, 100, "2026-11-10T10:00:00Z"),
+            self.comment("A normal discussion comment", 101, "2026-11-10T10:01:00Z"),
+            self.comment("/revoke-merge " + HEAD, 102, "2026-11-10T10:02:00Z", actor="outsider"),
+        ]
+        with patch.object(auth, "api_request", return_value=comments):
+            self.assertTrue(
+                auth.is_current_authorized_command("owner", "repo", 12, event, {"maintainer"}, "token")
+            )
+
+    def test_comment_pagination_fails_closed_after_two_thousand_entries(self):
+        event = self.event_comment()
+        full_page = [{"id": i + 1, "body": "ordinary comment", "created_at": "2026-11-10T10:00:00Z",
+                      "user": {"login": "outsider"}} for i in range(100)]
+        with patch.object(auth, "api_request", return_value=full_page):
+            with self.assertRaisesRegex(auth.AuthorizationError, "2,000 comments"):
+                auth.is_current_authorized_command("owner", "repo", 12, event, {"maintainer"}, "token")
 
 
 class MainAuthorizationFlowTests(unittest.TestCase):
@@ -449,6 +496,7 @@ class MainAuthorizationFlowTests(unittest.TestCase):
         event = {
             "issue": {"number": 12, "pull_request": {"url": "https://api.github.com/repos/owner/repo/pulls/12"}},
             "comment": {
+                "id": 123,
                 "body": command,
                 "user": {"login": actor},
                 "html_url": "https://github.com/owner/repo/pull/12#issuecomment-123",
@@ -479,7 +527,8 @@ class MainAuthorizationFlowTests(unittest.TestCase):
                  patch.object(auth, "publish_status") as publish, \
                  patch.object(auth, "reject_policy_changes", return_value=[]) as policy, \
                  patch.object(auth, "unresolved_threads", side_effect=threads) as unresolved, \
-                 patch.object(auth, "verify_evidence", return_value=(PARENT, "record")) as evidence:
+                 patch.object(auth, "verify_evidence", return_value=(PARENT, "record")) as evidence, \
+                 patch.object(auth, "is_current_authorized_command", return_value=True) as current_command:
                 result = auth.main()
         return result, api, publish, policy, unresolved, evidence
 
