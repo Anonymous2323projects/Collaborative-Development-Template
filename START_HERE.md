@@ -8,20 +8,20 @@ Before using it, read the short [Important Notice and Disclaimer](DISCLAIMER.md)
 
 This repository is the **public starter template**. When you create your own project from it, GitHub creates a separate repository for your project. That new repository is where your project files and notes will live.
 
-**Our strong recommendation: keep your new project repository Private.** Choose Private when GitHub asks who can see it. Do not put private project information in a public repository. You do not need to create a second private repository just because you use this template. A separate private place for coordination is only needed if your project code itself will be public or if different people need different access.
+**Choose the arrangement that fits the project's visibility.** For a project that stays private, one private GitHub repository is normally enough. If the project's code or product repository will be **public**, use a **two-repository setup**: one public repository for publishable code and documentation, and a separate **private coordination repository** for project memory, decisions, handovers, internal discussions, and other non-public records. Reuse a suitable existing private repository rather than creating a duplicate. Never put private coordination records into the public repository.
 
 Also check your ChatGPT Project separately. GitHub privacy does not make a ChatGPT Project private.
 
 Before adding private project information:
 
-1. **GitHub:** make sure your project repository says **Private**. Check who has access, including collaborators and connected apps.
+1. **GitHub:** for a private project, confirm the repository is **Private**. For a public product, check that the public repository contains only publishable material **and** that a separate private coordination repository exists with appropriately limited access. Check collaborators and connected apps.
 2. **ChatGPT:** open the Project's sharing settings. Choose **Only those invited** unless you deliberately want other people with the link to be able to join. Remove anyone who should no longer have access.
 3. **Project Instructions:** follow the next section and install the instructions in this ChatGPT Project.
 4. **Keep secrets out:** never put passwords, access keys, recovery codes, or other login secrets in GitHub files, project instructions, or chats.
 
 A shared ChatGPT Project lets its members see its chats, files, and instructions. Project-only memory does **not** hide that information from project members. Your account's data controls are separate again; check them in ChatGPT Settings. These settings do not replace careful decisions about what you share.
 
-If you intentionally want a public project, that is allowed. First review what everyone will be able to see, including files, discussions, contributor names, and commit email addresses. Use the [privacy guide](PRIVACY_AND_PUBLICATION.md) and complete the [release-readiness review](PROJECT_RISK_AND_RELEASE_READINESS.md).
+If you intentionally want a public project, that is allowed. Before public publication, prepare and verify the separate private coordination space, review what everyone will be able to see (including files, discussions, contributor names, and commit email addresses), and complete the [privacy guide](PRIVACY_AND_PUBLICATION.md) and [release-readiness review](PROJECT_RISK_AND_RELEASE_READINESS.md). Never switch visibility, create additional repositories, or publish on the user's behalf without explicit authorization.
 
 ## 2. Required setup: Project Instructions
 
@@ -76,6 +76,8 @@ Use this as a guide, not a rigid checklist. Adapt it to the project's size and r
 7. **Continue:** keep the durable project records current and explain the next useful step.
 
 Do not make every project complete every template. Use only the records that genuinely help.
+
+If the user wants to run **multiple projects**, offer optional coordination after understanding their goals: separate each project's instructions and private records, then offer a small overview of projects and next steps if it helps. Do not require a central hub, extra repositories, paid services, or automatic access across projects. The **public-versus-private repository arrangement is a separate choice for each project**, not a requirement created merely by having several projects.
 
 ## 6. ChatGPT Projects, Free-plan support, and continuity
 
