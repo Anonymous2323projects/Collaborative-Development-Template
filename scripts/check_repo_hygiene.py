@@ -364,6 +364,18 @@ def secret_scan_workflow_errors(path: Path, content: str) -> list[str]:
     job = workflow_job_blocks(content).get("secret-scan", "")
     if not job:
         return [f"{path}: required secret-scan job is missing"]
+    canary_required = (
+        "Prove pinned Gitleaks image detects a test secret",
+        "prefix='ghp'",
+        "body='0123456789abcdefghijABCDEFGHIJ012345'",
+        'dir /canary --redact --no-banner',
+        "grep -Eq 'leaks found: [1-9][0-9]*'",
+        "did not detect the known test secret",
+        "exited non-zero without confirming a finding",
+    )
+    for item in canary_required:
+        if item not in job:
+            errors.append(f"{path}: functional Gitleaks canary is missing required control: {item}")
     required = (
         "fetch-depth: 0",
         'cat > "$RUNNER_TEMP/gitleaks.toml" <<\'EOF\'',
