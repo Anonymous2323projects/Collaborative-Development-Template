@@ -388,6 +388,50 @@ jobs:
           fi
           scanned="$(grep -Eo '[1-9][0-9]* commits scanned' "$scan_log" | tail -n 1 || true)"
           if [[ -z "$scanned" ]]; then exit 1; fi
+      - name: Scan pushed commits
+        if: github.event_name == 'push'
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/gitleaks.toml" <<'EOF'
+          [extend]
+          useDefault = true
+          EOF
+          mkdir "$RUNNER_TEMP/gitleaks-ignore"
+          scan_log="$RUNNER_TEMP/gitleaks.log"
+          if ! docker run --rm \\
+            --volume "$GITHUB_WORKSPACE:/repo:ro" \\
+            --volume "$RUNNER_TEMP/gitleaks.toml:/tmp/gitleaks.toml:ro" \\
+            --volume "$RUNNER_TEMP/gitleaks-ignore:/tmp/gitleaks-ignore:ro" \\
+            --workdir /repo \\
+            ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \\
+            git --log-opts="$log_opts --diff-merges=first-parent" --config=/tmp/gitleaks.toml --gitleaks-ignore-path=/tmp/gitleaks-ignore --ignore-gitleaks-allow --redact --verbose . > "$scan_log" 2>&1; then
+            echo "Gitleaks reported findings or failed; detailed scanner output is suppressed."
+            exit 1
+          fi
+          scanned="$(grep -Eo '[1-9][0-9]* commits scanned' "$scan_log" | tail -n 1 || true)"
+          if [[ -z "$scanned" ]]; then exit 1; fi
+      - name: Scan all available history
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/gitleaks.toml" <<'EOF'
+          [extend]
+          useDefault = true
+          EOF
+          mkdir "$RUNNER_TEMP/gitleaks-ignore"
+          scan_log="$RUNNER_TEMP/gitleaks.log"
+          if ! docker run --rm \\
+            --volume "$GITHUB_WORKSPACE:/repo:ro" \\
+            --volume "$RUNNER_TEMP/gitleaks.toml:/tmp/gitleaks.toml:ro" \\
+            --volume "$RUNNER_TEMP/gitleaks-ignore:/tmp/gitleaks-ignore:ro" \\
+            --workdir /repo \\
+            ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \\
+            git --log-opts="--all --diff-merges=first-parent" --config=/tmp/gitleaks.toml --gitleaks-ignore-path=/tmp/gitleaks-ignore --ignore-gitleaks-allow --redact --verbose . > "$scan_log" 2>&1; then
+            echo "Gitleaks reported findings or failed; detailed scanner output is suppressed."
+            exit 1
+          fi
+          scanned="$(grep -Eo '[1-9][0-9]* commits scanned' "$scan_log" | tail -n 1 || true)"
+          if [[ -z "$scanned" ]]; then exit 1; fi
 """
 
     def test_secret_scan_requires_exact_full_pr_commit_range(self):
