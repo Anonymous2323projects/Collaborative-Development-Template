@@ -138,6 +138,33 @@ def validate_record(text: str, pr_number: int, base_ref: str, base_sha: str, rev
     if risk not in RISK_LEVELS:
         errors.append("Risk must be LOW, MODERATE, HIGH, or CRITICAL.")
 
+    independent_review = section(text, "## Independent review")
+    if len(re.findall(r"^## Independent review\\s*$", text, re.MULTILINE)) != 1:
+        errors.append("Independent review section must appear exactly once.")
+    review_status = field(independent_review, "Independent review status")
+    if review_status not in {"REQUIRED", "NOT REQUIRED"}:
+        errors.append("Independent review status must be REQUIRED or NOT REQUIRED.")
+    if risk in {"HIGH", "CRITICAL"} and review_status != "REQUIRED":
+        errors.append("HIGH/CRITICAL changes require an independent review.")
+    if review_status == "REQUIRED":
+        for label in (
+            "Reviewer/agent identity (distinct from the primary reviewer)",
+            "Scope reviewed",
+            "Report/reference",
+            "Findings and disposition",
+            "Independence and limitations",
+        ):
+            if not non_placeholder(field(independent_review, label)):
+                errors.append(f"Independent review section is incomplete: {label}.")
+        reviewer_type = field(independent_review, "Reviewer type")
+        if reviewer_type not in {"HUMAN", "AI"}:
+            errors.append("Independent review reviewer type must be HUMAN or AI.")
+        if field(independent_review, "Exact code SHA reviewed") != reviewed_code_sha:
+            errors.append("Independent review must identify the exact reviewed code SHA.")
+    elif review_status == "NOT REQUIRED":
+        if not non_placeholder(field(independent_review, "If not required, why")):
+            errors.append("Explain why an independent review was not required.")
+
     for lens in LENSES:
         heading = f"### {lens}"
         perspective_section = section(text, "## Five-perspective assessment")
