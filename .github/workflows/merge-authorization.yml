@@ -10,10 +10,6 @@ permissions:
   contents: read
   pull-requests: read
 
-concurrency:
-  group: merge-authorization-${{ github.event.issue.number }}
-  cancel-in-progress: false
-
 jobs:
   preflight:
     if: >-
@@ -42,6 +38,11 @@ jobs:
   authorize:
     needs: preflight
     if: needs.preflight.outputs.authorized == 'true'
+    # Only allowlisted maintainer commands enter this group. A newer command
+    # cancels an older authorization/revocation job; ordinary comments cannot.
+    concurrency:
+      group: merge-authorization-${{ github.event.issue.number }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     timeout-minutes: 5
     environment:
