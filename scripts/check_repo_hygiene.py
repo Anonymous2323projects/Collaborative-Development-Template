@@ -372,8 +372,9 @@ def secret_scan_workflow_errors(path: Path, content: str) -> list[str]:
         'git cat-file -e "${HEAD_SHA}^{commit}"',
         'git rev-list --count "${BASE_SHA}..${HEAD_SHA}"',
         'gitleaks/gitleaks@sha256:',
-        'git --log-opts="${BASE_SHA}..${HEAD_SHA}" --redact --verbose .',
+        'git --log-opts="${BASE_SHA}..${HEAD_SHA} --diff-merges=first-parent" --redact --verbose .',
         '--volume "$GITHUB_WORKSPACE:/repo:ro"',
+        "grep -Eo '[1-9][0-9]* commits scanned'",
     )
     for item in required:
         if item not in job:
