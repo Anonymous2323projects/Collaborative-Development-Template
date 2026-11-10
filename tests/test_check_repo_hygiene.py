@@ -79,6 +79,21 @@ class MarkdownHelperTests(unittest.TestCase):
         self.assertNotIn("secret-fragment", errors[0])
 
 
+    def test_repository_escape_error_redacts_raw_target(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as temp_dir:
+            with patch.object(hygiene, "ROOT", Path(temp_dir)):
+                errors = hygiene.markdown_link_errors(
+                    Path("README.md"),
+                    "[broken](../../outside.md?token=CANARY_REVIEW_ONLY_789012#private-fragment)",
+                    {},
+                )
+        self.assertEqual(len(errors), 1)
+        self.assertIn("link escapes repository", errors[0])
+        self.assertNotIn("CANARY_REVIEW_ONLY_789012", errors[0])
+        self.assertNotIn("private-fragment", errors[0])
+
+
 class WorkflowPolicyTests(unittest.TestCase):
     def test_valid_minimal_workflow_passes(self):
         content = """name: check
