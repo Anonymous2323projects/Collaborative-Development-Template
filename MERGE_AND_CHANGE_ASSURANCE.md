@@ -200,6 +200,8 @@ Give the second agent:
 
 Do not treat two AI reviews as independent human approval or proof of correctness. Reconcile disagreements explicitly. The primary reviewer remains responsible for verification. Human owner authorization remains separate from AI analysis.
 
+For HIGH/CRITICAL changes, the primary reviewer must explicitly confirm that the complete exact-head diff was reviewed. The independent review scope must also cover the complete diff and relevant surrounding implementation; a partial-file review does not satisfy the high-impact gate. The PR evidence validator enforces both statements.
+
 ## 10. Merge and release gates
 
 A change is ready for merge only when:
