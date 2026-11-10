@@ -4,6 +4,8 @@ Run with: python3 -m unittest discover -s tests -v
 """
 import sys
 import unittest
+from contextlib import redirect_stdout
+from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
 
@@ -90,6 +92,30 @@ class MarkdownHelperTests(unittest.TestCase):
         self.assertIn("link escapes repository", errors[0])
         self.assertNotIn("CANARY_REVIEW_ONLY_789012", errors[0])
         self.assertNotIn("private-fragment", errors[0])
+
+
+class MainOutputTests(unittest.TestCase):
+    def test_failure_output_never_echoes_untrusted_markdown_content(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            (root / "README.md").write_text(
+                "[broken](missing.md?token=CANARY_REVIEW_ONLY_987654#private-fragment)\\n",
+                encoding="utf-8",
+            )
+            output = StringIO()
+            with (
+                patch.object(hygiene, "ROOT", root),
+                patch.object(hygiene, "tracked_files", return_value=[Path("README.md")]),
+                patch.object(hygiene, "assurance_document_errors", return_value=[]),
+                redirect_stdout(output),
+            ):
+                result = hygiene.main()
+        self.assertEqual(result, 1)
+        self.assertIn("diagnostics are suppressed", output.getvalue())
+        self.assertNotIn("CANARY_REVIEW_ONLY_987654", output.getvalue())
+        self.assertNotIn("private-fragment", output.getvalue())
+        self.assertNotIn("missing.md", output.getvalue())
 
 
 class WorkflowPolicyTests(unittest.TestCase):
