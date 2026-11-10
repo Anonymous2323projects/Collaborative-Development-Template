@@ -465,10 +465,10 @@ def main() -> int:
     if state == "success":
         try:
             is_current_authorized_command(owner, repo, number, comment, allowed, read_token)
-        except AuthorizationError:
+        except (AuthorizationError, KeyError, TypeError, ValueError, OSError):
             state = "failure"
             description = (
-                "A newer authorized maintainer command superseded this request during status publication; "
+                "The post-publication authorization recheck did not complete cleanly; "
                 "authorization remains blocked."
             )
             publish_status(owner, repo, current_sha, status_token, state, description, target_url)

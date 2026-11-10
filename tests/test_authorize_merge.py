@@ -561,6 +561,22 @@ class MainAuthorizationFlowTests(unittest.TestCase):
         self.assertEqual(unresolved.call_count, 2)
         evidence.assert_called_once()
 
+    def test_post_publication_recheck_api_failure_compensates_to_failure(self):
+        result, api, publish, policy, unresolved, evidence = self.run_flow(
+            "/authorize-merge " + HEAD,
+            current_command_results=[
+                True,  # Initial command check.
+                True,  # Final check immediately before the success POST.
+                OSError("temporary network failure"),
+            ],
+        )
+        self.assertEqual(result, 1)
+        self.assertEqual([call.args[4] for call in publish.call_args_list], ["pending", "success", "failure"])
+        self.assertIn("recheck did not complete cleanly", publish.call_args_list[-1].args[5])
+        self.assertEqual(api.call_count, 2)
+        self.assertEqual(unresolved.call_count, 2)
+        evidence.assert_called_once()
+
     def test_stale_requested_sha_publishes_failure_without_evidence_validation(self):
         stale = "d" * 40
         result, api, publish, policy, unresolved, evidence = self.run_flow("/authorize-merge " + stale, pull_requests=[valid_pr()])
