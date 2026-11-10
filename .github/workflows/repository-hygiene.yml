@@ -59,7 +59,7 @@ jobs:
             --volume "$RUNNER_TEMP/gitleaks-ignore:/tmp/gitleaks-ignore:ro" \
             --workdir /repo \
             ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
-            git --log-opts="${BASE_SHA}..${HEAD_SHA} --diff-merges=first-parent" --config=/tmp/gitleaks.toml --gitleaks-ignore-path=/tmp/gitleaks-ignore --redact --verbose . > "$scan_log" 2>&1; then
+            git --log-opts="${BASE_SHA}..${HEAD_SHA} --diff-merges=first-parent" --config=/tmp/gitleaks.toml --gitleaks-ignore-path=/tmp/gitleaks-ignore --ignore-gitleaks-allow --redact --verbose . > "$scan_log" 2>&1; then
             echo "Gitleaks reported findings or failed; detailed scanner output is suppressed."
             exit 1
           fi
@@ -98,7 +98,7 @@ jobs:
             --volume "$RUNNER_TEMP/gitleaks-ignore:/tmp/gitleaks-ignore:ro" \
             --workdir /repo \
             ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
-            git --log-opts="$log_opts --diff-merges=first-parent" --config=/tmp/gitleaks.toml --gitleaks-ignore-path=/tmp/gitleaks-ignore --redact --verbose . > "$scan_log" 2>&1; then
+            git --log-opts="$log_opts --diff-merges=first-parent" --config=/tmp/gitleaks.toml --gitleaks-ignore-path=/tmp/gitleaks-ignore --ignore-gitleaks-allow --redact --verbose . > "$scan_log" 2>&1; then
             echo "Gitleaks reported findings or failed; detailed scanner output is suppressed."
             exit 1
           fi
@@ -125,7 +125,7 @@ jobs:
             --volume "$RUNNER_TEMP/gitleaks-ignore:/tmp/gitleaks-ignore:ro" \
             --workdir /repo \
             ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
-            git --log-opts="--all --diff-merges=first-parent" --config=/tmp/gitleaks.toml --gitleaks-ignore-path=/tmp/gitleaks-ignore --redact --verbose . > "$scan_log" 2>&1; then
+            git --log-opts="--all --diff-merges=first-parent" --config=/tmp/gitleaks.toml --gitleaks-ignore-path=/tmp/gitleaks-ignore --ignore-gitleaks-allow --redact --verbose . > "$scan_log" 2>&1; then
             echo "Gitleaks reported findings or failed; detailed scanner output is suppressed."
             exit 1
           fi
