@@ -175,6 +175,7 @@ If the repository cannot securely implement the exact-head gate, retain a manual
 
 Each pull request must include `reviews/PR-<number>.md`, copied from [the PR assurance record template](docs/PR_ASSURANCE_RECORD_TEMPLATE.md). It records:
 - PR number, base branch/SHA, head SHA, risk level, scope, and non-goals;
+- for HIGH/CRITICAL changes, an independent review record naming the distinct reviewer/agent, reviewer type, exact code SHA reviewed, scope, report reference, findings/disposition, and independence limitations; for lower-risk changes, record whether independent review was not required and why;
 - research question, source quality, DOI/official sources, and applicability limits;
 - each of the five perspective assessments, evidence, findings, and residual risks;
 - documentation-to-implementation traceability;
