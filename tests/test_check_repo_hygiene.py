@@ -5,6 +5,7 @@ Run with: python3 -m unittest discover -s tests -v
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import check_repo_hygiene as hygiene
@@ -45,6 +46,37 @@ class MarkdownHelperTests(unittest.TestCase):
 
     def test_slug_strips_markdown_and_punctuation(self):
         self.assertEqual(hygiene.github_slug("**AI & Safety**"), "ai-safety")
+
+    def test_missing_link_error_redacts_query_and_fragment(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as temp_dir:
+            with patch.object(hygiene, "ROOT", Path(temp_dir)):
+                errors = hygiene.markdown_link_errors(
+                    Path("README.md"),
+                    "[broken](missing.md?token=CANARY_REVIEW_ONLY_123456#private-fragment)",
+                    {},
+                )
+        self.assertEqual(len(errors), 1)
+        self.assertIn("missing.md", errors[0])
+        self.assertNotIn("CANARY_REVIEW_ONLY_123456", errors[0])
+        self.assertNotIn("private-fragment", errors[0])
+
+    def test_missing_anchor_error_redacts_query_and_fragment(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            (root / "docs").mkdir()
+            (root / "docs" / "guide.md").write_text("# Public heading\\n", encoding="utf-8")
+            with patch.object(hygiene, "ROOT", root):
+                errors = hygiene.markdown_link_errors(
+                    Path("README.md"),
+                    "[broken](docs/guide.md?token=CANARY_REVIEW_ONLY_654321#secret-fragment)",
+                    {},
+                )
+        self.assertEqual(len(errors), 1)
+        self.assertIn("docs/guide.md", errors[0])
+        self.assertNotIn("CANARY_REVIEW_ONLY_654321", errors[0])
+        self.assertNotIn("secret-fragment", errors[0])
 
 
 class WorkflowPolicyTests(unittest.TestCase):
