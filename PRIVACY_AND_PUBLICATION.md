@@ -17,7 +17,7 @@ GitHub repository visibility and ChatGPT Project sharing are separate controls:
 
 A private repository or invite-only Project reduces exposure but cannot guarantee confidentiality. Authorized collaborators, connected apps, downloaded copies, screenshots, backups, and information shared elsewhere may still expose content. Never store passwords, access tokens, recovery codes, private keys, or other login secrets in project files, Project Instructions, or chats.
 
-A separate private coordination repository is not required for every user. Consider one when the code repository is public but project discussions, decisions, or records must remain private, or when collaborators need different access.
+**Repository arrangement depends on publication.** A project that stays private normally needs only one private repository. If its code/product repository will be **public**, keep a **separate private coordination repository** for project memory, internal decisions, handovers, discussions, and any other non-public records. Verify its access before publishing, and reuse a suitable existing private repository rather than making unnecessary copies. Public code repositories must not hold these private records, including in issues, pull requests, commit messages, or historical commits. A private repository is not a guarantee of confidentiality: also review collaborators, apps, sharing, backups, and the information stored there.
 
 ## Personal information and contributor choice
 
