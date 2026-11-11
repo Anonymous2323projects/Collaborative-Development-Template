@@ -20,6 +20,8 @@ When adopting the template, copy [TEMPLATE_VERSION_TEMPLATE.md](TEMPLATE_VERSION
 6. If the baseline is unknown, say so and perform a current-state, file-by-file gap analysis. Do not claim a historical diff.
 7. Make one compact impact list for relevant changes only: what changed, whether this project needs it, which local files are affected, any conflict/risk, and the proposed action (adopt, adapt, already covered, not applicable, or defer). Do not create a separate row for every file when several files form one coherent change.
 
+If an upstream update addresses a material recurring or systemic weakness, check related downstream code, tests, instructions, workflows, permissions and user guidance for the same failure pattern. Adapt the correction and add regression controls where warranted; do not copy an upstream technical control that does not fit the downstream project.
+
 Do not rely on stale chat context, cached Project uploads, tags, or moving branch names as proof of current state.
 
 ## Preserve project-specific work
