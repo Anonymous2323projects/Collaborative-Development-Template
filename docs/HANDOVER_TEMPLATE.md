@@ -19,6 +19,7 @@
 - **Run:** <CHECK + RESULT>
 - **Not run:** <CHECK + REASON>
 - **Known limitations or risks:** <ONLY MATERIAL ITEMS / NONE KNOWN>
+- **Review evidence:** <LINK TO FIVE-PERSPECTIVE/INDEPENDENT REVIEW IF REQUIRED, OR NOT APPLICABLE>
 
 ## Decisions and records
 
@@ -27,6 +28,7 @@
 - **Decision / research / risk records:** <LINKS / NONE>
 - **Pending human action:** <ACTION + PRIORITY / NONE>
 - **Latest action tracker:** <PATH / NONE>
+- **Systemic follow-up:** <RELEVANT CONTROL/REGRESSION LINK / NOT APPLICABLE>
 
 ## Next safe step
 
