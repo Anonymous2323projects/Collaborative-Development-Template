@@ -22,6 +22,54 @@ jobs:
       - name: Check repository hygiene
         run: python3 scripts/check_repo_hygiene.py
 
+  recovery:
+    name: Exact-head recovery dry run
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out full history for exact PR base and head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Apply and reverse exact-base patch in a disposable worktree
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          [[ "$BASE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]
+          git cat-file -e "${BASE_SHA}^{commit}"
+          git cat-file -e "${HEAD_SHA}^{commit}"
+          base_tree="$(git rev-parse "${BASE_SHA}^{tree}")"
+          head_tree="$(git rev-parse "${HEAD_SHA}^{tree}")"
+          scratch="$(mktemp -d "$RUNNER_TEMP/pr-recovery.XXXXXX")"
+          trap 'rm -rf "$scratch"' EXIT
+          patch_file="$RUNNER_TEMP/pr-exact-head.patch"
+          git diff --binary --full-index "$BASE_SHA" "$HEAD_SHA" -- > "$patch_file"
+          test -s "$patch_file"
+          git archive "$BASE_SHA" | tar -x -C "$scratch"
+          git -C "$scratch" init -q
+          git -C "$scratch" apply --check "$patch_file"
+          git -C "$scratch" apply "$patch_file"
+          git -C "$scratch" add --all
+          actual_head="$(git -C "$scratch" write-tree)"
+          if [[ "$actual_head" != "$head_tree" ]]; then
+            echo "::error::Patch application did not reconstruct the exact PR head tree."
+            exit 1
+          fi
+          git -C "$scratch" apply --reverse --check "$patch_file"
+          git -C "$scratch" apply --reverse "$patch_file"
+          git -C "$scratch" add --all
+          actual_base="$(git -C "$scratch" write-tree)"
+          if [[ "$actual_base" != "$base_tree" ]]; then
+            echo "::error::Patch reversal did not restore the exact PR base tree."
+            exit 1
+          fi
+          echo "Exact-base patch application and reversal reproduced both Git trees."
+
   secret-scan:
     name: Secret scanning
     runs-on: ubuntu-latest
