@@ -25,7 +25,7 @@ Use this checklist for routine changes. For substantive changes, the complete me
 ## Merge and release
 - [ ] For ordinary PRs, required GitHub rulesets and status checks are verified live, not inferred from workflow files.
 - [ ] A manual exact-head owner decision is recorded as procedural; do not claim it is a required GitHub status check.
-- [ ] Required checks are successful on the current exact PR head.
+- [ ] Required checks are successful for the current PR's evaluated revision (head or test-merge ref), with base/head freshness checked.
 - [ ] Review threads are resolved; the owner has separately approved the exact current PR head before any merge.
 - [ ] The owner has explicitly authorized the merge/release where required.
 - [ ] Post-merge verification and handover updates are planned.

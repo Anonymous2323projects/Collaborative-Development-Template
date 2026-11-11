@@ -155,7 +155,7 @@ Give the second agent:
 - a requirement to preserve local changes and avoid destructive operations;
 - a requirement to report evidence, limitations, commands, and exact SHAs.
 
-Do not treat two AI reviews as independent human approval or proof of correctness. Reconcile disagreements explicitly. The primary reviewer remains responsible for verification. Human owner authorization remains separate from AI analysis.
+Do not treat two AI reviews as independent human approval or proof of correctness. Reconcile disagreements explicitly. The primary reviewer remains responsible for verification. Human owner authorization remains separate from AI analysis. Do not make a paid tool a prerequisite: use an available independent reviewer or report that the required independent review remains outstanding.
 
 For every substantive change, the primary reviewer must explicitly confirm that the complete exact-head diff was reviewed. For HIGH/CRITICAL changes, independent review must also cover the complete diff and relevant surrounding implementation. A partial-file review does not satisfy the high-impact gate. A written record alone does not enforce these requirements.
 

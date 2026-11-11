@@ -19,8 +19,8 @@ What changed and why?
 - Freedom and ownership:
 
 ## Research and evidence
-- Peer-reviewed research / DOI:
-- Applicable standards, law, and official platform documentation:
+- Peer-reviewed research / DOI (when applicable):
+- Applicable standards, law, and official platform documentation (when relevant):
 - Methodological limits and alternatives:
 
 ## Documentation and implementation parity
