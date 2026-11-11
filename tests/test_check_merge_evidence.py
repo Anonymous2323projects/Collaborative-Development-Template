@@ -99,6 +99,33 @@ def valid_record():
 """
 
 class MergeEvidenceTests(unittest.TestCase):
+    def test_required_field_value_must_be_on_same_line(self):
+        self.assertEqual(gate.field("- Risk:\nHIGH\n", "Risk"), "")
+        self.assertEqual(gate.field("- Risk:\r\nHIGH\r\n", "Risk"), "")
+        self.assertEqual(gate.field("- Risk:\tHIGH  \r\n", "Risk"), "HIGH")
+        self.assertEqual(gate.field("- Risk: HIGH\n", "Risk"), "HIGH")
+
+    def test_multiline_risk_field_does_not_pass_validation(self):
+        content = valid_record().replace("- Risk: HIGH", "- Risk:\nHIGH")
+        errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("Risk must be LOW" in error for error in errors))
+
+    def test_multiline_lens_evidence_does_not_pass_validation(self):
+        content = valid_record().replace(
+            "- Evidence: tests and source review recorded in this PR",
+            "- Evidence:\ntests and source review recorded in this PR",
+        )
+        errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any(": evidence is required" in error for error in errors))
+
+    def test_multiline_independent_reviewer_field_does_not_pass_validation(self):
+        content = valid_record().replace(
+            "- Reviewer/agent identity (distinct from the primary reviewer): independent-review-agent-2",
+            "- Reviewer/agent identity (distinct from the primary reviewer):\nindependent-review-agent-2",
+        )
+        errors = gate.validate_record(content, 12, "main", BASE, REVIEWED)
+        self.assertTrue(any("Independent review section is incomplete" in error for error in errors))
+
     def test_high_risk_record_requires_independent_review(self):
         content = valid_record().replace(
             "- Independent review status: REQUIRED",
