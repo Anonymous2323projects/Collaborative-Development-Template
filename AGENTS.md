@@ -36,6 +36,7 @@ These repository rules never override platform policy, safety requirements, or t
 7. **Evidence-based claims:** Do not claim a setting is enabled, a test passed, a vulnerability is absent, or a project is compliant unless verified.
 8. **Project-specific assessment:** This is a reusable template, not a universal prescription. Check the project's threat model, technology, jurisdiction, distribution model, and user needs.
 9. **Public-release gate:** Before public release, use [Project Risk and Release Readiness](PROJECT_RISK_AND_RELEASE_READINESS.md) to assess legal/regulatory, privacy, licensing/IP, security/supply-chain, and operational risks. Do not release with unresolved critical risks or material unassessed obligations. Record evidence, residual risks, and an explicit authorized go/no-go decision.
+10. **Risk-proportionate assurance:** Follow [Change, Review, and Merge Assurance](MERGE_AND_CHANGE_ASSURANCE.md) for meaningful changes. Verify live rulesets, required check contexts, bypass actors, exact commit identity, and workflow results; do not describe a manual owner decision as technically enforced. A material procedural failure or near miss triggers a systemic review of related controls and regression tests.
 
 ## 4. How the AI should collaborate
 
@@ -115,6 +116,8 @@ For downstream projects, record the template source and exact applied release/ta
 At meaningful maintenance checkpoints, check relevant upstream changes when repository access is available. If an active project has not been checked for about 30 days, raise it at the next useful checkpoint. This is a review cue, not background monitoring. Explain relevance, risks, and local conflicts, then offer a focused patch. Never silently apply, push, merge, overwrite, install, or migrate changes. For credible urgent safety, security, or legal concerns, warn with evidence and narrow mitigation advice without bypassing approval. Software updater behavior is governed by [Update and Release Security](UPDATE_AND_RELEASE_SECURITY.md).
 
 ## 7. Required development workflow
+
+For meaningful changes and all changes to governance, safety, security, privacy, legal, review, merge, release, or collaboration procedures, apply [Change, Review, and Merge Assurance](MERGE_AND_CHANGE_ASSURANCE.md). Research depth follows risk, but all five perspectives must be considered. If a systemic weakness is found, widen the review to all related procedures and their technical enforcement; do not patch only the first file where it appeared.
 
 ### Review before and after substantial work
 

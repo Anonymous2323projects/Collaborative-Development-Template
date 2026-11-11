@@ -12,16 +12,20 @@ This document explains how the Collaborative Development Template is maintained 
 
 ## Decision process
 
-1. Prefer evidence, user impact, safety, legal solidity, usability, trust, and freedom—in that priority order.
+1. Prioritize **safety**, **legal solidity and privacy**, **usability**, **trust and human impact**, then **freedom and ownership**. Evidence and user impact inform each decision; they are methods and considerations, not higher-ranking substitutes for safety.
 2. Research relevant standards and existing solutions before adding new mechanisms or dependencies.
 3. Keep changes focused, explain material trade-offs, and preserve backwards compatibility where practical.
-4. Use pull requests for substantive changes so the rationale and validation remain visible.
-5. The maintainer makes the final decision after considering feedback and the project's capacity.
+4. Use pull requests for substantive changes so the rationale and validation remain visible. Apply [Change, Review, and Merge Assurance](MERGE_AND_CHANGE_ASSURANCE.md), including the five perspectives, PR-specific evidence, and live technical-gate verification.
+5. The maintainer makes the final decision after considering feedback and the project's capacity. For a single-maintainer project, require a separate explicit exact-head owner decision without inventing a second human reviewer. Unless a separate technical gate is verified live, this remains a manual procedural step. Never treat an AI review or successful CI as owner authorization.
 6. Record durable decisions in the relevant project documentation or changelog; do not duplicate the same decision across multiple files.
 
 ## Changes requiring particular care
 
 Changes to privacy boundaries, security policy, licensing, contribution terms, default project instructions, or release/update behavior require explicit rationale and careful review. Do not weaken safeguards merely to improve convenience or a security score.
+
+## Merge protection and exact-head authorization
+
+Where supported, protect the default branch with pull requests, relevant checks, review-thread resolution, and deletion/force-push restrictions. Verify required check origins, strict up-to-date settings, and bypass actors live; do not infer enforcement from a policy document. Where a second human reviewer is unavailable, record the owner's explicit decision for the PR, target branch, exact target-tip/base SHA and final PR head SHA together; any base or head movement invalidates the decision. Recheck both immediately before merging. This template does not provide a technically enforced owner-authorization gate.
 
 ## Releases and compatibility
 

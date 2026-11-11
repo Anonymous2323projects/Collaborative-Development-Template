@@ -1,33 +1,33 @@
 # Lightweight Review Checklist
 
-Use only the sections relevant to the change. A small documentation correction does not need a full software release audit.
+Use this checklist for routine changes. For substantive changes, the complete method and required PR evidence are in [Change, Review, and Merge Assurance](../MERGE_AND_CHANGE_ASSURANCE.md).
 
 ## Purpose and scope
 - [ ] The change addresses a clear problem or user outcome.
-- [ ] Scope is proportionate and avoids unrelated refactoring.
-- [ ] Confirmed decisions, assumptions, and open questions are distinguishable.
+- [ ] Scope, non-goals, affected components, and acceptance criteria are known.
+- [ ] Verified facts, assumptions, and unresolved questions are distinguished.
 
-## Safety and security
-- [ ] Inputs, permissions, trust boundaries, scripts, dependencies, and network behavior were considered where relevant.
-- [ ] No secrets or privileged credentials are exposed.
-- [ ] CI and automation use least privilege and trusted, pinned dependencies.
-- [ ] Failure, rollback, and recovery behavior are understood where relevant.
+## Five required perspectives
+- [ ] Safety and security: hazards, threats, trust boundaries, safeguards, recovery, and abuse cases.
+- [ ] Legal solidity and privacy: applicable duties, personal data, confidentiality, rights, and licences.
+- [ ] Usability: safe defaults, accessibility, clarity, and recovery.
+- [ ] Trust and human impact: truthful claims, evidence, consent, fairness, and affected parties.
+- [ ] Freedom and ownership: user choice, control, portability, and least-restrictive safeguards.
 
-## Legal, privacy, and publication
-- [ ] Rights and licence compatibility are understood for contributed material.
-- [ ] Personal data, confidential content, and identifying metadata have been reviewed.
-- [ ] Privacy and legal claims match actual behavior and evidence.
-- [ ] Required notices, attribution, and disclosures are present.
+## Implementation and evidence
+- [ ] Requirements and documentation match code, configuration, tests, workflows, and live settings.
+- [ ] Relevant research and authoritative sources were checked for the risk level.
+- [ ] Complete diff, dependencies, scripts, workflows, secrets, and public metadata were reviewed.
+- [ ] Tests/checks ran on the exact reviewed code; omissions are explicit.
+- [ ] Similar weaknesses in related procedures were searched when a systemic issue was found.
+- [ ] For significant changes, preserve the exact pre-merge **target tip/base**, affected paths, intended integration and separate PR-head evidence; verify a realistic recovery/rehearsal route.
 
-## Usability and trust
-- [ ] Instructions are understandable and accessible to the intended audience.
-- [ ] User-visible behavior and trade-offs are explained.
-- [ ] Claims are evidence-backed; limitations are explicit.
-- [ ] User choice and portability are preserved where feasible.
+## Merge and release
+- [ ] For ordinary PRs, required GitHub rulesets and status checks are verified live, not inferred from workflow files.
+- [ ] A manual exact-head owner decision is recorded as procedural; do not claim it is a required GitHub status check.
+- [ ] Required checks are successful for the current PR's evaluated revision (head or test-merge ref), linked to the exact reviewed base/head; final evidence is recorded after the last commit, outside a self-changing PR-branch file.
+- [ ] Review threads are resolved; the owner has separately approved the PR number, target branch and **exact base/head SHA pair**. Any base/head movement voids approval.
+- [ ] The owner has explicitly authorized the merge/release where required.
+- [ ] Post-merge verification and handover updates are planned.
 
-## Validation and release
-- [ ] Relevant tests and checks were run and results recorded.
-- [ ] Unrun checks and known limitations are stated.
-- [ ] Documentation and handover are current.
-- [ ] Residual risks and required approvals are recorded.
-- [ ] The authorized owner has made any required release or merge decision.
+For low-risk changes, use one short record with links or N/A for irrelevant fields. Do not omit a perspective; explain why deeper checks are unnecessary. Mark independent review as REQUIRED/PENDING/COMPLETED separately where applicable; a filled checklist is not proof of completion or safety.
