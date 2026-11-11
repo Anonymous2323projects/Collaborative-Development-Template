@@ -77,6 +77,36 @@ class MarkdownDiagnosticSafetyTests(unittest.TestCase):
         self.assertIn("link escapes repository", errors[0])
         self.assertNotIn("private-placeholder", errors[0])
 
+    def test_missing_anchor_diagnostic_does_not_echo_fragment(self):
+        with TemporaryDirectory() as tmp, patch.object(hygiene, "ROOT", Path(tmp)):
+            (Path(tmp) / "guide.md").write_text("# Real heading\n", encoding="utf-8")
+            errors = hygiene.markdown_link_errors(
+                Path("README.md"), "[link](guide.md#private-placeholder)", {}
+            )
+        self.assertEqual(len(errors), 1)
+        self.assertIn("missing Markdown heading anchor", errors[0])
+        self.assertNotIn("private-placeholder", errors[0])
+
+    def test_unreadable_target_diagnostic_does_not_echo_target(self):
+        with TemporaryDirectory() as tmp, patch.object(hygiene, "ROOT", Path(tmp)):
+            (Path(tmp) / "guide.md").write_bytes(b"\xff\xfe")
+            errors = hygiene.markdown_link_errors(
+                Path("README.md"), "[link](guide.md?credential=private-placeholder#x)", {}
+            )
+        self.assertEqual(len(errors), 1)
+        self.assertIn("cannot read Markdown link target", errors[0])
+        self.assertNotIn("private-placeholder", errors[0])
+
+    def test_visible_link_after_html_comment_is_checked(self):
+        with TemporaryDirectory() as tmp, patch.object(hygiene, "ROOT", Path(tmp)):
+            errors = hygiene.markdown_link_errors(
+                Path("README.md"),
+                "<!-- [hidden](missing-hidden.md) -->\n[visible](missing-visible.md)",
+                {},
+            )
+        self.assertEqual(len(errors), 1)
+        self.assertIn("missing local link target", errors[0])
+
     def test_valid_local_link_still_passes(self):
         with TemporaryDirectory() as tmp, patch.object(hygiene, "ROOT", Path(tmp)):
             (Path(tmp) / "guide.md").write_text("# Real heading\n", encoding="utf-8")
