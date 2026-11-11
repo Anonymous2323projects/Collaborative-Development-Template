@@ -89,7 +89,13 @@ def strip_fenced_code_blocks(text: str) -> str:
     return strip_html_comments("".join(output))
 
 def field(text: str, name: str) -> str:
-    matches = re.findall(rf"^-\s*{re.escape(name)}:\s*(.*?)\s*$", text, re.MULTILINE)
+    # Whitespace must stay on this line. Using \s here can consume a newline,
+    # making an empty required field look filled by text on the next line.
+    matches = re.findall(
+        rf"^-[ \t]*{re.escape(name)}:[ \t]*([^\r\n]*?)[ \t]*\r?$",
+        text,
+        re.MULTILINE,
+    )
     return matches[0].strip() if len(matches) == 1 else ""
 
 def non_placeholder(value: str) -> bool:
