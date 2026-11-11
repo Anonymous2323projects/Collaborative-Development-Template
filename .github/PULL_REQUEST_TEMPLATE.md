@@ -35,13 +35,13 @@ What changed and why?
 - Similar weaknesses found and remediation:
 
 ## PR assurance record
-For substantive or high-risk changes, use [the assurance-record template](../docs/PR_ASSURANCE_RECORD_TEMPLATE.md) in a PR record or description. Record the exact reviewed head and checks; no automated owner-authorization or assurance-record gate is provided.
+For substantive or high-risk changes, use [the assurance-record template](../docs/PR_ASSURANCE_RECORD_TEMPLATE.md) in the PR description or an out-of-branch/restricted record. Final base/head, reviewed integration and check results are recorded **after the last commit**; a file committed on the PR branch cannot attest its own final head SHA. For low-risk changes, one short record with links/N/A is sufficient. No automated owner-authorization or assurance-record gate is provided.
 
 ## Merge authorization
 - Confirm the active ruleset and required status checks.
 - Resolve review threads.
-- Obtain a separate explicit owner decision for the exact current head before merging. Manual approval is procedural, not a required status check.
-- A changed head SHA requires fresh authorization.
+- Obtain a separate explicit owner decision for this **PR number, target branch, exact base SHA and final head SHA** together. Manual approval is procedural, not a required status check.
+- **Any change to the base or head** stops the merge pending refreshed integration/checks, review and renewed owner authorization.
 
 ## Review checklist
 - [ ] The change is focused and project-agnostic.

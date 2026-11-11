@@ -55,7 +55,7 @@ Choose checks based on the change and its risks. Reuse a passing result only whe
 
 ## 6. Review and integrate
 
-Summarize the change, reason, user impact, risks, and validation evidence. Use a pull request for substantive changes. Resolve review comments and require the applicable automated gates. For single-maintainer projects, do not invent a second human approval; require an explicit owner decision for the exact current head. Until an independently verified technical gate exists, that decision is procedural rather than platform-enforced. A changed head or materially changed base invalidates the previous decision. Never merge without explicit owner authorization. Follow [Change, Review, and Merge Assurance](../MERGE_AND_CHANGE_ASSURANCE.md).
+Summarize the change, reason, user impact, risks, and validation evidence. Use a pull request for substantive changes. Resolve review comments and require the applicable automated gates. For single-maintainer projects, do not invent a second human approval; require an explicit owner decision for the **PR, target branch, exact base SHA and final head SHA** after checking the evaluated integration. Until an independently verified technical gate exists, that decision is procedural rather than platform-enforced. **Any base or head movement, even an otherwise 'minor' base update, voids the prior approval**; refresh checks and review before requesting renewed consent. Never merge without explicit owner authorization. Follow [Change, Review, and Merge Assurance](../MERGE_AND_CHANGE_ASSURANCE.md).
 
 ## 7. Keep downstream template updates safe
 

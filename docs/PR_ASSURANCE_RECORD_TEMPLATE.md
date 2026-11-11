@@ -1,13 +1,15 @@
 # Pull Request Assurance Record
 
-> For substantive changes, copy this template to an appropriate PR record (for example `reviews/PR-<number>.md`) or adapt it into the PR description. Replace prompts with verified facts. Keep private project details in restricted storage. This is review evidence, not proof that the claims are true or that owner approval is technically enforced. Use proportionate depth.
+> For substantive changes, use **one record**, preferably the PR description or an external/restricted record, and update its **final** base/head/CI/review status **after the last candidate commit**. If a versioned file such as `reviews/PR-<number>.md` is placed inside the PR branch, it changes the head and cannot contain its own final head SHA: distinguish the reviewed code revision there and record final head/base/approval outside the branch. Do not require an unimplemented evidence-only-commit validator. For low-risk work, a short summary with links or N/A for irrelevant sections is sufficient. A filled form is not proof of review, approval, or technical enforcement.
 
 ## Change identity
 
 - PR number:
-- Base branch:
-- Base SHA (40 characters):
-- Exact reviewed PR head SHA (40 characters):
+- Target/base branch:
+- Exact target-tip/base SHA (40 characters):
+- Reviewed code SHA (if different from final head):
+- Final PR head SHA (40 characters; record externally after last commit):
+- Tested integration SHA (test-merge or head, with corresponding base/head):
 - Risk: LOW / MODERATE / HIGH / CRITICAL
 - Goal and user outcome:
 - Scope and non-goals:
@@ -25,11 +27,12 @@
 
 ## Independent review
 
-- Independent review status: REQUIRED / NOT REQUIRED
+- Independent review requirement: REQUIRED / NOT REQUIRED (justify if not required)
+- Independent review execution: PENDING / COMPLETED / NOT APPLICABLE (a required but pending review is **not** completed)
 - Primary reviewer/coordinator identity:
 - Reviewer/agent identity (distinct from the primary reviewer):
 - Reviewer type: HUMAN / AI / NOT REQUIRED
-- Exact code SHA reviewed:
+- Exact code/head SHA reviewed (and base SHA):
 - Scope reviewed: state whether the complete exact-head diff and relevant surrounding implementation were reviewed; HIGH/CRITICAL changes must cover the complete diff. Record any unreviewed areas honestly.
 - Report/reference:
 - Findings and disposition:
@@ -95,7 +98,7 @@
 
 - Complete diff reviewed: YES / NO — for substantive changes, the primary reviewer must inspect the complete exact-head diff before requesting merge approval.
 - Checks not run and why:
-- Exact commit SHA tested:
+- Exact SHA evaluated by each check (head or test merge), its paired base/head and check source:
 
 ## Systemic recurrence review
 
@@ -118,9 +121,12 @@
 - Open findings and residual risks:
 - Critical blockers: NONE / describe blockers
 - Required user/owner decision:
-- Merge authorization state: PENDING EXPLICIT OWNER DECISION / APPROVED FOR EXACT HEAD (with evidence)
+- Merge authorization state: PENDING EXPLICIT OWNER DECISION / APPROVED FOR EXACT BASE AND HEAD (with external evidence)
 - Authorization mechanism: MANUAL PROCEDURE / independently verified platform gate (describe evidence)
-- Base/head freshness rechecked at: PENDING
+- Approved PR, target branch, exact base SHA, final head SHA, owner and decision reference (outside branch):
+- Base/head and integration freshness rechecked at: PENDING (any target/base or head movement voids prior authorization)
 - Changes to security policy or merge controls and extra review required:
-- Any backup/recovery evidence required and verified:
+- Pre-merge target-tip/base SHA and affected paths preserved (separately from PR head):
+- Recoverable baseline/backup and actual restoration verification or rehearsal (include limitations):
+- Any affected user-owned work or external side effects and recovery approach:
 - Post-merge verification plan:

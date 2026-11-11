@@ -108,7 +108,7 @@ Where supported and proportionate, require pull requests, appropriate tests and 
 
 ### Review evidence and CI
 
-For substantive or higher-risk work, document the exact base/head commits, affected trust boundaries, five-perspective assessment, complete diff review, tests and their actual evaluated revision, independent review where warranted, open findings, and recovery plan. The [assurance-record template](docs/PR_ASSURANCE_RECORD_TEMPLATE.md) is a reusable format; a PR description or equivalent private project record may be appropriate when it preserves the same evidence. Keep sensitive project records out of public repositories.
+For substantive or higher-risk work, document the exact target branch and base/head commits, affected trust boundaries, five-perspective assessment, complete diff review, tests and their actual evaluated revision, independent review where warranted, open findings, and recovery plan. Use the PR description or a suitable external/restricted review record as the **default** for final exact-head evidence: publishing or updating a record **inside the PR branch changes its head SHA**, invalidating a self-referential head reference. A versioned in-branch record may identify the reviewed code revision, but the final PR head, current base, checks and owner approval must be confirmed in a separate record **after the final commit**. The [assurance-record template](docs/PR_ASSURANCE_RECORD_TEMPLATE.md) is reusable; keep sensitive project records out of public repositories. Do not assume an evidence-only-commit mechanism or required validator exists.
 
 Run stack-appropriate unit/regression tests, repository hygiene, secret scanning, static analysis, licence/dependency and workflow checks. A passing check proves only its stated scope. An optional evidence validator may help with formatting and identity checks, but it does not authenticate reviewer claims or owner approval. **This template does not currently provide an automated owner-authorization gate or a required assurance-record validation check.**
 
@@ -116,11 +116,11 @@ Run stack-appropriate unit/regression tests, repository hygiene, secret scanning
 
 Until a separately reviewed, configured, and adversarially tested technical owner gate is proven to work, use a transparent manual procedure:
 
-1. Re-fetch the live PR number, target branch, base SHA, head SHA, status, checks, and unresolved review threads immediately before deciding.
-2. Inspect the full current diff, any protected-policy changes, and the applicable assurance evidence. Stop for unresolved critical findings, incomplete checks, stale reviews, or inadequate recovery.
-3. Ask the authorized owner to explicitly approve **that PR and full 40-character head SHA**, recording the decision in an appropriate audit trail. Approval of a draft, plan, or previous SHA is not merge authorization.
-4. Immediately before merging, re-fetch head **and base** and check the tested revision, ruleset, review threads, and approval scope. If anything material changed, stop and request renewed review/approval. Do not rely on an old approval.
-5. Only the owner or an explicitly authorized operator performs the merge. Afterward, verify the default-branch result and checks, and update the handover.
+1. Re-fetch the live PR number, target branch, **target tip/base SHA**, source head SHA, status, checks, and unresolved review threads immediately before deciding. Identify the tested integration (including the test-merge SHA, if used) and verify that it represents this exact base/head pair.
+2. Inspect the full current diff, any protected-policy changes, and the applicable assurance evidence recorded **after the final candidate commit**. Stop for unresolved critical findings, incomplete checks, stale reviews, or inadequate recovery of the current target branch.
+3. Ask the authorized owner to explicitly approve the **PR number, target branch, full 40-character current base SHA and full 40-character current head SHA as a single reviewed candidate**, recording the decision outside a self-changing PR-branch file. Approval of a draft, plan, previous head or previous base is not merge authorization.
+4. Immediately before merging, re-fetch **both base and head SHAs** and recheck the exact evaluated integration, required check source and result, ruleset, review threads, recovery evidence and approval tuple. **Any movement of the target/base or head ref invalidates the prior decision, even if the source head is unchanged.** Stop; refresh the integration and checks, review its impact and obtain a new explicit owner decision before proceeding.
+5. Only the owner or an explicitly authorized operator performs the merge. Where the merge API supports an `expected_head_sha` (or equivalent), supply the approved head to reject head movement; **this does not atomically protect against a base change**, so a separate last-moment base recheck is still required and the race must be documented. Afterward, verify the default-branch result and checks, and update the handover.
 
 **Important:** a manual approval comment does **not** create a GitHub-required status, cannot block a maintainer from clicking Merge, and does not automatically expire or revoke a prior decision. This is a procedural control, not a platform-enforced authorization boundary. Never present an ordinary GitHub Actions check as an independently authenticated owner-approval check.
 
@@ -130,16 +130,16 @@ A dedicated GitHub App, Checks API, protected deployment, or similar design need
 
 ## 8. PR-specific assurance record
 
-For substantive changes, keep a concise PR-specific assurance record, using [the PR assurance record template](docs/PR_ASSURANCE_RECORD_TEMPLATE.md) where useful. High/critical changes should retain a full auditable record; low-risk changes may document the same essentials in the PR description. A record includes:
-- PR number, base branch/SHA, exact reviewed head SHA, risk level, scope, and non-goals;
-- for HIGH/CRITICAL changes, an independent review record naming the primary reviewer and distinct independent reviewer/agent, reviewer type, exact code SHA reviewed, scope, report reference, findings/disposition, and independence limitations; for lower-risk changes, record whether independent review was not required and why;
+For substantive changes, keep **one** concise PR-specific assurance record, using [the PR assurance record template](docs/PR_ASSURANCE_RECORD_TEMPLATE.md) where useful. The PR description or an out-of-branch/private record should carry **final head/base evidence and owner authorization**, updated after the last code change. In-branch snapshots cannot authenticate their own final head SHA. High/critical changes should retain a full auditable record; for low-risk work a short PR description with links or **N/A** for irrelevant fields is sufficient. A record includes:
+- PR number, target branch and exact target-tip/base SHA, reviewed code/head SHA, final candidate head SHA, risk level, scope, and non-goals (record final identifiers outside the PR branch);
+- for HIGH/CRITICAL changes, an independent review **status** of PENDING or COMPLETED, naming the primary reviewer and distinct independent reviewer/agent, reviewer type, exact code SHA reviewed, scope, report reference, findings/disposition and independence limitations; for lower-risk changes, record why independent review is not required, when justified;
 - research question, source quality, DOI/official sources, and applicability limits;
 - each of the five perspective assessments, evidence, findings, and residual risks;
 - documentation-to-implementation traceability;
-- commands/tests/checks and exact results, including what was not run;
+- commands/tests/checks and exact evaluated integration revision (head or test merge) with results, including what was not run;
 - systemic recurrence search and affected procedures reviewed;
 - efficiency audit: duplicate work removed, evidence reused, and why selected checks were sufficient;
-- outstanding blockers and the exact owner-authorization state.
+- outstanding blockers and the exact owner-authorization state tied to the live PR, target branch, target-tip/base SHA and final head SHA.
 
 For low-risk changes, keep the record concise and explain why deeper analysis is unnecessary. For high/critical changes, include substantive hazard analysis and independent review evidence. Never fill the record with generic “passed” statements.
 
@@ -162,7 +162,7 @@ For every substantive change, the primary reviewer must explicitly confirm that 
 ## 10. Merge and release gates
 
 A change is ready for merge only when:
-- scope and exact base/head SHAs are known;
+- PR number, target branch, exact current target-tip/base SHA, source head SHA and tested integration SHA are known and linked to reviewed evidence;
 - the full diff and affected system context have been reviewed;
 - research is adequate for the risk;
 - all five perspective assessments are complete;
@@ -170,9 +170,9 @@ A change is ready for merge only when:
 - systemic recurrence checks are complete where triggered;
 - required CI checks pass on the exact revision GitHub evaluates for the current PR (head or tested merge ref); verify the relationship to the current head and base;
 - review threads are resolved;
-- before a high-impact or hard-to-reverse merge, create and verify a recoverable snapshot of the exact pre-merge head and any user-owned work that could be affected; record the backup reference and a realistic rollback/recovery route; a Git commit alone is not assumed to be an independent backup;
+- before a high-impact or hard-to-reverse merge, identify and preserve the **exact pre-merge target-branch tip/base commit**, the affected paths and the intended integration result; separately preserve the PR source head as evidence and any affected user-owned work. Verify a recoverable baseline/snapshot and a risk-proportionate restoration method or isolated rehearsal against **that target tip**, including limits of Git-only restoration and external side effects. Record the backup reference, test result and realistic rollback route; an existing Git commit alone is not assumed to be an independent backup;
 - residual risks are documented and acceptable;
-- the owner has separately authorized the exact current PR head and scope, with manual authorization clearly labeled procedural unless a verified technical gate exists;
+- the owner has separately authorized the current PR number, target branch, exact current base SHA and final head SHA **together**, after final evidence; any base/head movement requires refreshed checks/review and renewed consent. Manual authorization remains procedural unless a verified technical gate exists;
 - no unresolved critical blocker or explicit approval boundary remains.
 
 A change may be prepared and brought to PR-ready status autonomously within scope. Do not merge, release, delete data/history, change repository visibility/ownership/access, or take other reserved irreversible actions without explicit authorization. A user authorization to research or implement is not automatically merge authorization.

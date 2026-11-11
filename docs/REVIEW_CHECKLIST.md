@@ -20,14 +20,14 @@ Use this checklist for routine changes. For substantive changes, the complete me
 - [ ] Complete diff, dependencies, scripts, workflows, secrets, and public metadata were reviewed.
 - [ ] Tests/checks ran on the exact reviewed code; omissions are explicit.
 - [ ] Similar weaknesses in related procedures were searched when a systemic issue was found.
-- [ ] Residual risks and recovery steps are documented.
+- [ ] For significant changes, preserve the exact pre-merge **target tip/base**, affected paths, intended integration and separate PR-head evidence; verify a realistic recovery/rehearsal route.
 
 ## Merge and release
 - [ ] For ordinary PRs, required GitHub rulesets and status checks are verified live, not inferred from workflow files.
 - [ ] A manual exact-head owner decision is recorded as procedural; do not claim it is a required GitHub status check.
-- [ ] Required checks are successful for the current PR's evaluated revision (head or test-merge ref), with base/head freshness checked.
-- [ ] Review threads are resolved; the owner has separately approved the exact current PR head before any merge.
+- [ ] Required checks are successful for the current PR's evaluated revision (head or test-merge ref), linked to the exact reviewed base/head; final evidence is recorded after the last commit, outside a self-changing PR-branch file.
+- [ ] Review threads are resolved; the owner has separately approved the PR number, target branch and **exact base/head SHA pair**. Any base/head movement voids approval.
 - [ ] The owner has explicitly authorized the merge/release where required.
 - [ ] Post-merge verification and handover updates are planned.
 
-For low-risk changes, keep the evidence concise. Do not omit a perspective; explain why a deeper check is unnecessary. A completed checklist is not proof of correctness or safety.
+For low-risk changes, use one short record with links or N/A for irrelevant fields. Do not omit a perspective; explain why deeper checks are unnecessary. Mark independent review as REQUIRED/PENDING/COMPLETED separately where applicable; a filled checklist is not proof of completion or safety.
