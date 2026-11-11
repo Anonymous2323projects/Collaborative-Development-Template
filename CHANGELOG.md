@@ -4,6 +4,9 @@ Notable user-facing changes to the template are recorded here. This is a curated
 
 ## Unreleased
 
+- Made local Markdown hygiene diagnostics avoid echoing potentially sensitive link targets in CI errors; hidden HTML comments no longer cause false link findings, with regression tests.
+- Clarified systemic downstream update review, independent five-perspective assessments and concise handover references.
+
 - Added a clear review-before-work and verification-after-substantial-change cadence, with checks scaled to impact and evidence reused only while still valid.
 - Streamlined onboarding, project records, README navigation, and the downstream update guide and reusable prompt; clarified when specialist templates are needed without weakening mandatory project memory or public-release risk assessment.
 - Resolved conflicting commit-email instructions: contributors choose how their own identity appears, and the workflow checks the author details attached to saved changes against that choice.
