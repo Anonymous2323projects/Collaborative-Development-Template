@@ -2,7 +2,7 @@
 
 Use this guide when a project is ready to work with a remote GitHub repository. It is not a reason to delay discovery, design, or safe local development.
 
-The public Collaborative Development Template is only the starter. A project should normally begin in a **Private** GitHub repository; public visibility is an informed user choice, not an onboarding default. For a project that remains private, one private repository is normally enough. If the code/product repository will be **public**, the setup needs **two separate repositories**: a public product repository and a private coordination repository for project memory, decisions, handovers, and non-public communication. Reuse an existing suitable private repository when possible; never create duplicates unnecessarily. Do not put internal project records in the public repository.
+The public Collaborative Development Template is only the starter. Starting with a **Private** GitHub project is the recommendation, not a compulsory step before exploration. For an entirely private project, one private repository normally suffices. If the code/product repository will be **public**, keep non-public memory, decisions, handovers and communication in a separate **restricted private record location**. An existing private GitHub repository, protected local files or a suitably secured other-hosted workspace may qualify; a second GitHub repository is one practical option, not a requirement. Verify privacy, recovery and handover before publication.
 
 GitHub privacy does not change ChatGPT Project sharing. Check the ChatGPT Project separately and use **Only those invited** unless wider access is intentional. Members of a shared Project can see its chats, files, and instructions. Project-only memory does not hide that material from members.
 
@@ -44,14 +44,14 @@ For a new GitHub project repository, **Private** is the default recommendation. 
 
 **Choose the setup before publishing:**
 - **Private project:** use one suitable private project repository. No extra coordination repository is needed just because the template is used.
-- **Public product/code:** keep only publishable material in the public repository, plus a separate private coordination repository for non-public project memory, decisions, handovers, internal communication, and work records. Do this **before publishing any product material**. Never assume moving a file out of a public repository later removes its history.
+- **Public product/code:** store only publishable material in the public repository. Before the first public push, establish a separate protected private record location for memory, decisions, handovers and internal work. This can be an existing private repository, secure local storage or another trusted restricted host; an extra GitHub repository is optional. Moving files later does not erase public Git history.
 - **No remote repository needed yet:** continue idea exploration or safe local work. Offer GitHub when it provides a real benefit.
 
 For a project intended to become public, guide the user through these steps at the appropriate time:
-1. Check whether suitable public and private repositories already exist. If so, verify owners, visibility, collaborators, connected apps, and the user's intended use; do not duplicate them.
-2. If the private coordination space is missing, propose a **Private** repository for it, explain its purpose and obtain explicit approval before creating it. Keep project memory, private decisions, handovers, internal communication and pending actions there.
+1. Check for an existing public product repository and a suitable restricted private record location, whether a private repository, protected local workspace or another secure host. Verify visibility, access, ownership, connected apps where relevant, and reliable backup/handover; do not duplicate suitable storage.
+2. If no suitable private record location exists, explain the options and obtain the owner's choice. A **Private** GitHub coordination repository is a simple option, but protected local or appropriately restricted other-hosted storage also works when the project can be handed over securely. Do not create accounts/repositories or connect access without explicit approval.
 3. Propose or verify a separate public product repository. Review its initial files, metadata, commit identity, history, issues and PRs for non-public material **before** the first public push or visibility change.
-4. Record privately which repository is the public product and which is the private coordination space. Keep the ChatGPT Project's sharing permissions separately restricted and confirm its Project Instructions point to the correct record location.
+4. Record privately which repository holds publishable code and where the private project record lives. Keep ChatGPT Project sharing settings separately restricted; ensure Project Instructions point to the correct record location and explain a manual status/handover method when connectors are unavailable.
 5. Complete the [privacy review](../PRIVACY_AND_PUBLICATION.md) and [release-readiness assessment](../PROJECT_RISK_AND_RELEASE_READINESS.md) before public release; obtain the user's explicit publication authorization.
 
 Do not create either repository, alter visibility, link access or publish without informed user authorization.

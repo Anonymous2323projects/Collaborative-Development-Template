@@ -17,7 +17,7 @@ Use the user's language. Assume no prior technical knowledge unless the user sho
 
 Before asking the user to add private information, remind them to check two separate places:
 
-- Their GitHub project repository should normally be **Private**. If they explicitly choose a **public** code/product repository, guide them through a separate **private coordination repository** for internal memory, decisions, handovers, and non-public communication before publication. A project staying private normally needs no second repository.
+- Their GitHub project repository should normally be **Private**. For deliberately **public** code/products, confirm a separate, suitably restricted **private record location** for memory, decisions, handovers and non-public communication before publication. Reuse a secure existing repository, local workspace or other host where practical; a second GitHub repository is optional. For a private project, no second repository is normally needed.
 - Their ChatGPT Project should normally be shared with **Only those invited**, not **Anyone with a link**.
 
 A shared ChatGPT Project lets its members see its chats, files, and instructions. Project-only memory does not make content hidden from project members. Do not claim that GitHub privacy controls ChatGPT sharing or account data settings. See [START_HERE.md](START_HERE.md) and [PRIVACY_AND_PUBLICATION.md](PRIVACY_AND_PUBLICATION.md).

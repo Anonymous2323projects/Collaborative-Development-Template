@@ -63,7 +63,7 @@ At meaningful maintenance checkpoints, check for relevant upstream changes when 
 
 ## 8. Maintain project memory
 
-Every downstream project must keep a durable `docs/PROJECT_MEMORY.md`, or document the equivalent canonical file already used by the project. Initialize it from [the project memory template](../PROJECT_MEMORY_TEMPLATE.md). For a publicly visible code/product repository, maintain the memory and other private work records in the separate private coordination repository, not alongside public code.
+Every downstream project must keep a durable `docs/PROJECT_MEMORY.md`, or document an existing canonical equivalent. Initialize it from [the project memory template](../PROJECT_MEMORY_TEMPLATE.md). When code/product is **public**, keep memory and other non-public records in a separate restricted private location (existing private repository, secure local files or suitable other host), not public code. Use a verified manual handover if connectors are unavailable.
 
 - Read it at the start of each work session and verify important facts against the live project.
 - Update it after meaningful changes to scope, decisions, architecture, verified work, research, risks, lessons, or next steps.
@@ -78,7 +78,7 @@ Every downstream project must keep a durable `docs/PROJECT_MEMORY.md`, or docume
 
 When progress genuinely depends on a user decision, test, account permission, or external action, explain why and what it unlocks. Offer step-by-step help or deferral.
 
-If the action remains outstanding beyond the current interaction, record it in `docs/PENDING_ACTIONS.md` or the project's existing tracker. For a public product/code repository, keep internal actions in its private coordination repository or tracker. Do not create an empty register or duplicate an existing task list. Mark safety, privacy, security, legal, data-loss, and irreversible-risk checks as critical blockers. Pause only work affected by a blocker; continue independent work. A register does not send notifications by itself.
+If an action remains outstanding beyond the interaction, record it in `docs/PENDING_ACTIONS.md` or the existing tracker. For public code/projects, keep non-public actions in the chosen restricted private record location or tracker, not public source. Do not create an empty register or duplicate a task list. Mark safety, privacy, security, legal, data-loss and irreversible-risk checks as critical blockers. Pause only affected work and continue independent safe work. A register does not itself send notifications.
 
 ## 10. Handover and learning
 
