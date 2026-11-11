@@ -37,6 +37,14 @@ def sensitive_path(path: Path) -> bool:
         return True
     return name in {"id_rsa", "id_ed25519", "id_ecdsa"}
 
+def strip_html_comments(content: str) -> str:
+    """Discard invisible Markdown HTML comments without joining visible lines."""
+    return re.sub(
+        r"<!--[\s\S]*?(?:-->|$)",
+        lambda match: "\n" * match.group(0).count("\n"),
+        content,
+    )
+
 def strip_fenced_code(content: str) -> str:
     output = []
     fence_char = None
@@ -54,7 +62,7 @@ def strip_fenced_code(content: str) -> str:
                 output.append("")
                 continue
         output.append(line if fence_char is None else "")
-    return "\n".join(output)
+    return strip_html_comments("\n".join(output))
 
 def github_slug(heading: str) -> str:
     value = html.unescape(heading).strip().lower()
@@ -101,21 +109,21 @@ def markdown_link_errors(path: Path, content: str, file_cache: dict[Path, str]) 
             try:
                 target_path = Path(resolved.relative_to(ROOT.resolve()))
             except ValueError:
-                errors.append(f"{path}: link escapes repository: {target}")
+                errors.append(f"{path}: link escapes repository")
                 continue
         absolute = ROOT / target_path
         if not absolute.exists():
-            errors.append(f"{path}: missing local link target: {target}")
+            errors.append(f"{path}: missing local link target")
             continue
         if fragment and absolute.is_file() and absolute.suffix.lower() == ".md":
             if target_path not in file_cache:
                 try:
                     file_cache[target_path] = absolute.read_text(encoding="utf-8")
-                except (OSError, UnicodeError) as exc:
-                    errors.append(f"{path}: cannot read Markdown link target {target}: {exc}")
+                except (OSError, UnicodeError):
+                    errors.append(f"{path}: cannot read Markdown link target")
                     continue
             if fragment not in markdown_anchors(file_cache[target_path]):
-                errors.append(f"{path}: missing Markdown heading anchor: {target}")
+                errors.append(f"{path}: missing Markdown heading anchor")
     return errors
 
 def workflow_policy_errors(path: Path, content: str) -> list[str]:

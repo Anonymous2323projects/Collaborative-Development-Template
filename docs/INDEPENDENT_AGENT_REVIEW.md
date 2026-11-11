@@ -18,6 +18,12 @@ Before sharing a repository with an external reviewer:
 
 A public repository can be reviewed without granting write access. For a private repository, use a trusted reviewer with the minimum necessary read-only access, or provide a carefully sanitized export.
 
+## Five-perspective coverage and systemic findings
+
+For meaningful changes, assess all five priorities separately: safety/security, legal solidity/privacy, usability, trust/human impact, and freedom/ownership. These are review perspectives, not a claim that five independent people or specialist agents participated. Record evidence and uncertainty for each relevant perspective.
+
+When a material procedural failure is discovered, inspect analogous controls and dependencies (including instructions, code, workflows, tests, and public claims) rather than only the reported file. Recommend proportionate regression tests and state what was actually inspected. Follow [Change, Review, and Merge Assurance](../MERGE_AND_CHANGE_ASSURANCE.md).
+
 ## Suggested review roles
 
 For stronger independence, assign separate reviewers distinct scopes rather than asking one agent to approve its own work.
