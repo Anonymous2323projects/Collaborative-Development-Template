@@ -14,7 +14,7 @@ You do not need programming experience to begin. The guide helps you explore the
 
 **Required when using a ChatGPT Project:** have ChatGPT prepare one complete, project-specific set of Project Instructions. Paste it into **Project settings → Project instructions** and save it. GitHub files and uploads do not install instructions automatically. Follow the full setup and verification steps in [START_HERE.md](START_HERE.md).
 
-Private is the strong default, not a requirement for every project. You do not need a second private repository for a normal project whose workspace is already private. If you choose to publish the project code, keep private conversations and project records out of that public repository and review the [privacy guide](PRIVACY_AND_PUBLICATION.md) first.
+Private is the strong default, not a requirement for every project. One private repository normally suffices for a private project. If code/product will be **public**, keep non-public memory and coordination **outside** that public repository in a suitable restricted private location. Reuse secure local storage, an existing private repository or a trusted other-hosted workspace where continuity, access and backup can be managed; a separate private GitHub repository is an option, **not mandatory**. Review the [privacy guide](PRIVACY_AND_PUBLICATION.md) before publication. Multi-project coordination does not itself require extra repositories.
 
 An existing suitable repository or a local/alternative-host workflow is also valid. Before the first remote push, explain publication risks and let each contributor choose how their own commit name and email appear.
 

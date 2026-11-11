@@ -1,6 +1,6 @@
 # Project Memory
 
-**Required for every project using this template.** This is the durable, concise record that lets future sessions continue safely. It is not a chat transcript or a replacement for source code, tests, or specialist records.
+**Required for every project using this template.** This is the durable, concise record that lets future sessions continue safely. It is not a chat transcript or substitute for tests/source. **If code/product is public, keep this record outside the public code repository in a suitably restricted private location** (an existing private repository, protected local files or another secure host). Ensure authorized access, recovery and a manual handover when connectors are unavailable.
 
 Keep only information that is useful later. Remove sections that do not apply; mark unknowns honestly. Never store secrets, sensitive personal data, confidential third-party information, or raw private conversations. A private repository is not a secret store.
 
@@ -58,4 +58,4 @@ Use the project's decision, research, and risk records for detail. Do not copy t
 6. If information is missing, mark it unknown or ask only when it blocks safe progress.
 7. If write access is unavailable, prepare the exact update and say that it remains unsaved. Never claim it was saved until the change is committed and verified.
 
-**Template-repository exception:** the Collaborative Development Template itself is not a project using the template. Do not create `docs/PROJECT_MEMORY.md` in the template repository; use its private maintainer records instead.
+**Upstream-only exception:** the original public Collaborative Development Template product repository does not store internal maintainer memory in public files. This exception does **not** apply to any new repository created from the template; verify the actual repository. A public downstream code project must maintain private durable memory in its chosen protected private record location, not in public source.

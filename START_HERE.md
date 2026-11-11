@@ -6,22 +6,22 @@ Before using it, read the short [Important Notice and Disclaimer](DISCLAIMER.md)
 
 ## 1. Protect your project before adding private information
 
-This repository is the **public starter template**. When you create your own project from it, GitHub creates a separate repository for your project. That new repository is where your project files and notes will live.
+This repository is the **public starter template**. When you create your own project from it, GitHub creates a separate repository for your project. If you keep the project private, its files and internal records can normally live together there. If you publish the project's code, put only publishable material in the public repository and store private project records separately.
 
-**Our strong recommendation: keep your new project repository Private.** Choose Private when GitHub asks who can see it. Do not put private project information in a public repository. You do not need to create a second private repository just because you use this template. A separate private place for coordination is only needed if your project code itself will be public or if different people need different access.
+**Choose privacy and access before publication.** For a project that stays private, one private GitHub repository is normally enough. If code/product will be **public**, keep publishable code in the public repository and keep project memory, decisions, handovers, internal discussions and other non-public records in a suitable **restricted private location outside it**. Reuse an existing private GitHub repository, protected local workspace or appropriately secure other host where access, backup and handover work; a second GitHub repository is an option, not mandatory. Never put private records in public code or its history.
 
 Also check your ChatGPT Project separately. GitHub privacy does not make a ChatGPT Project private.
 
 Before adding private project information:
 
-1. **GitHub:** make sure your project repository says **Private**. Check who has access, including collaborators and connected apps.
+1. **GitHub and private records:** for a private project, confirm the project repository is **Private**. For public code, ensure it contains only publishable material and verify a separate restricted private record location (existing private repository, protected local files or another secure host). Check actual collaborators, connected apps, authorized access and backup/handover; do not assume GitHub visibility protects another host.
 2. **ChatGPT:** open the Project's sharing settings. Choose **Only those invited** unless you deliberately want other people with the link to be able to join. Remove anyone who should no longer have access.
 3. **Project Instructions:** follow the next section and install the instructions in this ChatGPT Project.
 4. **Keep secrets out:** never put passwords, access keys, recovery codes, or other login secrets in GitHub files, project instructions, or chats.
 
 A shared ChatGPT Project lets its members see its chats, files, and instructions. Project-only memory does **not** hide that information from project members. Your account's data controls are separate again; check them in ChatGPT Settings. These settings do not replace careful decisions about what you share.
 
-If you intentionally want a public project, that is allowed. First review what everyone will be able to see, including files, discussions, contributor names, and commit email addresses. Use the [privacy guide](PRIVACY_AND_PUBLICATION.md) and complete the [release-readiness review](PROJECT_RISK_AND_RELEASE_READINESS.md).
+If you intentionally want a public project, that is allowed. Before publishing, confirm the chosen private record location and its recovery/handover route, review what the public will see (files, discussions, contributor names and commit email addresses), and complete the [privacy guide](PRIVACY_AND_PUBLICATION.md) and [release-readiness review](PROJECT_RISK_AND_RELEASE_READINESS.md). Do not create repositories, change visibility or publish on the user's behalf without explicit authorization.
 
 ## 2. Required setup: Project Instructions
 
@@ -77,6 +77,8 @@ Use this as a guide, not a rigid checklist. Adapt it to the project's size and r
 
 Do not make every project complete every template. Use only the records that genuinely help.
 
+If the user wants to run **multiple projects**, offer optional coordination after understanding their goals: separate each project's instructions and private records, then offer a small overview of projects and next steps if it helps. Do not require a central hub, extra repositories, paid services, or automatic access across projects. The **public-versus-private repository arrangement is a separate choice for each project**, not a requirement created merely by having several projects.
+
 ## 6. ChatGPT Projects, Free-plan support, and continuity
 
 The core workflow must work with ChatGPT Free and GitHub Free. Paid features, automation, and repository connectors are optional.
@@ -108,13 +110,13 @@ Official product details can change. Check the current [Projects guide](https://
 
 ## 7. Project memory and human actions
 
-**Project memory is required for every downstream project.** Maintain `docs/PROJECT_MEMORY.md`, initialized from [the memory template](PROJECT_MEMORY_TEMPLATE.md), or document the equivalent canonical file already used by the project.
+**Project memory is required for every downstream project.** Maintain `docs/PROJECT_MEMORY.md`, initialized from [the memory template](PROJECT_MEMORY_TEMPLATE.md), or document an equivalent canonical file. For **public** code/products, keep that file in the chosen **restricted private record location**, not in the public repository. A suitably secured local or other-hosted location is valid; use a concise manual handover if no connector is available.
 
 Keep it concise and update it after meaningful changes to goals, decisions, architecture, verified work, research, risks, lessons, or next steps. Read it at the start of each work session and check important facts against the live project. Link to detailed records rather than copying them. Never store secrets, sensitive personal data, confidential third-party information, or raw chat transcripts.
 
-**Template-repository exception:** this repository is the template itself. Do not create `docs/PROJECT_MEMORY.md` here; its continuity belongs in private maintainer records.
+**Upstream-only exception:** the original Collaborative Development Template public starter does not keep internal project memory in its public repository. Verify the actual repository before applying this exception. If you created your own project from the template, the exception does **not** apply: maintain your own durable project memory in the appropriate private location.
 
-Create `docs/PENDING_ACTIONS.md` only when meaningful human-dependent actions arise and no existing tracker is suitable. Do not create an empty register. Explain why the action matters, offer step-by-step help or deferral, and record actions that remain outstanding. Pause only the work genuinely blocked by the action; continue independent work.
+Create `docs/PENDING_ACTIONS.md` only when meaningful human-dependent actions arise and no suitable tracker exists. Do not create an empty register. Keep internal actions for public code/projects in the chosen restricted private record location or tracker, never the public repository. Explain why an action matters, offer step-by-step help or deferral, and record outstanding actions. Pause only affected work; continue independent safe work.
 
 Use a [handover](docs/HANDOVER_TEMPLATE.md) when work changes hands or a session needs a durable transfer. Keep it short and link to the canonical records.
 

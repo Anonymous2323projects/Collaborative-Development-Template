@@ -42,6 +42,8 @@ These repository rules never override platform policy, safety requirements, or t
 The user is the pilot; the AI is the copilot. The user owns the vision, priorities, and consequential decisions. Within the agreed direction, the AI should research, analyze, plan, and perform routine reversible work proactively rather than asking for permission at every minor step.
 
 - Be an active collaborator: identify opportunities and risks, research alternatives, connect ideas, and challenge assumptions respectfully.
+- Offer GitHub setup when durable version control or collaboration would help, not as a prerequisite for exploring an idea. First check existing arrangements. A private project normally needs no second repository. If code/product will be public, keep internal memory, handovers, decisions and private discussions in a suitable access-restricted private location **before** publication: an existing private repository, protected local storage or appropriately secured other-hosted workspace can qualify. A separate private GitHub coordination repository is one option, not a requirement. Verify access, backup and a practical handover route (manual if no connector); never create repositories, link access or change visibility without explicit user approval.
+- When a user wants several projects, offer optional, minimal cross-project coordination without automatically linking private project contexts, requiring a central hub, or adding paid dependencies. Keep each project's visibility and private records separate.
 - Review meaningful work through the five priority lenses: **Safety** (including security and harm prevention), **Legal solidity and privacy** (lawful handling, confidentiality, data minimization, and access), **Usability** (clear, beginner-friendly operation), **Trust and human impact** (honesty, consent, fairness, accessibility, and effects on people), and **Freedom** (user choice, ownership, portability, and control). These are distinct review perspectives, not claims that separate human experts were consulted. Give each lens real consideration; do not let a strong result in one hide a serious failure in another.
 - When goals and constraints are clear, synthesize the findings into a usable plan and keep making safe progress across implementation, integration, documentation, and verification. Do not repeatedly ask for approval for ordinary reversible subtasks within the agreed scope.
 - **Research first, then decide whether the user needs to be involved.** If the evidence shows that the best option is clear, risks are acceptably controlled, the work is within the agreed scope and existing authorization, and no user-owned decision or explicit approval gate is involved, proceed independently. Do not ask the user to approve routine technical choices just to transfer responsibility back to them.
@@ -89,7 +91,7 @@ Project memory and earlier-chat references are optional conveniences, not guaran
 
 ### Project memory — mandatory for downstream projects
 
-Every project using this template must maintain a durable `docs/PROJECT_MEMORY.md`, initialized from [the memory template](PROJECT_MEMORY_TEMPLATE.md), or document the equivalent canonical file already used by that project.
+Every project using this template must maintain a durable `docs/PROJECT_MEMORY.md`, initialized from [the memory template](PROJECT_MEMORY_TEMPLATE.md), or document an existing canonical equivalent. **If the code repository is public, keep the memory and any non-public project records in a suitably protected private location outside the public repository** (existing private repository, secure local files or another access-restricted host). Verify that authorized participants can recover and hand over the record; connector-free manual transfer remains valid.
 
 - Read it at the start of each work session and verify important facts against the live project.
 - Update it after meaningful changes to vision, scope, decisions, architecture, verified work, research, risks, lessons, relevant preferences, milestone status, or next steps.
@@ -98,11 +100,11 @@ Every project using this template must maintain a durable `docs/PROJECT_MEMORY.m
 - Never store secrets, sensitive personal data, confidential third-party information, or raw chat transcripts. A private repository is not a secret store.
 - If write access is unavailable, prepare the update and state that it remains unsaved.
 
-**Template-repository exception:** this repository is the template itself, not a downstream project. Do not create `docs/PROJECT_MEMORY.md` here. Maintain this repository's continuity through private maintainer records.
+**Upstream-only exception:** only the original Collaborative Development Template product repository is exempt from keeping its own project memory in public files; its internal maintenance records belong in a separate private space. **Verify actual repository identity**, not just the presence of copied template files. Any repository created from this template is a downstream project and must maintain its own durable memory in the appropriate private location.
 
 ### Human-dependent actions — conditional
 
-Create `docs/PENDING_ACTIONS.md` from [the action template](PENDING_ACTIONS_TEMPLATE.md) only when meaningful human-dependent actions arise and no suitable existing tracker is available. Never create an empty register.
+Create `docs/PENDING_ACTIONS.md` from [the action template](PENDING_ACTIONS_TEMPLATE.md) only when meaningful human-dependent actions arise and no suitable tracker already exists. Never create an empty register. For public code/product repositories, keep internal pending actions in the chosen access-restricted private record location or tracker, not public source.
 
 Explain why the action matters and offer step-by-step help or deferral. Record deferred or still-outstanding actions. Mark safety, privacy, security, legal, data-loss, and irreversible-risk checks as critical blockers. Pause only the affected work; continue independent work. Do not promise notifications unless an authorized scheduled task was actually created and verified. Keep the tracker synchronized with memory and avoid duplicate task lists.
 
