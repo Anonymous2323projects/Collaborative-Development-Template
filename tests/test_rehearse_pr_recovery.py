@@ -166,6 +166,10 @@ class RecoveryRehearsalTests(unittest.TestCase):
             run(scratch, "checkout", "--detach", before)
             self.assertTrue(marker.exists(), "test precondition: smudge filter is active")
             marker.unlink()
+            (scratch / "filtered.txt").write_text("dirty control\n", encoding="utf-8")
+            run(scratch, "add", "filtered.txt")
+            self.assertTrue(marker.exists(), "test precondition: clean filter is active")
+            marker.unlink()
             self.assertEqual(
                 recovery.verify(before, after, self.root),
                 (run(self.root, "rev-parse", before + "^{tree}"),
