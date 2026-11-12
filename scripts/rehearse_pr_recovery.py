@@ -72,7 +72,8 @@ def verify(base: str, head: str, repository: Path) -> tuple[str, str]:
             raise RecoveryError("Initial clean base tree mismatch")
         patch = tmp / "change.patch"
         with patch.open("wb") as out:
-            git(source, "diff", "--binary", "--full-index", base, head, "--", stdout=out)
+            # A locally configured diff.external helper must never run during recovery.
+            git(source, "diff", "--no-ext-diff", "--binary", "--full-index", base, head, "--", stdout=out)
         git(scratch, "apply", "--check", str(patch))
         git(scratch, "apply", str(patch))
         git(scratch, "add", "--all", "--force")
