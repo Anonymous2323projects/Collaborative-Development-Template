@@ -9,8 +9,9 @@ authorize merges, or account for external effects.
 Run only with a *trusted* local repository, Git binary and OS environment:
 local repository config and working-tree attributes are NOT a security
 sandbox. Git 2.46.0+ with a working --no-lazy-fetch option is required and checked
-before reading the source repository. All needed base/head commit, tree and blob objects
-must already be available locally. Git subprocesses prohibit promisor lazy
+before reading the source repository. All referenced base/head commit, tree and blob objects
+must already be available locally; all leaf blobs are checked in a batch,
+including those inside unchanged subtrees. Git subprocesses prohibit promisor lazy
 fetching; missing objects fail the rehearsal rather than fetching from a remote. This checks
 the specific pair of trees, not the completeness of unrelated history.
 Source refs and unrelated local work must remain unchanged.
@@ -63,7 +64,8 @@ def require_offline_git() -> None:
     The --no-lazy-fetch flag exists in 2.45.0, but its promisor prefetch path
     can still fetch. The fix is present by 2.45.1; 2.46.0 is a conservative
     supported floor. The local-file-only transport allowlist adds a second
-    defense against any outbound network transport.
+    defense against Git's non-file transports, not OS-level network shares or
+    trusted local helper execution.
     """
     try:
         probe = subprocess.run(
@@ -121,9 +123,11 @@ def verify(base: str, head: str, repository: Path) -> tuple[str, str]:
                                 phase="commit-type")
     base_tree = git(source, "rev-parse", f"{base}^{{tree}}")
     head_tree = git(source, "rev-parse", f"{head}^{{tree}}")
-    # Git paths are arbitrary bytes on POSIX. Parse only the ASCII mode from raw,
-    # NUL-delimited ls-tree records; never decode filename bytes as UTF-8.
-    def has_gitlinks(revision: str) -> bool:
+    # Inventory every leaf of BOTH trees, not only the changed paths. Git's
+    # index may reuse an unchanged cached subtree without opening its blobs.
+    # Filenames are arbitrary bytes on POSIX, so only parse NUL-separated
+    # ls-tree metadata, never decode filename bytes as UTF-8.
+    def tree_blob_ids(revision: str) -> set[bytes]:
         completed = subprocess.run(
             ["git", "-C", str(source), "-c", "core.autocrlf=false",
              "-c", f"core.attributesFile={os.devnull}",
@@ -132,19 +136,48 @@ def verify(base: str, head: str, repository: Path) -> tuple[str, str]:
             env=isolated_git_env(),
         )
         if completed.returncode:
-            raise RecoveryError("git ls-tree failed; local objects are uncertain", phase="ls-tree")
+            raise RecoveryError("Tree inventory failed; local objects are uncertain",
+                                phase="ls-tree")
+        blobs: set[bytes] = set()
         for record in completed.stdout.split(b"\0"):
             if not record:
                 continue
             metadata, separator, _filename = record.partition(b"\t")
-            if not separator:
-                raise RecoveryError("Unexpected git ls-tree record format")
-            if metadata.split(b" ", 1)[0] == b"160000":
-                return True
-        return False
+            fields = metadata.split(b" ")
+            if not separator or len(fields) != 3:
+                raise RecoveryError("Unexpected tree inventory record", phase="ls-tree")
+            mode, kind, oid = fields
+            if mode == b"160000":
+                raise RecoveryError("Git submodules require a separate recovery assessment",
+                                    phase="gitlink")
+            if kind != b"blob" or re.fullmatch(rb"[0-9a-f]{40}", oid) is None:
+                raise RecoveryError("Unexpected Git object in tree inventory",
+                                    phase="ls-tree")
+            blobs.add(oid)
+        return blobs
 
-    if has_gitlinks(base) or has_gitlinks(head):
-        raise RecoveryError("Git submodules require a separate recovery assessment")
+    required_blobs = sorted(tree_blob_ids(base) | tree_blob_ids(head))
+    if required_blobs:
+        checked = subprocess.run(
+            ["git", "--no-lazy-fetch", "-C", str(source),
+             "-c", "core.autocrlf=false",
+             "-c", f"core.attributesFile={os.devnull}", "cat-file",
+             "--batch-check=%(objectname) %(objecttype)", "--buffer"],
+            input=b"\n".join(required_blobs) + b"\n",
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+            env=isolated_git_env(),
+        )
+        # cat-file --batch-check can exit ZERO while printing "<oid> missing".
+        # Require one exact "oid blob" record for every requested object.
+        if checked.returncode or checked.stdout.splitlines() != [
+                oid + b" blob" for oid in required_blobs]:
+            raise RecoveryError("Required local blob is missing or invalid",
+                                phase="blob-availability")
+    # An empty patch is a legitimate no-op for distinct commits with the same
+    # tree. Do not bypass object availability or gitlink checks to accept it.
+    if base_tree == head_tree:
+        return base_tree, head_tree
+
     with tempfile.TemporaryDirectory(prefix="cdt-recovery-") as location:
         tmp = Path(location)
         scratch = tmp / "checkout"

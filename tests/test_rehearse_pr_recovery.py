@@ -1,6 +1,7 @@
 """Synthetic offline recovery round-trip tests; no network or real user repository."""
 import sys
 import os
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -142,6 +143,65 @@ class RecoveryRehearsalTests(unittest.TestCase):
         self.assertIn("FAILED", stream.getvalue())
         self.assertNotIn(marker, stream.getvalue())
         self.assertNotIn(str(self.root), stream.getvalue())
+
+    def test_unchanged_nested_subtree_missing_blob_fails_then_recovers(self):
+        """The index can reuse a tree even if an unchanged blob is absent."""
+        unchanged = self.root / "nested" / "deeper" / "same.dat"
+        unchanged.parent.mkdir(parents=True)
+        unchanged.write_text("must remain present\n", encoding="utf-8")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "include nested blob")
+        before = run(self.root, "rev-parse", "HEAD")
+        (self.root / "README.md").write_text("changed again\n", encoding="utf-8")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "change only another file")
+        after = run(self.root, "rev-parse", "HEAD")
+        missing_blob = run(self.root, "rev-parse", f"{before}:nested/deeper/same.dat")
+
+        remote = Path(self.tmp.name) / "complete-local-remote.git"
+        run(self.root, "clone", "--bare", str(self.root), str(remote))
+        run(self.root, "remote", "add", "origin", str(remote))
+        run(self.root, "config", "extensions.partialClone", "origin")
+        run(self.root, "config", "remote.origin.promisor", "true")
+        run(self.root, "config", "remote.origin.partialclonefilter", "blob:none")
+        local_object = self.root / ".git" / "objects" / missing_blob[:2] / missing_blob[2:]
+        saved_object = remote / "objects" / missing_blob[:2] / missing_blob[2:]
+        self.assertTrue(local_object.is_file(), "loose blob fixture required")
+        self.assertTrue(saved_object.is_file(), "complete local fixture backup required")
+        local_object.unlink()  # Only our disposable synthetic repository.
+
+        def offline_presence():
+            return subprocess.run(
+                ["git", "--no-lazy-fetch", "-C", str(self.root),
+                 "cat-file", "-e", missing_blob],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+                env=recovery.isolated_git_env(),
+            ).returncode
+
+        self.assertNotEqual(offline_presence(), 0)
+        with self.assertRaises(recovery.RecoveryError) as caught:
+            recovery.verify(before, after, self.root)
+        self.assertEqual(caught.exception.phase, "blob-availability")
+        self.assertNotEqual(offline_presence(), 0, "must never lazy-fetch missing blob")
+        self.assertFalse(local_object.exists(), "no missing blob was downloaded")
+
+        shutil.copyfile(saved_object, local_object)
+        self.assertEqual(offline_presence(), 0)
+        self.assertEqual(
+            recovery.verify(before, after, self.root),
+            (run(self.root, "rev-parse", before + "^{tree}"),
+             run(self.root, "rev-parse", after + "^{tree}")),
+        )
+
+    def test_empty_tree_change_is_verified_no_op(self):
+        """Two different commits can point at the same complete tree."""
+        run(self.root, "commit", "--allow-empty", "--quiet", "-m", "empty commit")
+        after = run(self.root, "rev-parse", "HEAD")
+        expected_tree = run(self.root, "rev-parse", self.head + "^{tree}")
+        self.assertNotEqual(self.head, after)
+        self.assertEqual(expected_tree, run(self.root, "rev-parse", after + "^{tree}"))
+        self.assertEqual(recovery.verify(self.head, after, self.root),
+                         (expected_tree, expected_tree))
 
     def test_does_not_modify_source_branch_or_local_work(self):
         (self.root / "local-untracked.txt").write_text("keep my work")
