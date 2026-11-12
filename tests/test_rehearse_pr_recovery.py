@@ -76,6 +76,30 @@ class RecoveryRehearsalTests(unittest.TestCase):
         self.assertEqual(revision, run(self.root, "rev-parse", "HEAD"))
         self.assertEqual((self.root / "local-untracked.txt").read_text(), "keep my work")
 
+    @unittest.skipIf(os.name == "nt", "external diff fixture requires a POSIX shell")
+    def test_custom_external_diff_helper_is_not_executed(self):
+        """A maintainer's Git config must not run an external helper during rehearsal."""
+        marker = Path(self.tmp.name) / "external-diff-executed.txt"
+        helper = Path(self.tmp.name) / "safe-diff-fixture.py"
+        helper.write_text(
+            "from pathlib import Path\\n"
+            f"Path({str(marker)!r}).write_text('ran', encoding='utf-8')\\n",
+            encoding="utf-8",
+        )
+        run(self.root, "config", "diff.external", f'"{sys.executable}" "{helper}"')
+
+        # Demonstrate that the synthetic helper is actually active without the guard.
+        run(self.root, "diff", "--binary", "--full-index", self.base, self.head, "--")
+        self.assertTrue(marker.exists(), "test precondition: Git external diff is active")
+        marker.unlink()
+
+        expected = (
+            run(self.root, "rev-parse", self.base + "^{tree}"),
+            run(self.root, "rev-parse", self.head + "^{tree}"),
+        )
+        self.assertEqual(recovery.verify(self.base, self.head, self.root), expected)
+        self.assertFalse(marker.exists(), "recovery executed an external diff helper")
+
     def test_rejects_invalid_sha(self):
         for value in ("short", "a" * 39, "f" * 40 + "; echo bad", "A" * 40):
             with self.subTest(value=value), self.assertRaises(recovery.RecoveryError):
