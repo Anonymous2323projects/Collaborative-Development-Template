@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
 """Rehearse a pull-request patch forward and backward without changing the source checkout.
 
-Only proves that the Git trees for two commits can be round-tripped via an isolated
-local clone. It does not back up the repository, execute tests, authorize merges,
-or account for external effects. Requires Git and a complete local object history.
+Only proves that the Git trees for two commits can be round-tripped via a
+temporary local clone. It does not back up the repository, execute tests,
+authorize merges, or account for external effects.
+
+Run only with a *trusted* local repository, Git binary and OS environment:
+local repository config and working-tree attributes are NOT a security
+sandbox. All needed base/head commit, tree and blob objects must already be
+available locally. Git subprocesses prohibit promisor lazy fetching; missing
+objects fail the rehearsal rather than fetching from a remote. This checks
+the specific pair of trees, not the completeness of unrelated history.
+Source refs and unrelated local work must remain unchanged.
 """
 from __future__ import annotations
 
@@ -21,26 +29,37 @@ SHA = re.compile(r"[0-9a-f]{40}\Z")
 class RecoveryError(Exception):
     """A recovery precondition or tree reconstruction failed."""
 
+    def __init__(self, message: str, *, phase: str = "verification"):
+        super().__init__(message)
+        self.phase = phase
+
 
 def isolated_git_env() -> dict[str, str]:
     """Avoid inherited Git config and helpers in a read-only tree rehearsal."""
     env = {key: value for key, value in os.environ.items() if not key.upper().startswith("GIT_")}
-    # Local repository config remains readable; global/system and Git env overrides
-    # must not inject a filter, helper, index or worktree into this operation.
-    env.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull)
+    # Source-local repository config is still trusted; suppress inherited global,
+    # system, attribute, replacement-ref and promisor auto-fetch overrides.
+    env.update(
+        GIT_CONFIG_NOSYSTEM="1",
+        GIT_CONFIG_GLOBAL=os.devnull,
+        GIT_ATTR_NOSYSTEM="1",
+        GIT_NO_LAZY_FETCH="1",
+        GIT_NO_REPLACE_OBJECTS="1",
+    )
     return env
 
 
 def git(root: Path, *args: str, stdout=None) -> str:
     completed = subprocess.run(
-        ["git", "-C", str(root), "-c", "core.autocrlf=false", *args],
+        ["git", "-C", str(root), "-c", "core.autocrlf=false",
+         "-c", f"core.attributesFile={os.devnull}", *args],
         stdout=subprocess.PIPE if stdout is None else stdout,
         stderr=subprocess.PIPE,
         check=False,
         env=isolated_git_env(),
     )
     if completed.returncode:
-        raise RecoveryError(f"git {args[0]} failed (exit {completed.returncode}); see local Git configuration and object availability")
+        raise RecoveryError("Git command failed; verify trusted config and local objects", phase=args[0])
     return completed.stdout.decode("utf-8").strip() if stdout is None else ""
 
 
@@ -56,12 +75,13 @@ def verify(base: str, head: str, repository: Path) -> tuple[str, str]:
     def has_gitlinks(revision: str) -> bool:
         completed = subprocess.run(
             ["git", "-C", str(source), "-c", "core.autocrlf=false",
+             "-c", f"core.attributesFile={os.devnull}",
              "ls-tree", "-r", "-z", revision],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
             env=isolated_git_env(),
         )
         if completed.returncode:
-            raise RecoveryError("git ls-tree failed; object availability is uncertain")
+            raise RecoveryError("git ls-tree failed; local objects are uncertain", phase="ls-tree")
         for record in completed.stdout.split(b"\0"):
             if not record:
                 continue
@@ -77,8 +97,19 @@ def verify(base: str, head: str, repository: Path) -> tuple[str, str]:
     with tempfile.TemporaryDirectory(prefix="cdt-recovery-") as location:
         tmp = Path(location)
         scratch = tmp / "checkout"
-        # Clone from a local path only: never fetch a remote or modify the source.
-        subprocess.run(["git", "clone", "--quiet", "--no-checkout", "--no-hardlinks", str(source), str(scratch)], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=isolated_git_env())
+        empty_template = tmp / "empty-template"
+        empty_template.mkdir()
+        # A local-path clone uses local object copying; no hook template or
+        # remote-object lazy fetch is allowed. Do not use an untrusted .git dir.
+        clone = subprocess.run(
+            ["git", "-c", f"core.attributesFile={os.devnull}",
+             "clone", "--quiet", "--no-checkout", "--no-hardlinks",
+             "--template", str(empty_template), str(source), str(scratch)],
+            check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            env=isolated_git_env(),
+        )
+        if clone.returncode:
+            raise RecoveryError("Local clone failed", phase="clone")
         git(scratch, "checkout", "--detach", base)
         if git(scratch, "write-tree") != base_tree:
             raise RecoveryError("Initial clean base tree mismatch")
@@ -107,10 +138,16 @@ def main() -> int:
     args = parser.parse_args()
     try:
         before, after = verify(args.base, args.head, args.repository)
-    except (RecoveryError, OSError, subprocess.SubprocessError) as exc:
+    except RecoveryError as exc:
+        # Only hardcoded operation names reach stdout/stderr, never Git stderr,
+        # remote URLs, file paths, or local configuration values.
+        print(f"Recovery rehearsal FAILED in {exc.phase} (details suppressed)", file=sys.stderr)
+        return 1
+    except (OSError, subprocess.SubprocessError) as exc:
         print(f"Recovery rehearsal FAILED: {type(exc).__name__} (details suppressed)", file=sys.stderr)
         return 1
     print(f"Recovery rehearsal PASS: forward tree {after}; restored base tree {before}")
+    print("Trusted local Git/repository required; missing objects are not fetched.")
     print("No branch/ref was changed. Git-only test, not an offsite backup or merge authorization.")
     return 0
 
