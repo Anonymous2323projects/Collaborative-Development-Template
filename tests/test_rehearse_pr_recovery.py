@@ -70,6 +70,79 @@ class RecoveryRehearsalTests(unittest.TestCase):
         self.assertEqual(before, run(self.root, "rev-parse", self.head + "^{tree}"))
         self.assertEqual(after, run(self.root, "rev-parse", self.base + "^{tree}"))
 
+    def test_mode_only_change_round_trip_even_when_filemode_is_false(self):
+        """Windows may not represent executable bits; the Git index can."""
+        mode_file = self.root / "mode-only.sh"
+        mode_file.write_text("echo fixed\n", encoding="utf-8")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "mode-base")
+        before = run(self.root, "rev-parse", "HEAD")
+        run(self.root, "update-index", "--chmod=+x", "mode-only.sh")
+        run(self.root, "commit", "--quiet", "-m", "mode-only")
+        after = run(self.root, "rev-parse", "HEAD")
+        run(self.root, "config", "core.filemode", "false")
+        expected_before = run(self.root, "rev-parse", before + "^{tree}")
+        expected_after = run(self.root, "rev-parse", after + "^{tree}")
+        self.assertNotEqual(expected_before, expected_after)
+        self.assertEqual(recovery.verify(before, after, self.root),
+                         (expected_before, expected_after))
+        self.assertEqual(recovery.verify(after, before, self.root),
+                         (expected_after, expected_before))
+
+    def test_refuses_tree_and_annotated_tag_objects_as_commits(self):
+        tree = run(self.root, "rev-parse", self.head + "^{tree}")
+        run(self.root, "tag", "-a", "synthetic-head", "-m", "tag fixture", self.head)
+        annotated_tag = run(self.root, "rev-parse", "refs/tags/synthetic-head^{tag}")
+        for object_id in (tree, annotated_tag):
+            for base, head in ((object_id, self.head), (self.base, object_id)):
+                with self.subTest(object_id=object_id, base=base):
+                    with self.assertRaises(recovery.RecoveryError) as failure:
+                        recovery.verify(base, head, self.root)
+                    self.assertEqual(failure.exception.phase, "commit-type")
+
+    def test_git_2450_is_rejected_despite_successful_option_probe(self):
+        """A successful flag probe was not sufficient in Git 2.45.0."""
+        proc = subprocess.CompletedProcess(
+            ["git", "--no-lazy-fetch", "--version"], 0,
+            stdout=b"git version 2.45.0", stderr=b"",
+        )
+        with patch.object(recovery.subprocess, "run", return_value=proc) as mocked:
+            with self.assertRaises(recovery.RecoveryError) as error:
+                recovery.verify(self.base, self.head, self.root)
+        self.assertEqual(error.exception.phase, "git-version")
+        self.assertEqual(mocked.call_count, 1)
+
+    def test_minimum_git_version_parser_accepts_windows_suffix(self):
+        proc = subprocess.CompletedProcess(
+            ["git", "--no-lazy-fetch", "--version"], 0,
+            stdout=b"git version 2.46.0.windows.1", stderr=b"",
+        )
+        with patch.object(recovery.subprocess, "run", return_value=proc):
+            recovery.require_offline_git()
+
+    def test_git_stderr_sentinel_is_never_disclosed(self):
+        from contextlib import redirect_stderr
+        from io import StringIO
+
+        marker = "SECRET_FAKE_TOKEN_NOT_FOR_LOGS"
+        def unavailable(*args, **kwargs):
+            command = args[0]
+            if "--version" in command:
+                return subprocess.CompletedProcess(
+                    command, 0, stdout=b"git version 2.47.3", stderr=b"")
+            return subprocess.CompletedProcess(
+                command, 1, stdout=b"", stderr=marker.encode("ascii"))
+        stream = StringIO()
+        with patch.object(recovery.subprocess, "run", side_effect=unavailable):
+            with patch.object(sys, "argv", [
+                "rehearse_pr_recovery.py", "--repository", str(self.root),
+                "--base", self.base, "--head", self.head,
+            ]), redirect_stderr(stream):
+                self.assertEqual(recovery.main(), 1)
+        self.assertIn("FAILED", stream.getvalue())
+        self.assertNotIn(marker, stream.getvalue())
+        self.assertNotIn(str(self.root), stream.getvalue())
+
     def test_does_not_modify_source_branch_or_local_work(self):
         (self.root / "local-untracked.txt").write_text("keep my work")
         revision = run(self.root, "rev-parse", "HEAD")
@@ -190,9 +263,13 @@ class RecoveryRehearsalTests(unittest.TestCase):
             self.assertEqual(safe["GIT_CONFIG_GLOBAL"], os.devnull)
             self.assertEqual(safe["GIT_NO_LAZY_FETCH"], "1")
             self.assertEqual(safe["GIT_NO_REPLACE_OBJECTS"], "1")
+            self.assertEqual(safe["GIT_ALLOW_PROTOCOL"], "file")
+            self.assertEqual(safe["GIT_TERMINAL_PROMPT"], "0")
+            self.assertEqual(safe["GIT_PROTOCOL_FROM_USER"], "0")
             self.assertEqual(safe["GIT_ATTR_NOSYSTEM"], "1")
             allowlist = {"GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_GLOBAL",
-                         "GIT_ATTR_NOSYSTEM", "GIT_NO_LAZY_FETCH", "GIT_NO_REPLACE_OBJECTS"}
+                         "GIT_ATTR_NOSYSTEM", "GIT_NO_LAZY_FETCH", "GIT_NO_REPLACE_OBJECTS",
+                         "GIT_ALLOW_PROTOCOL", "GIT_TERMINAL_PROMPT", "GIT_PROTOCOL_FROM_USER"}
             self.assertFalse(any(k.upper().startswith("GIT_") for k in safe
                                  if k not in allowlist))
 
@@ -249,7 +326,7 @@ class RecoveryRehearsalTests(unittest.TestCase):
         def missing_at_diff(root, *args, **kwargs):
             if Path(root) == self.root and args and args[0] == "diff":
                 observed.append("source-diff")
-                # Clone and checkout have completed using the intact source.
+                # Local clone completed with objects intact; no checkout is needed.
                 self.assertTrue(object_path.exists())
                 self.assertFalse(marker.exists(), "remote used before source diff")
                 object_path.unlink()  # Only this disposable synthetic repository.
@@ -320,7 +397,7 @@ class RecoveryRehearsalTests(unittest.TestCase):
             "--base", "f" * 40, "--head", self.head,
         ]), redirect_stderr(stream):
             self.assertEqual(recovery.main(), 1)
-        self.assertIn("FAILED in rev-parse", stream.getvalue())
+        self.assertIn("FAILED in commit-type", stream.getvalue())
         self.assertNotIn(str(self.root), stream.getvalue())
         self.assertNotIn("f" * 40, stream.getvalue())
 
