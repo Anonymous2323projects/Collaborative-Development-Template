@@ -82,8 +82,8 @@ class RecoveryRehearsalTests(unittest.TestCase):
         marker = Path(self.tmp.name) / "external-diff-executed.txt"
         helper = Path(self.tmp.name) / "safe-diff-fixture.py"
         helper.write_text(
-            "from pathlib import Path\\n"
-            f"Path({str(marker)!r}).write_text('ran', encoding='utf-8')\\n",
+            "from pathlib import Path\n"
+            f"Path({str(marker)!r}).write_text('ran', encoding='utf-8')\n",
             encoding="utf-8",
         )
         run(self.root, "config", "diff.external", f'"{sys.executable}" "{helper}"')
