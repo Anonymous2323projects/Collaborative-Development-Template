@@ -184,8 +184,71 @@ class RecoveryRehearsalTests(unittest.TestCase):
             safe = recovery.isolated_git_env()
             self.assertEqual(safe["GIT_CONFIG_NOSYSTEM"], "1")
             self.assertEqual(safe["GIT_CONFIG_GLOBAL"], os.devnull)
+            self.assertEqual(safe["GIT_NO_LAZY_FETCH"], "1")
+            self.assertEqual(safe["GIT_NO_REPLACE_OBJECTS"], "1")
+            self.assertEqual(safe["GIT_ATTR_NOSYSTEM"], "1")
+            allowlist = {"GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_GLOBAL",
+                         "GIT_ATTR_NOSYSTEM", "GIT_NO_LAZY_FETCH", "GIT_NO_REPLACE_OBJECTS"}
             self.assertFalse(any(k.upper().startswith("GIT_") for k in safe
-                                 if k not in {"GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_GLOBAL"}))
+                                 if k not in allowlist))
+
+    def test_missing_promisor_blob_fails_closed_without_fetching(self):
+        """An object held only by a local promisor remote must not be fetched."""
+        remote = Path(self.tmp.name) / "complete-local-remote.git"
+        run(self.root, "clone", "--bare", str(self.root), str(remote))
+        run(self.root, "remote", "add", "origin", str(remote))
+        run(self.root, "config", "extensions.partialClone", "origin")
+        run(self.root, "config", "remote.origin.promisor", "true")
+        run(self.root, "config", "remote.origin.partialclonefilter", "blob:none")
+        missing_blob = run(self.root, "rev-parse", f"{self.base}:README.md")
+        object_path = self.root / ".git" / "objects" / missing_blob[:2] / missing_blob[2:]
+        self.assertTrue(object_path.exists(), "test precondition: loose object exists")
+        object_path.unlink()  # Only the synthetic, disposable test repository.
+        self.assertFalse(object_path.exists())
+
+        with self.assertRaises(recovery.RecoveryError):
+            recovery.verify(self.base, self.head, self.root)
+        self.assertFalse(object_path.exists(), "recovery fetched a missing object")
+
+    @unittest.skipIf(os.name == "nt", "POSIX executable-hook fixture")
+    def test_inherited_template_hook_is_not_executed(self):
+        template = Path(self.tmp.name) / "inherited-template"
+        hooks = template / "hooks"
+        hooks.mkdir(parents=True)
+        marker = Path(self.tmp.name) / "template-hook-executed"
+        hook = hooks / "post-checkout"
+        hook.write_text(
+            "#!/bin/sh\n"
+            f'printf ran > "{marker}"\n',
+            encoding="utf-8",
+        )
+        hook.chmod(0o755)
+        with patch.dict(os.environ, {"GIT_TEMPLATE_DIR": str(template)}):
+            control = Path(self.tmp.name) / "unsafe-template-control"
+            subprocess.run(
+                ["git", "clone", "--quiet", "--no-checkout",
+                 str(self.root), str(control)],
+                check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            )
+            run(control, "checkout", "--detach", self.base)
+            self.assertTrue(marker.exists(), "test precondition: template hook executes")
+            marker.unlink()
+            recovery.verify(self.base, self.head, self.root)
+            self.assertFalse(marker.exists(), "recovery executed an inherited template hook")
+
+    def test_failure_message_has_allowlisted_stage_not_local_path(self):
+        from contextlib import redirect_stderr
+        from io import StringIO
+
+        stream = StringIO()
+        with patch.object(sys, "argv", [
+            "rehearse_pr_recovery.py", "--repository", str(self.root),
+            "--base", "f" * 40, "--head", self.head,
+        ]), redirect_stderr(stream):
+            self.assertEqual(recovery.main(), 1)
+        self.assertIn("FAILED in rev-parse", stream.getvalue())
+        self.assertNotIn(str(self.root), stream.getvalue())
+        self.assertNotIn("f" * 40, stream.getvalue())
 
     def test_rejects_invalid_sha(self):
         for value in ("short", "a" * 39, "f" * 40 + "; echo bad", "A" * 40):
