@@ -26,7 +26,7 @@ Do not assume a report channel is configured until it has been checked in reposi
 
 ## Automated checks in this template
 
-The public repository uses GitHub CodeQL for Python and GitHub Actions workflow analysis, Gitleaks for secret-pattern scanning, repository-hygiene checks, and unit tests for the hygiene helper functions. Review each workflow's current triggers, permissions, pinned action revisions, and query scope before relying on it. A successful run means only that those configured checks completed without reporting a failure; it is not a full security review.
+The public repository uses GitHub CodeQL for Python and GitHub Actions workflow analysis, Gitleaks for secret-pattern scanning, repository-hygiene checks, and unit tests for its Python maintenance scripts. For pull requests, an additional read-only recovery-rehearsal job compares exact Git trees before and after applying and reversing a proposed patch. This is not an independent backup, live restoration of external effects, or a cryptographically authenticated owner-approval gate. Review each workflow's current triggers, permissions, pinned action revisions, and query scope before relying on it. A successful run means only that those configured checks completed without reporting a failure; it is not a full security review.
 
 ## Important limitations
 

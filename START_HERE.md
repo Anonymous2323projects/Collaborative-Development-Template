@@ -2,6 +2,8 @@
 
 This template helps you turn an idea into a secure, maintainable project with ChatGPT as a practical collaborator. You do not need programming experience to begin.
 
+If you only need the first actions, follow the [five-step README quick start](README.md#start-in-five-steps). This longer guide provides optional detail and troubleshooting; ChatGPT should still consult it when applying the template.
+
 Before using it, read the short [Important Notice and Disclaimer](DISCLAIMER.md).
 
 ## 1. Protect your project before adding private information
