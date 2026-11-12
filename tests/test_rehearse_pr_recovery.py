@@ -2,6 +2,7 @@
 import sys
 import os
 import shutil
+import stat
 import subprocess
 import tempfile
 import unittest
@@ -159,7 +160,7 @@ class RecoveryRehearsalTests(unittest.TestCase):
         missing_blob = run(self.root, "rev-parse", f"{before}:nested/deeper/same.dat")
 
         remote = Path(self.tmp.name) / "complete-local-remote.git"
-        run(self.root, "clone", "--bare", str(self.root), str(remote))
+        run(self.root, "clone", "--bare", "--no-hardlinks", str(self.root), str(remote))
         run(self.root, "remote", "add", "origin", str(remote))
         run(self.root, "config", "extensions.partialClone", "origin")
         run(self.root, "config", "remote.origin.promisor", "true")
@@ -167,7 +168,9 @@ class RecoveryRehearsalTests(unittest.TestCase):
         local_object = self.root / ".git" / "objects" / missing_blob[:2] / missing_blob[2:]
         saved_object = remote / "objects" / missing_blob[:2] / missing_blob[2:]
         self.assertTrue(local_object.is_file(), "loose blob fixture required")
-        self.assertTrue(saved_object.is_file(), "complete local fixture backup required")
+        self.assertTrue(saved_object.is_file(), "independent local fixture backup required")
+        # Git creates read-only loose objects on Windows; only change this disposable object.
+        local_object.chmod(local_object.stat().st_mode | stat.S_IWRITE)
         local_object.unlink()  # Only our disposable synthetic repository.
 
         def offline_presence():
