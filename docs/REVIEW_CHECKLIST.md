@@ -20,7 +20,7 @@ Use this checklist for routine changes. For substantive changes, the complete me
 - [ ] Complete diff, dependencies, scripts, workflows, secrets, and public metadata were reviewed.
 - [ ] Tests/checks ran on the exact reviewed code; omissions are explicit.
 - [ ] Similar weaknesses in related procedures were searched when a systemic issue was found.
-- [ ] For significant changes, preserve the exact pre-merge **target tip/base**, affected paths, intended integration and separate PR-head evidence; verify a realistic recovery/rehearsal route.
+- [ ] For significant changes, preserve the exact pre-merge **target tip/base**, affected paths, intended integration and separate PR-head evidence; verify a realistic recovery/rehearsal route. The optional `scripts/rehearse_pr_recovery.py` Git-tree test is not a backup or rollback of external effects, and its status is not automatically required by branch rules.
 
 ## Merge and release
 - [ ] For ordinary PRs, required GitHub rulesets and status checks are verified live, not inferred from workflow files.
