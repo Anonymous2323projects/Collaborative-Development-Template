@@ -88,6 +88,19 @@ class RecoveryRehearsalTests(unittest.TestCase):
         with self.assertRaises(recovery.RecoveryError):
             recovery.verify(self.base, self.head, Path(self.tmp.name))
 
+    def test_gitlink_looking_filenames_are_regular_files(self):
+        (self.root / "160000 commit ordinary.txt").write_text("ordinary\n")
+        (self.root / "header\n160000 commit").write_text("newline in name\n")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "ordinary names containing gitlink text")
+        after = run(self.root, "rev-parse", "HEAD")
+        before_tree = run(self.root, "rev-parse", self.head + "^{tree}")
+        after_tree = run(self.root, "rev-parse", after + "^{tree}")
+        self.assertEqual(
+            recovery.verify(self.head, after, self.root),
+            (before_tree, after_tree),
+        )
+
     def test_gitlink_requires_separate_assessment(self):
         run(self.root, "update-index", "--add", "--cacheinfo", f"160000,{self.head},example-submodule")
         run(self.root, "commit", "--quiet", "-m", "add gitlink")
