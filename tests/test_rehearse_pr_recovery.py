@@ -213,6 +213,9 @@ class RecoveryRehearsalTests(unittest.TestCase):
         with self.assertRaises(recovery.RecoveryError):
             recovery.verify(self.base, self.head, self.root)
         self.assertFalse(object_path.exists(), "recovery fetched a missing object")
+        # Positive control: the only remote is another local disposable fixture.
+        # With the guard absent, Git can lazily retrieve exactly this blob.
+        self.assertEqual(run(self.root, "cat-file", "-p", missing_blob), "original")
 
     @unittest.skipIf(os.name == "nt", "POSIX executable-hook fixture")
     def test_inherited_template_hook_is_not_executed(self):
