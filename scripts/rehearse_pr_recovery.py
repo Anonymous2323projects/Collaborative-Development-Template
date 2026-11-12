@@ -40,7 +40,16 @@ def verify(base: str, head: str, repository: Path) -> tuple[str, str]:
     git(source, "rev-parse", "--is-inside-work-tree")
     base_tree = git(source, "rev-parse", f"{base}^{{tree}}")
     head_tree = git(source, "rev-parse", f"{head}^{{tree}}")
-    if git(source, "ls-tree", "-r", base).find("160000 commit") != -1 or git(source, "ls-tree", "-r", head).find("160000 commit") != -1:
+    # Parse NUL-delimited ls-tree entries: filenames (even with embedded newlines)
+    # must never be mistaken for the "160000" Git submodule mode.
+    def has_gitlinks(revision: str) -> bool:
+        entries = git(source, "ls-tree", "-r", "-z", revision).split("\0")
+        return any(
+            record.split("\t", 1)[0].split(" ", 1)[0] == "160000"
+            for record in entries if record
+        )
+
+    if has_gitlinks(base) or has_gitlinks(head):
         raise RecoveryError("Git submodules require a separate recovery assessment")
     with tempfile.TemporaryDirectory(prefix="cdt-recovery-") as location:
         tmp = Path(location)
