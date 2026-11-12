@@ -7,9 +7,10 @@ authorize merges, or account for external effects.
 
 Run only with a *trusted* local repository, Git binary and OS environment:
 local repository config and working-tree attributes are NOT a security
-sandbox. All needed base/head commit, tree and blob objects must already be
-available locally. Git subprocesses prohibit promisor lazy fetching; missing
-objects fail the rehearsal rather than fetching from a remote. This checks
+sandbox. Git 2.45+ with --no-lazy-fetch support is required and checked before
+reading the source repository. All needed base/head commit, tree and blob objects
+must already be available locally. Git subprocesses prohibit promisor lazy
+fetching; missing objects fail the rehearsal rather than fetching from a remote. This checks
 the specific pair of trees, not the completeness of unrelated history.
 Source refs and unrelated local work must remain unchanged.
 """
@@ -49,6 +50,27 @@ def isolated_git_env() -> dict[str, str]:
     return env
 
 
+def require_offline_git() -> None:
+    """Fail before repository access if Git lacks the no-lazy-fetch option.
+
+    Git 2.45 introduced --no-lazy-fetch, equivalent to GIT_NO_LAZY_FETCH=1.
+    Merely setting an unknown environment variable on older Git is unsafe.
+    """
+    try:
+        probe = subprocess.run(
+            ["git", "--no-lazy-fetch", "--version"],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+            env=isolated_git_env(),
+        )
+    except OSError as exc:
+        raise RecoveryError("Git is unavailable", phase="git-version") from exc
+    if probe.returncode:
+        raise RecoveryError(
+            "Git 2.45+ with --no-lazy-fetch support is required",
+            phase="git-version",
+        )
+
+
 def git(root: Path, *args: str, stdout=None) -> str:
     completed = subprocess.run(
         ["git", "-C", str(root), "-c", "core.autocrlf=false",
@@ -66,6 +88,7 @@ def git(root: Path, *args: str, stdout=None) -> str:
 def verify(base: str, head: str, repository: Path) -> tuple[str, str]:
     if not SHA.fullmatch(base) or not SHA.fullmatch(head):
         raise RecoveryError("Expected two complete lowercase 40-character commit IDs")
+    require_offline_git()  # Prove the guard works before touching repository data.
     source = repository.resolve()
     git(source, "rev-parse", "--is-inside-work-tree")
     base_tree = git(source, "rev-parse", f"{base}^{{tree}}")
