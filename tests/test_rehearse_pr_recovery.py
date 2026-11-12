@@ -196,26 +196,93 @@ class RecoveryRehearsalTests(unittest.TestCase):
             self.assertFalse(any(k.upper().startswith("GIT_") for k in safe
                                  if k not in allowlist))
 
-    def test_missing_promisor_blob_fails_closed_without_fetching(self):
-        """An object held only by a local promisor remote must not be fetched."""
+    def test_git_without_no_lazy_fetch_fails_before_repository_access(self):
+        """Unknown offline option must reject Git, not run against a repository."""
+        with patch.object(
+            recovery.subprocess, "run",
+            return_value=subprocess.CompletedProcess(
+                ["git", "--no-lazy-fetch", "--version"], 129,
+                stdout=b"", stderr=b"unknown option",
+            ),
+        ) as mocked:
+            with self.assertRaises(recovery.RecoveryError) as error:
+                recovery.verify(self.base, self.head, self.root)
+        self.assertEqual(error.exception.phase, "git-version")
+        self.assertEqual(mocked.call_count, 1)
+        self.assertEqual(
+            mocked.call_args.args[0],
+            ["git", "--no-lazy-fetch", "--version"],
+        )
+
+    def test_git_offline_option_is_supported_on_this_runner(self):
+        """Positive control for the actual installed Git version."""
+        recovery.require_offline_git()
+
+    @unittest.skipIf(os.name == "nt", "upload-pack marker fixture requires a POSIX shell")
+    def test_missing_promisor_blob_fails_in_source_diff_without_fetching(self):
+        """The missing object is introduced at source diff, after scratch checkout."""
         remote = Path(self.tmp.name) / "complete-local-remote.git"
         run(self.root, "clone", "--bare", str(self.root), str(remote))
         run(self.root, "remote", "add", "origin", str(remote))
         run(self.root, "config", "extensions.partialClone", "origin")
         run(self.root, "config", "remote.origin.promisor", "true")
         run(self.root, "config", "remote.origin.partialclonefilter", "blob:none")
+
+        marker = Path(self.tmp.name) / "upload-pack-invoked.txt"
+        upload_pack = Path(self.tmp.name) / "instrumented-upload-pack.sh"
+        upload_pack.write_text(
+            "#!/bin/sh\n"
+            f'printf invoked >> "{marker}"\n'
+            'exec git-upload-pack "$@"\n',
+            encoding="utf-8",
+        )
+        upload_pack.chmod(0o755)
+        run(self.root, "config", "remote.origin.uploadpack", str(upload_pack))
+
         missing_blob = run(self.root, "rev-parse", f"{self.base}:README.md")
         object_path = self.root / ".git" / "objects" / missing_blob[:2] / missing_blob[2:]
-        self.assertTrue(object_path.exists(), "test precondition: loose object exists")
-        object_path.unlink()  # Only the synthetic, disposable test repository.
-        self.assertFalse(object_path.exists())
+        self.assertTrue(object_path.exists(), "test precondition: loose source blob")
 
-        with self.assertRaises(recovery.RecoveryError):
-            recovery.verify(self.base, self.head, self.root)
-        self.assertFalse(object_path.exists(), "recovery fetched a missing object")
-        # Positive control: the only remote is another local disposable fixture.
-        # With the guard absent, Git can lazily retrieve exactly this blob.
+        actual_git = recovery.git
+        observed = []
+
+        def missing_at_diff(root, *args, **kwargs):
+            if Path(root) == self.root and args and args[0] == "diff":
+                observed.append("source-diff")
+                # Clone and checkout have completed using the intact source.
+                self.assertTrue(object_path.exists())
+                self.assertFalse(marker.exists(), "remote used before source diff")
+                object_path.unlink()  # Only this disposable synthetic repository.
+            return actual_git(root, *args, **kwargs)
+
+        with patch.object(recovery, "git", side_effect=missing_at_diff):
+            with self.assertRaises(recovery.RecoveryError) as error:
+                recovery.verify(self.base, self.head, self.root)
+
+        self.assertEqual(observed, ["source-diff"], "must reach source diff")
+        self.assertEqual(error.exception.phase, "diff")
+        self.assertFalse(marker.exists(), "offline source diff contacted remote")
+
+        local_probe = [
+            "git", "--no-lazy-fetch", "-C", str(self.root),
+            "cat-file", "-e", missing_blob,
+        ]
+        # Pack-aware object availability check, explicitly with fetching off.
+        missing = subprocess.run(
+            local_probe, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            check=False, env=recovery.isolated_git_env(),
+        )
+        self.assertNotEqual(missing.returncode, 0, "object fetched into a pack")
+        self.assertFalse(marker.exists(), "object check contacted remote")
+
+        # Positive control: ordinary Git can lazily fetch from a LOCAL fixture.
         self.assertEqual(run(self.root, "cat-file", "-p", missing_blob), "original")
+        self.assertTrue(marker.exists(), "control must contact local upload-pack")
+        present = subprocess.run(
+            local_probe, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            check=False, env=recovery.isolated_git_env(),
+        )
+        self.assertEqual(present.returncode, 0, "fetched object should be available")
 
     @unittest.skipIf(os.name == "nt", "POSIX executable-hook fixture")
     def test_inherited_template_hook_is_not_executed(self):
