@@ -40,14 +40,25 @@ def verify(base: str, head: str, repository: Path) -> tuple[str, str]:
     git(source, "rev-parse", "--is-inside-work-tree")
     base_tree = git(source, "rev-parse", f"{base}^{{tree}}")
     head_tree = git(source, "rev-parse", f"{head}^{{tree}}")
-    # Parse NUL-delimited ls-tree entries: filenames (even with embedded newlines)
-    # must never be mistaken for the "160000" Git submodule mode.
+    # Git paths are arbitrary bytes on POSIX. Parse only the ASCII mode from raw,
+    # NUL-delimited ls-tree records; never decode filename bytes as UTF-8.
     def has_gitlinks(revision: str) -> bool:
-        entries = git(source, "ls-tree", "-r", "-z", revision).split("\0")
-        return any(
-            record.split("\t", 1)[0].split(" ", 1)[0] == "160000"
-            for record in entries if record
+        completed = subprocess.run(
+            ["git", "-C", str(source), "-c", "core.autocrlf=false",
+             "ls-tree", "-r", "-z", revision],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
         )
+        if completed.returncode:
+            raise RecoveryError("git ls-tree failed; object availability is uncertain")
+        for record in completed.stdout.split(b"\0"):
+            if not record:
+                continue
+            metadata, separator, _filename = record.partition(b"\t")
+            if not separator:
+                raise RecoveryError("Unexpected git ls-tree record format")
+            if metadata.split(b" ", 1)[0] == b"160000":
+                return True
+        return False
 
     if has_gitlinks(base) or has_gitlinks(head):
         raise RecoveryError("Git submodules require a separate recovery assessment")
