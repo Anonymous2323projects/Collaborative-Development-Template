@@ -1,5 +1,6 @@
 """Synthetic offline recovery round-trip tests; no network or real user repository."""
 import sys
+import os
 import subprocess
 import tempfile
 import unittest
@@ -88,17 +89,41 @@ class RecoveryRehearsalTests(unittest.TestCase):
         with self.assertRaises(recovery.RecoveryError):
             recovery.verify(self.base, self.head, Path(self.tmp.name))
 
-    def test_gitlink_looking_filenames_are_regular_files(self):
+    def test_gitlink_looking_filename_is_regular_file(self):
         (self.root / "160000 commit ordinary.txt").write_text("ordinary\n")
-        (self.root / "header\n160000 commit").write_text("newline in name\n")
         run(self.root, "add", "--all")
-        run(self.root, "commit", "--quiet", "-m", "ordinary names containing gitlink text")
+        run(self.root, "commit", "--quiet", "-m", "ordinary filename containing gitlink text")
         after = run(self.root, "rev-parse", "HEAD")
-        before_tree = run(self.root, "rev-parse", self.head + "^{tree}")
-        after_tree = run(self.root, "rev-parse", after + "^{tree}")
         self.assertEqual(
             recovery.verify(self.head, after, self.root),
-            (before_tree, after_tree),
+            (run(self.root, "rev-parse", self.head + "^{tree}"),
+             run(self.root, "rev-parse", after + "^{tree}")),
+        )
+
+    @unittest.skipIf(os.name == "nt", "newlines are not valid in Windows filenames")
+    def test_gitlink_looking_filename_with_newline_on_posix(self):
+        (self.root / "header\n160000 commit").write_text("newline in name\n")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "POSIX filename with newline")
+        after = run(self.root, "rev-parse", "HEAD")
+        self.assertEqual(
+            recovery.verify(self.head, after, self.root),
+            (run(self.root, "rev-parse", self.head + "^{tree}"),
+             run(self.root, "rev-parse", after + "^{tree}")),
+        )
+
+    @unittest.skipUnless(sys.platform.startswith("linux"), "raw non-UTF-8 filename test requires Linux")
+    def test_non_utf8_filename_does_not_break_gitlink_parser(self):
+        invalid_path = os.path.join(os.fsencode(self.root), b"raw-\xff-160000 commit.dat")
+        with open(invalid_path, "wb") as output:
+            output.write(bytes(range(256)))
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "raw non-UTF-8 filename")
+        after = run(self.root, "rev-parse", "HEAD")
+        self.assertEqual(
+            recovery.verify(self.head, after, self.root),
+            (run(self.root, "rev-parse", self.head + "^{tree}"),
+             run(self.root, "rev-parse", after + "^{tree}")),
         )
 
     def test_gitlink_requires_separate_assessment(self):
