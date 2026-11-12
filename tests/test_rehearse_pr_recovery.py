@@ -42,6 +42,27 @@ class RecoveryRehearsalTests(unittest.TestCase):
         self.assertEqual(before, run(self.root, "rev-parse", self.base + "^{tree}"))
         self.assertEqual(after, run(self.root, "rev-parse", self.head + "^{tree}"))
 
+    def test_existing_binary_edit_and_delete_round_trip(self):
+        existing = self.root / "existing.bin"
+        deleted = self.root / "deleted.bin"
+        existing.write_bytes(bytes(range(256)))
+        deleted.write_bytes(b"\x00\xff\x80\x01")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "add existing binary fixtures")
+        before = run(self.root, "rev-parse", "HEAD")
+        existing.write_bytes(bytes(reversed(range(256))) + b"\x00")
+        deleted.unlink()
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "modify and delete binary fixtures")
+        after = run(self.root, "rev-parse", "HEAD")
+        patch = run(self.root, "diff", "--binary", before, after)
+        self.assertIn("GIT binary patch", patch)
+        self.assertEqual(
+            recovery.verify(before, after, self.root),
+            (run(self.root, "rev-parse", before + "^{tree}"),
+             run(self.root, "rev-parse", after + "^{tree}")),
+        )
+
     def test_reverse_direction_is_also_valid(self):
         before, after = recovery.verify(self.head, self.base, self.root)
         self.assertEqual(before, run(self.root, "rev-parse", self.head + "^{tree}"))
