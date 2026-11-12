@@ -4,6 +4,9 @@ Notable user-facing changes to the template are recorded here. This is a curated
 
 ## Unreleased
 
+- Added a short, actionable beginner-first README path that works with ChatGPT Free, makes privacy and Project Instructions setup explicit, and keeps advanced guidance optional.
+- Added a Git-only, isolated PR recovery-rehearsal script and synthetic regression tests, with an informational pull-request CI job. Clarified that a passed Git-tree reversal is neither an independent backup nor merge authorization.
+
 - Made local Markdown hygiene diagnostics avoid echoing potentially sensitive link targets in CI errors; hidden HTML comments no longer cause false link findings, with regression tests.
 - Clarified systemic downstream update review, independent five-perspective assessments and concise handover references.
 
