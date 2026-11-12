@@ -8,6 +8,7 @@ or account for external effects. Requires Git and a complete local object histor
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import subprocess
 import sys
@@ -21,12 +22,22 @@ class RecoveryError(Exception):
     """A recovery precondition or tree reconstruction failed."""
 
 
+def isolated_git_env() -> dict[str, str]:
+    """Avoid inherited Git config and helpers in a read-only tree rehearsal."""
+    env = {key: value for key, value in os.environ.items() if not key.upper().startswith("GIT_")}
+    # Local repository config remains readable; global/system and Git env overrides
+    # must not inject a filter, helper, index or worktree into this operation.
+    env.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull)
+    return env
+
+
 def git(root: Path, *args: str, stdout=None) -> str:
     completed = subprocess.run(
         ["git", "-C", str(root), "-c", "core.autocrlf=false", *args],
         stdout=subprocess.PIPE if stdout is None else stdout,
         stderr=subprocess.PIPE,
         check=False,
+        env=isolated_git_env(),
     )
     if completed.returncode:
         raise RecoveryError(f"git {args[0]} failed (exit {completed.returncode}); see local Git configuration and object availability")
@@ -47,6 +58,7 @@ def verify(base: str, head: str, repository: Path) -> tuple[str, str]:
             ["git", "-C", str(source), "-c", "core.autocrlf=false",
              "ls-tree", "-r", "-z", revision],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+            env=isolated_git_env(),
         )
         if completed.returncode:
             raise RecoveryError("git ls-tree failed; object availability is uncertain")
@@ -66,14 +78,14 @@ def verify(base: str, head: str, repository: Path) -> tuple[str, str]:
         tmp = Path(location)
         scratch = tmp / "checkout"
         # Clone from a local path only: never fetch a remote or modify the source.
-        subprocess.run(["git", "clone", "--quiet", "--no-checkout", "--no-hardlinks", str(source), str(scratch)], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["git", "clone", "--quiet", "--no-checkout", "--no-hardlinks", str(source), str(scratch)], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=isolated_git_env())
         git(scratch, "checkout", "--detach", base)
         if git(scratch, "write-tree") != base_tree:
             raise RecoveryError("Initial clean base tree mismatch")
         patch = tmp / "change.patch"
         with patch.open("wb") as out:
-            # A locally configured diff.external helper must never run during recovery.
-            git(source, "diff", "--no-ext-diff", "--binary", "--full-index", base, head, "--", stdout=out)
+            # A recovery patch must not use executable diff or textconv drivers.
+            git(source, "diff", "--no-ext-diff", "--no-textconv", "--binary", "--full-index", base, head, "--", stdout=out)
         git(scratch, "apply", "--check", str(patch))
         git(scratch, "apply", str(patch))
         git(scratch, "add", "--all", "--force")
