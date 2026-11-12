@@ -5,6 +5,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import rehearse_pr_recovery as recovery
@@ -99,6 +100,92 @@ class RecoveryRehearsalTests(unittest.TestCase):
         )
         self.assertEqual(recovery.verify(self.base, self.head, self.root), expected)
         self.assertFalse(marker.exists(), "recovery executed an external diff helper")
+
+    @unittest.skipIf(os.name == "nt", "textconv fixture requires POSIX-style helper")
+    def test_custom_textconv_helper_is_not_executed(self):
+        marker = Path(self.tmp.name) / "textconv-executed.txt"
+        helper = Path(self.tmp.name) / "textconv-fixture.py"
+        helper.write_text(
+            "from pathlib import Path\n"
+            f"Path({str(marker)!r}).write_text('ran', encoding='utf-8')\n"
+            "print('converted')\n",
+            encoding="utf-8",
+        )
+        (self.root / ".gitattributes").write_text("*.dat diff=fixture\n", encoding="utf-8")
+        (self.root / "sample.dat").write_bytes(b"\x00before\x00")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "textconv before")
+        before = run(self.root, "rev-parse", "HEAD")
+        (self.root / "sample.dat").write_bytes(b"\x00after\x00")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "textconv after")
+        after = run(self.root, "rev-parse", "HEAD")
+        run(self.root, "config", "diff.fixture.textconv", f'"{sys.executable}" "{helper}"')
+        # Demonstrate that --no-ext-diff alone still permits textconv execution.
+        run(self.root, "diff", "--no-ext-diff", "--binary", "--full-index", before, after, "--")
+        self.assertTrue(marker.exists(), "test precondition: textconv is active")
+        marker.unlink()
+        self.assertEqual(
+            recovery.verify(before, after, self.root),
+            (run(self.root, "rev-parse", before + "^{tree}"),
+             run(self.root, "rev-parse", after + "^{tree}")),
+        )
+        self.assertFalse(marker.exists(), "recovery executed a textconv helper")
+
+    @unittest.skipIf(os.name == "nt", "synthetic filter fixture requires POSIX shell")
+    def test_inherited_global_smudge_filter_does_not_run(self):
+        marker = Path(self.tmp.name) / "global-filter-executed.txt"
+        helper = Path(self.tmp.name) / "filter-fixture.sh"
+        helper.write_text(
+            "#!/bin/sh\n"
+            f'printf triggered >> "{marker}"\n'
+            "cat\n",
+            encoding="utf-8",
+        )
+        helper.chmod(0o755)
+        (self.root / ".gitattributes").write_text("*.txt filter=fixture\n", encoding="utf-8")
+        (self.root / "filtered.txt").write_text("before\n", encoding="utf-8")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "filter before")
+        before = run(self.root, "rev-parse", "HEAD")
+        (self.root / "filtered.txt").write_text("after\n", encoding="utf-8")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "filter after")
+        after = run(self.root, "rev-parse", "HEAD")
+        global_cfg = Path(self.tmp.name) / "synthetic-global.cfg"
+        run(self.root, "config", "--file", str(global_cfg), "filter.fixture.smudge", f'"{helper}"')
+        run(self.root, "config", "--file", str(global_cfg), "filter.fixture.clean", f'"{helper}"')
+
+        with patch.dict(os.environ, {"GIT_CONFIG_GLOBAL": str(global_cfg)}):
+            # The unisolated checkout demonstrates the synthetic filter is active.
+            scratch = Path(self.tmp.name) / "unsafe-control"
+            subprocess.run(
+                ["git", "clone", "--quiet", "--no-checkout", str(self.root), str(scratch)],
+                check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            )
+            run(scratch, "checkout", "--detach", before)
+            self.assertTrue(marker.exists(), "test precondition: smudge filter is active")
+            marker.unlink()
+            self.assertEqual(
+                recovery.verify(before, after, self.root),
+                (run(self.root, "rev-parse", before + "^{tree}"),
+                 run(self.root, "rev-parse", after + "^{tree}")),
+            )
+            self.assertFalse(marker.exists(), "recovery executed an inherited filter")
+
+    def test_git_subprocess_environment_discards_git_overrides(self):
+        with patch.dict(os.environ, {
+            "GIT_CONFIG_COUNT": "1",
+            "GIT_CONFIG_KEY_0": "diff.external",
+            "GIT_CONFIG_VALUE_0": "fixture",
+            "GIT_EXTERNAL_DIFF": "fixture",
+            "GIT_INDEX_FILE": "synthetic-index",
+        }):
+            safe = recovery.isolated_git_env()
+            self.assertEqual(safe["GIT_CONFIG_NOSYSTEM"], "1")
+            self.assertEqual(safe["GIT_CONFIG_GLOBAL"], os.devnull)
+            self.assertFalse(any(k.upper().startswith("GIT_") for k in safe
+                                 if k not in {"GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_GLOBAL"}))
 
     def test_rejects_invalid_sha(self):
         for value in ("short", "a" * 39, "f" * 40 + "; echo bad", "A" * 40):
