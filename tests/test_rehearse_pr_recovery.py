@@ -297,7 +297,7 @@ class RecoveryRehearsalTests(unittest.TestCase):
 
     @unittest.skipIf(os.name == "nt", "upload-pack marker fixture requires a POSIX shell")
     def test_missing_promisor_blob_fails_in_source_diff_without_fetching(self):
-        """The missing object is introduced at source diff, after scratch checkout."""
+        """The missing object is introduced at source diff, after a local clone."""
         remote = Path(self.tmp.name) / "complete-local-remote.git"
         run(self.root, "clone", "--bare", str(self.root), str(remote))
         run(self.root, "remote", "add", "origin", str(remote))
