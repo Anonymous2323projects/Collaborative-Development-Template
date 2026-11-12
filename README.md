@@ -1,22 +1,22 @@
 # Collaborative Development Template
 
+Turn an idea into a project with ChatGPT, one manageable step at a time. This public starter is for beginners and experienced builders; no programming experience or paid AI plan is required to begin.
+
+**You need:** access to ChatGPT (Free is enough) and a web browser. GitHub is useful when you want to save code or project records, but it is **not required to explore an idea**. This public template is not a place to put private notes or passwords.
+
+## Start in five steps
+
+1. **Check privacy first.** If you use a ChatGPT Project, check who can see its chats and files; choose **Only those invited** unless you deliberately want wider sharing. Do not share passwords, secret keys, or confidential data. GitHub privacy and ChatGPT sharing are separate settings.
+2. **Open a ChatGPT conversation.** Share the [public template link](https://github.com/Anonymous2323projects/Collaborative-Development-Template) and ask ChatGPT to read `START_HERE.md` and `AGENTS.md` on the current default branch. If it cannot read them, it must tell you; provide only the relevant public text instead. The template's opening question is **“What are you dreaming of?”**
+3. **Describe your idea without secrets.** ChatGPT helps you clarify the goal, intended users, risks, and one small first result. You do not need to decide the programming language or buy a service yet.
+4. **Set up continuity if you use a ChatGPT Project.** Ask for **one complete, project-specific Project Instructions block**, then open **Project settings → Project instructions**, paste it, and save it yourself. GitHub files do not install these instructions automatically. If Project Instructions are unavailable, continue in an ordinary chat using this guide and a short written handover.
+5. **Save work when you are ready.** You can use an existing suitable repository. For a new GitHub repository, choose **Use this template → Create a new repository**, give it a name, and normally choose **Private** before creating it. Create project memory from [the memory template](PROJECT_MEMORY_TEMPLATE.md) in a suitable private record location. If you intentionally publish code, keep private notes and coordination **outside** that public repository. Ask for explicit approval before publishing, changing access, or merging.
+
+**First success:** you and ChatGPT have agreed on a short project goal, a privacy-conscious place for any records, and the next verifiable action. No code or GitHub repository is required just to reach that point.
+
 ![Collaborative Development Template — manifesto banner](assets/manifesto-banner.png)
 
-A ChatGPT-first framework for turning an idea into a secure, maintainable project—with clear guidance, human control, and GitHub as an optional durable work record.
-
-## Start a project
-
-Share this repository with ChatGPT and ask it to use the template. If it can read the repository, its first response should be only a natural equivalent of **“What are you dreaming of?”** in your language. It must read [START_HERE.md](START_HERE.md) first and be honest if it cannot access the guide.
-
-You do not need programming experience to begin. The guide helps you explore the idea, agree on a useful first step, and build at a manageable pace.
-
-**Before adding private project information:** this is a public starter template, not your private workspace. When you create your own project from it, choose **Private** for the new project repository. Also check your ChatGPT Project's sharing settings separately and use **Only those invited** unless you intentionally want others with the link to join. The setup guide explains both.
-
-**Required when using a ChatGPT Project:** have ChatGPT prepare one complete, project-specific set of Project Instructions. Paste it into **Project settings → Project instructions** and save it. GitHub files and uploads do not install instructions automatically. Follow the full setup and verification steps in [START_HERE.md](START_HERE.md).
-
-Private is the strong default, not a requirement for every project. One private repository normally suffices for a private project. If code/product will be **public**, keep non-public memory and coordination **outside** that public repository in a suitable restricted private location. Reuse secure local storage, an existing private repository or a trusted other-hosted workspace where continuity, access and backup can be managed; a separate private GitHub repository is an option, **not mandatory**. Review the [privacy guide](PRIVACY_AND_PUBLICATION.md) before publication. Multi-project coordination does not itself require extra repositories.
-
-An existing suitable repository or a local/alternative-host workflow is also valid. Before the first remote push, explain publication risks and let each contributor choose how their own commit name and email appear.
+For a guided explanation and troubleshooting, continue with [Start Here](START_HERE.md). The references below are for the stages when you actually need them; you do not need to read every policy before discussing an idea.
 
 ## Find what you need
 
