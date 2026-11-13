@@ -12,7 +12,7 @@ GitHub repository visibility and ChatGPT Project sharing are separate controls:
 
 - **GitHub:** a public repository can be viewed by anyone. A private repository is limited to its owner and people or applications granted access, subject to GitHub and organization settings.
 - **ChatGPT Project:** check the Project's Share settings separately. **Only those invited** is the safer default. With **Anyone with a link**, any logged-in ChatGPT user who has the link can join. Members of a shared Project can view its chats, files, and instructions.
-- **Project memory:** project-only memory limits which other conversations ChatGPT can use as context. It does not hide chats, files, or instructions from members of a shared Project.
+- **Project memory:** in each eligible ChatGPT Project, choose **••• → Project settings → Memory → Project-only memory** when conversations must not supply memory context to other projects. This also works for existing projects; changes can take a few hours. It does not hide chats, files, or instructions from shared-project members, revoke connected-app or GitHub repository access, remove earlier disclosures, or enable ChatGPT Work in that Project. Account/workspace memory settings may also apply. [Official Project memory documentation](https://help.openai.com/en/articles/10169521-projects-in-chatgpt).
 - **Account data controls:** these are separate from both GitHub visibility and Project sharing. Check the current ChatGPT Data Controls settings and official guidance; do not assume one setting changes another.
 
 A private repository or invite-only Project reduces exposure but cannot guarantee confidentiality. Authorized collaborators, connected apps, downloaded copies, screenshots, backups, and information shared elsewhere may still expose content. Never store passwords, access tokens, recovery codes, private keys, or other login secrets in project files, Project Instructions, or chats.
@@ -55,7 +55,7 @@ This prohibition applies to source files, documentation, examples, filenames, co
 
 ## Pre-commit and release review
 
-Use automated secret/PII detection as a safety net, not as a substitute for human review. Inspect the staged diff and all release artifacts. Check image/document metadata and generated files. Review commit messages and history.
+Use automated secret/PII detection as a safety net, not as a substitute for human review. Inspect the staged diff and all release artifacts. Check image/document metadata and generated files. **Also review the proposed public PR title/body, issue and review comments, commit author/committer email metadata, commit messages, reachable historical refs, CI logs and artifact names where relevant.** Verify that no material from unrelated private projects, accounts or agent contexts crosses into the public repository. A clean current tree or passing secret scan does not establish that public Git history, PR metadata or third-party caches are clean. Avoid quoting suspected sensitive values in diagnostic output or public review comments.
 
 ## Incident response
 
