@@ -18,6 +18,8 @@ Use this checklist for routine changes. For substantive changes, the complete me
 - [ ] Requirements and documentation match code, configuration, tests, workflows, and live settings.
 - [ ] Relevant research and authoritative sources were checked for the risk level.
 - [ ] Complete diff, dependencies, scripts, workflows, secrets, and public metadata were reviewed.
+- [ ] Before public publication: PR description/comments, commit author/committer identity, reachable history, generated artifacts and relevant CI logs were checked for secrets, personal data and material from unrelated projects; any uninspectable area is recorded rather than marked clean.
+- [ ] For projects requiring separate AI context: actual Project-only memory, sharing and connected-app/repository access were individually checked or explicitly marked as user-verification pending.
 - [ ] Tests/checks ran on the exact reviewed code; omissions are explicit.
 - [ ] Similar weaknesses in related procedures were searched when a systemic issue was found.
 - [ ] For significant changes, preserve the exact pre-merge **target tip/base**, affected paths, intended integration and separate PR-head evidence; verify a realistic recovery/rehearsal route. The optional `scripts/rehearse_pr_recovery.py` Git-tree test is not a backup or rollback of external effects, and its status is not automatically required by branch rules.
