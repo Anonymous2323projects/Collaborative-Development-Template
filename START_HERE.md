@@ -18,10 +18,11 @@ Before adding private project information:
 
 1. **GitHub and private records:** for a private project, confirm the project repository is **Private**. For public code, ensure it contains only publishable material and verify a separate restricted private record location (existing private repository, protected local files or another secure host). Check actual collaborators, connected apps, authorized access and backup/handover; do not assume GitHub visibility protects another host.
 2. **ChatGPT:** open the Project's sharing settings. Choose **Only those invited** unless you deliberately want other people with the link to be able to join. Remove anyone who should no longer have access.
-3. **Project Instructions:** follow the next section and install the instructions in this ChatGPT Project.
-4. **Keep secrets out:** never put passwords, access keys, recovery codes, or other login secrets in GitHub files, project instructions, or chats.
+3. **Memory separation:** if you want one project's chats kept out of other projects' memory context, open that project's **••• → Project settings → Memory**, choose **Project-only memory**, and save. This works for eligible existing projects too; changes can take a few hours. Make this choice separately for each project. It does not restrict access granted to connected apps or GitHub repositories, and ChatGPT Work is not available in project-only projects.
+4. **Project Instructions:** follow the next section and install the instructions in this ChatGPT Project.
+5. **Keep secrets out:** never put passwords, access keys, recovery codes, or other login secrets in GitHub files, project instructions, or chats.
 
-A shared ChatGPT Project lets its members see its chats, files, and instructions. Project-only memory does **not** hide that information from project members. Your account's data controls are separate again; check them in ChatGPT Settings. These settings do not replace careful decisions about what you share.
+A shared ChatGPT Project lets its members see its chats, files, and instructions. Project-only memory does **not** hide that information from project members, turn off sharing, revoke app permissions, or erase earlier public disclosures. Your account's data controls are separate again; check them in ChatGPT Settings. These settings do not replace careful decisions about what you share.
 
 If you intentionally want a public project, that is allowed. Before publishing, confirm the chosen private record location and its recovery/handover route, review what the public will see (files, discussions, contributor names and commit email addresses), and complete the [privacy guide](PRIVACY_AND_PUBLICATION.md) and [release-readiness review](PROJECT_RISK_AND_RELEASE_READINESS.md). Do not create repositories, change visibility or publish on the user's behalf without explicit authorization.
 
