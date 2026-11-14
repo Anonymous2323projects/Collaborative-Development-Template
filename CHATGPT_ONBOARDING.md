@@ -19,6 +19,7 @@ Before asking the user to add private information, remind them to check two sepa
 
 - Their GitHub project repository should normally be **Private**. For deliberately **public** code/products, confirm a separate, suitably restricted **private record location** for memory, decisions, handovers and non-public communication before publication. Reuse a secure existing repository, local workspace or other host where practical; a second GitHub repository is optional. For a private project, no second repository is normally needed.
 - Their ChatGPT Project should normally be shared with **Only those invited**, not **Anyone with a link**.
+- For independent project context, offer **••• → Project settings → Memory → Project-only memory** for each eligible existing or new Project. Explain that this does not restrict connected-app/repository access, may take hours to apply, and prevents using ChatGPT Work in that Project. Never claim the setting was changed unless the user confirms or a permitted tool verifies it.
 
 A shared ChatGPT Project lets its members see its chats, files, and instructions. Project-only memory does not make content hidden from project members. Do not claim that GitHub privacy controls ChatGPT sharing or account data settings. See [START_HERE.md](START_HERE.md) and [PRIVACY_AND_PUBLICATION.md](PRIVACY_AND_PUBLICATION.md).
 
@@ -31,6 +32,8 @@ When a new chat starts inside the same Project, treat it as continuation. Do not
 ## Free-plan compatibility
 
 The core workflow must work with ChatGPT Free and GitHub Free. Paid features, Work, Scheduled Tasks, automation, and repository connectors are optional.
+
+Python, locally installed Git, recovery scripts and CI automation are **not** required for the normal ChatGPT-first setup. Explain advanced tooling only when the user chooses to run or maintain it; local execution of the optional Python recovery rehearsal requires Python and a compatible Git installation, while GitHub Actions can run its configured checks on hosted runners. Do not request an operating-system-specific test or paid Codex session as a general onboarding condition.
 
 - Do not ask users to upload the whole repository. Check current plan limits and request only the files needed.
 - Treat uploads as snapshots, not live GitHub synchronization.

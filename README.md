@@ -6,13 +6,15 @@ Turn an idea into a project with ChatGPT, one manageable step at a time. This pu
 
 ## Start in five steps
 
-1. **Check privacy first.** If you use a ChatGPT Project, check who can see its chats and files; choose **Only those invited** unless you deliberately want wider sharing. Do not share passwords, secret keys, or confidential data. GitHub privacy and ChatGPT sharing are separate settings.
+1. **Check privacy first.** If you use a ChatGPT Project, check who can see its chats and files; choose **Only those invited** unless you deliberately want wider sharing. Do not share passwords, secret keys, or confidential data. For separate projects, consider **Project settings → Memory → Project-only memory** for context isolation; sharing and connected-app access still need their own checks. GitHub privacy and ChatGPT sharing are separate settings.
 2. **Open a ChatGPT conversation.** Share the [public template link](https://github.com/Anonymous2323projects/Collaborative-Development-Template) and ask ChatGPT to read `START_HERE.md` and `AGENTS.md` on the current default branch. If it cannot read them, it must tell you; provide only the relevant public text instead. The template's opening question is **“What are you dreaming of?”**
 3. **Describe your idea without secrets.** ChatGPT helps you clarify the goal, intended users, risks, and one small first result. You do not need to decide the programming language or buy a service yet.
 4. **Set up continuity if you use a ChatGPT Project.** Ask for **one complete, project-specific Project Instructions block**, then open **Project settings → Project instructions**, paste it, and save it yourself. GitHub files do not install these instructions automatically. If Project Instructions are unavailable, continue in an ordinary chat using this guide and a short written handover.
 5. **Save work when you are ready.** You can use an existing suitable repository. For a new GitHub repository, choose **Use this template → Create a new repository**, give it a name, and normally choose **Private** before creating it. Create project memory from [the memory template](PROJECT_MEMORY_TEMPLATE.md) in a suitable private record location. If you intentionally publish code, keep private notes and coordination **outside** that public repository. Ask for explicit approval before publishing, changing access, or merging.
 
 **First success:** you and ChatGPT have agreed on a short project goal, a privacy-conscious place for any records, and the next verifiable action. No code or GitHub repository is required just to reach that point.
+
+**No Python, scripts, or local Git installation is required for the standard ChatGPT-first workflow.** The template also includes optional developer/maintainer tooling for automated checks and Git recovery rehearsals. Those tools are **not** onboarding prerequisites: running the Python recovery script locally requires Python and a compatible Git installation; GitHub Actions can run configured checks on its own hosted runner without a local Python installation. A successful Git-tree rehearsal does not replace an independent backup or authorize a merge. See [merge and recovery assurance](MERGE_AND_CHANGE_ASSURANCE.md) only if you choose those advanced checks.
 
 ![Collaborative Development Template — manifesto banner](assets/manifesto-banner.png)
 

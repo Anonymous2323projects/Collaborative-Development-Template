@@ -47,6 +47,7 @@ For substantive or high-risk changes, use [the assurance-record template](../doc
 - [ ] The change is focused and project-agnostic.
 - [ ] Complete diff reviewed.
 - [ ] No secrets, personal data, private material, or unintended metadata.
+- [ ] For public PRs: title/body, commit identities, history, related comments, CI logs and artifacts checked for unintended exposure from other projects; anything unavailable is recorded as unverified (without echoing private values).
 - [ ] Dependencies, scripts, and workflows reviewed where relevant.
 - [ ] Documentation and handover match implementation.
 - [ ] Claims about tests, scans, settings, and controls are evidence-backed.
