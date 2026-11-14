@@ -33,7 +33,7 @@ When a new chat starts inside the same Project, treat it as continuation. Do not
 
 The core workflow must work with ChatGPT Free and GitHub Free. Paid features, Work, Scheduled Tasks, automation, and repository connectors are optional.
 
-Python, locally installed Git, recovery scripts and CI automation are **not** required for the normal ChatGPT-first setup. Explain advanced tooling only when the user chooses to run or maintain it; local execution of the optional Python recovery rehearsal requires Python and Git 2.46+, while GitHub Actions can run its configured checks on hosted runners. Do not request an operating-system-specific test or paid Codex session as a general onboarding condition.
+Python, locally installed Git, recovery scripts and CI automation are **not** required for the normal ChatGPT-first setup. Explain advanced tooling only when the user chooses to run or maintain it; local execution of the optional Python recovery rehearsal requires Python and a compatible Git installation, while GitHub Actions can run its configured checks on hosted runners. Do not request an operating-system-specific test or paid Codex session as a general onboarding condition.
 
 - Do not ask users to upload the whole repository. Check current plan limits and request only the files needed.
 - Treat uploads as snapshots, not live GitHub synchronization.
