@@ -62,8 +62,20 @@ class RecoveryRehearsalTests(unittest.TestCase):
                 try:
                     unsafe = run(self.root, "diff", "--binary", "--full-index",
                                  self.base, self.head, "--")
-                    self.assertNotIn("diff --git a/README.md b/README.md", unsafe,
-                                     "control must actually activate nonstandard paths")
+                    if "diff.mnemonicPrefix" in overrides:
+                        # For two explicit commits Git still uses a/ and b/.
+                        # Verify mnemonic prefixes separately with a worktree diff.
+                        original = (self.root / "README.md").read_bytes()
+                        (self.root / "README.md").write_text("synthetic dirty content\n")
+                        try:
+                            mnemonic = run(self.root, "diff", "HEAD", "--", "README.md")
+                            self.assertIn("diff --git c/README.md w/README.md", mnemonic)
+                        finally:
+                            (self.root / "README.md").write_bytes(original)
+                        self.assertIn("diff --git a/README.md b/README.md", unsafe)
+                    else:
+                        self.assertNotIn("diff --git a/README.md b/README.md", unsafe,
+                                         "control must activate nonstandard paths")
                     normal = run(self.root, "diff", "--binary", "--full-index",
                                  "--default-prefix", self.base, self.head, "--")
                     self.assertIn("diff --git a/README.md b/README.md", normal)
