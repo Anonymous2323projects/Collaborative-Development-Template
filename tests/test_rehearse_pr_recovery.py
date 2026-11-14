@@ -1,10 +1,13 @@
 """Synthetic offline recovery round-trip tests; no network or real user repository."""
 import sys
 import os
+import shutil
+import stat
 import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import rehearse_pr_recovery as recovery
@@ -38,6 +41,75 @@ class RecoveryRehearsalTests(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
+    def test_configured_diff_prefixes_cannot_change_recovery_patch_paths(self):
+        """Exercise all four documented prefix settings with real Git commands."""
+        cases = (
+            {"diff.noprefix": "true"},
+            {"diff.srcPrefix": "custom-source/"},
+            {"diff.dstPrefix": "custom-destination/"},
+            {"diff.mnemonicPrefix": "true",
+             "diff.srcPrefix": "mnemonic-source/",
+             "diff.dstPrefix": "mnemonic-destination/"},
+        )
+        expected = (
+            run(self.root, "rev-parse", self.base + "^{tree}"),
+            run(self.root, "rev-parse", self.head + "^{tree}"),
+        )
+        for overrides in cases:
+            with self.subTest(overrides=overrides):
+                for name, value in overrides.items():
+                    run(self.root, "config", "--local", name, value)
+                try:
+                    unsafe = run(self.root, "diff", "--binary", "--full-index",
+                                 self.base, self.head, "--")
+                    if "diff.mnemonicPrefix" in overrides:
+                        # For two explicit commits Git still uses a/ and b/.
+                        # Verify mnemonic prefixes separately with a worktree diff.
+                        original = (self.root / "README.md").read_bytes()
+                        (self.root / "README.md").write_text("synthetic dirty content\n")
+                        try:
+                            mnemonic = run(self.root, "diff", "HEAD", "--", "README.md")
+                            self.assertIn("diff --git c/README.md w/README.md", mnemonic)
+                        finally:
+                            (self.root / "README.md").write_bytes(original)
+                        self.assertIn("diff --git a/README.md b/README.md", unsafe)
+                    else:
+                        self.assertNotIn("diff --git a/README.md b/README.md", unsafe,
+                                         "control must activate nonstandard paths")
+                    normal = run(self.root, "diff", "--binary", "--full-index",
+                                 "--default-prefix", self.base, self.head, "--")
+                    self.assertIn("diff --git a/README.md b/README.md", normal)
+                    self.assertEqual(recovery.verify(self.base, self.head, self.root),
+                                     expected)
+                    self.assertEqual(recovery.verify(self.head, self.base, self.root),
+                                     (expected[1], expected[0]))
+                finally:
+                    for name in overrides:
+                        run(self.root, "config", "--local", "--unset", name)
+
+    @unittest.skipIf(os.name == "nt", "POSIX symbolic-link fixture")
+    def test_changed_symlink_target_round_trips_without_checkout(self):
+        link = self.root / "synthetic-link"
+        try:
+            link.symlink_to("README.md")
+        except (OSError, NotImplementedError) as exc:
+            self.skipTest(f"symbolic links unavailable: {type(exc).__name__}")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "add fictional symlink")
+        before = run(self.root, "rev-parse", "HEAD")
+        link.unlink()
+        link.symlink_to("binary.bin")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "change fictional symlink")
+        after = run(self.root, "rev-parse", "HEAD")
+        before_tree = run(self.root, "rev-parse", before + "^{tree}")
+        after_tree = run(self.root, "rev-parse", after + "^{tree}")
+        self.assertNotEqual(before_tree, after_tree)
+        self.assertEqual(recovery.verify(before, after, self.root),
+                         (before_tree, after_tree))
+        self.assertEqual(recovery.verify(after, before, self.root),
+                         (after_tree, before_tree))
+
     def test_binary_add_delete_edit_round_trip(self):
         before, after = recovery.verify(self.base, self.head, self.root)
         self.assertEqual(before, run(self.root, "rev-parse", self.base + "^{tree}"))
@@ -69,12 +141,410 @@ class RecoveryRehearsalTests(unittest.TestCase):
         self.assertEqual(before, run(self.root, "rev-parse", self.head + "^{tree}"))
         self.assertEqual(after, run(self.root, "rev-parse", self.base + "^{tree}"))
 
+    def test_mode_only_change_round_trip_even_when_filemode_is_false(self):
+        """Windows may not represent executable bits; the Git index can."""
+        mode_file = self.root / "mode-only.sh"
+        mode_file.write_text("echo fixed\n", encoding="utf-8")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "mode-base")
+        before = run(self.root, "rev-parse", "HEAD")
+        run(self.root, "update-index", "--chmod=+x", "mode-only.sh")
+        run(self.root, "commit", "--quiet", "-m", "mode-only")
+        after = run(self.root, "rev-parse", "HEAD")
+        run(self.root, "config", "core.filemode", "false")
+        expected_before = run(self.root, "rev-parse", before + "^{tree}")
+        expected_after = run(self.root, "rev-parse", after + "^{tree}")
+        self.assertNotEqual(expected_before, expected_after)
+        self.assertEqual(recovery.verify(before, after, self.root),
+                         (expected_before, expected_after))
+        self.assertEqual(recovery.verify(after, before, self.root),
+                         (expected_after, expected_before))
+
+    def test_refuses_tree_and_annotated_tag_objects_as_commits(self):
+        tree = run(self.root, "rev-parse", self.head + "^{tree}")
+        run(self.root, "tag", "-a", "synthetic-head", "-m", "tag fixture", self.head)
+        annotated_tag = run(self.root, "rev-parse", "refs/tags/synthetic-head^{tag}")
+        for object_id in (tree, annotated_tag):
+            for base, head in ((object_id, self.head), (self.base, object_id)):
+                with self.subTest(object_id=object_id, base=base):
+                    with self.assertRaises(recovery.RecoveryError) as failure:
+                        recovery.verify(base, head, self.root)
+                    self.assertEqual(failure.exception.phase, "commit-type")
+
+    def test_git_2450_is_rejected_despite_successful_option_probe(self):
+        """A successful flag probe was not sufficient in Git 2.45.0."""
+        proc = subprocess.CompletedProcess(
+            ["git", "--no-lazy-fetch", "--version"], 0,
+            stdout=b"git version 2.45.0", stderr=b"",
+        )
+        with patch.object(recovery.subprocess, "run", return_value=proc) as mocked:
+            with self.assertRaises(recovery.RecoveryError) as error:
+                recovery.verify(self.base, self.head, self.root)
+        self.assertEqual(error.exception.phase, "git-version")
+        self.assertEqual(mocked.call_count, 1)
+
+    def test_minimum_git_version_parser_accepts_windows_suffix(self):
+        proc = subprocess.CompletedProcess(
+            ["git", "--no-lazy-fetch", "--version"], 0,
+            stdout=b"git version 2.46.0.windows.1", stderr=b"",
+        )
+        with patch.object(recovery.subprocess, "run", return_value=proc):
+            recovery.require_offline_git()
+
+    def test_git_stderr_sentinel_is_never_disclosed(self):
+        from contextlib import redirect_stderr
+        from io import StringIO
+
+        marker = "SECRET_FAKE_TOKEN_NOT_FOR_LOGS"
+        def unavailable(*args, **kwargs):
+            command = args[0]
+            if "--version" in command:
+                return subprocess.CompletedProcess(
+                    command, 0, stdout=b"git version 2.47.3", stderr=b"")
+            return subprocess.CompletedProcess(
+                command, 1, stdout=b"", stderr=marker.encode("ascii"))
+        stream = StringIO()
+        with patch.object(recovery.subprocess, "run", side_effect=unavailable):
+            with patch.object(sys, "argv", [
+                "rehearse_pr_recovery.py", "--repository", str(self.root),
+                "--base", self.base, "--head", self.head,
+            ]), redirect_stderr(stream):
+                self.assertEqual(recovery.main(), 1)
+        self.assertIn("FAILED", stream.getvalue())
+        self.assertNotIn(marker, stream.getvalue())
+        self.assertNotIn(str(self.root), stream.getvalue())
+
+    def test_unchanged_nested_subtree_missing_blob_fails_then_recovers(self):
+        """The index can reuse a tree even if an unchanged blob is absent."""
+        unchanged = self.root / "nested" / "deeper" / "same.dat"
+        unchanged.parent.mkdir(parents=True)
+        unchanged.write_text("must remain present\n", encoding="utf-8")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "include nested blob")
+        before = run(self.root, "rev-parse", "HEAD")
+        (self.root / "README.md").write_text("changed again\n", encoding="utf-8")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "change only another file")
+        after = run(self.root, "rev-parse", "HEAD")
+        missing_blob = run(self.root, "rev-parse", f"{before}:nested/deeper/same.dat")
+
+        remote = Path(self.tmp.name) / "complete-local-remote.git"
+        run(self.root, "clone", "--bare", "--no-hardlinks", str(self.root), str(remote))
+        run(self.root, "remote", "add", "origin", str(remote))
+        run(self.root, "config", "extensions.partialClone", "origin")
+        run(self.root, "config", "remote.origin.promisor", "true")
+        run(self.root, "config", "remote.origin.partialclonefilter", "blob:none")
+        local_object = self.root / ".git" / "objects" / missing_blob[:2] / missing_blob[2:]
+        saved_object = remote / "objects" / missing_blob[:2] / missing_blob[2:]
+        self.assertTrue(local_object.is_file(), "loose blob fixture required")
+        self.assertTrue(saved_object.is_file(), "independent local fixture backup required")
+        # Git creates read-only loose objects on Windows; only change this disposable object.
+        local_object.chmod(local_object.stat().st_mode | stat.S_IWRITE)
+        local_object.unlink()  # Only our disposable synthetic repository.
+
+        def offline_presence():
+            return subprocess.run(
+                ["git", "--no-lazy-fetch", "-C", str(self.root),
+                 "cat-file", "-e", missing_blob],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+                env=recovery.isolated_git_env(),
+            ).returncode
+
+        self.assertNotEqual(offline_presence(), 0)
+        with self.assertRaises(recovery.RecoveryError) as caught:
+            recovery.verify(before, after, self.root)
+        self.assertEqual(caught.exception.phase, "blob-availability")
+        self.assertNotEqual(offline_presence(), 0, "must never lazy-fetch missing blob")
+        self.assertFalse(local_object.exists(), "no missing blob was downloaded")
+
+        shutil.copyfile(saved_object, local_object)
+        self.assertEqual(offline_presence(), 0)
+        self.assertEqual(
+            recovery.verify(before, after, self.root),
+            (run(self.root, "rev-parse", before + "^{tree}"),
+             run(self.root, "rev-parse", after + "^{tree}")),
+        )
+
+    def test_empty_tree_change_is_verified_no_op(self):
+        """Two different commits can point at the same complete tree."""
+        run(self.root, "commit", "--allow-empty", "--quiet", "-m", "empty commit")
+        after = run(self.root, "rev-parse", "HEAD")
+        expected_tree = run(self.root, "rev-parse", self.head + "^{tree}")
+        self.assertNotEqual(self.head, after)
+        self.assertEqual(expected_tree, run(self.root, "rev-parse", after + "^{tree}"))
+        self.assertEqual(recovery.verify(self.head, after, self.root),
+                         (expected_tree, expected_tree))
+
     def test_does_not_modify_source_branch_or_local_work(self):
+        """An isolated rehearsal must preserve refs, staged, unstaged and new files."""
         (self.root / "local-untracked.txt").write_text("keep my work")
+        (self.root / "staged-only.txt").write_text("staged content\n")
+        run(self.root, "add", "staged-only.txt")
+        (self.root / "README.md").write_text("unstaged local change\n")
         revision = run(self.root, "rev-parse", "HEAD")
+        ref_name = run(self.root, "symbolic-ref", "HEAD")
+        index_before = run(self.root, "ls-files", "--stage")
+        status_before = run(self.root, "status", "--porcelain=v1")
+        work_before = (self.root / "README.md").read_bytes()
         recovery.verify(self.base, self.head, self.root)
         self.assertEqual(revision, run(self.root, "rev-parse", "HEAD"))
+        self.assertEqual(ref_name, run(self.root, "symbolic-ref", "HEAD"))
+        self.assertEqual(index_before, run(self.root, "ls-files", "--stage"))
+        self.assertEqual(status_before, run(self.root, "status", "--porcelain=v1"))
+        self.assertEqual(work_before, (self.root / "README.md").read_bytes())
         self.assertEqual((self.root / "local-untracked.txt").read_text(), "keep my work")
+        self.assertEqual((self.root / "staged-only.txt").read_text(), "staged content\n")
+
+    @unittest.skipIf(os.name == "nt", "external diff fixture requires a POSIX shell")
+    def test_custom_external_diff_helper_is_not_executed(self):
+        """A maintainer's Git config must not run an external helper during rehearsal."""
+        marker = Path(self.tmp.name) / "external-diff-executed.txt"
+        helper = Path(self.tmp.name) / "safe-diff-fixture.py"
+        helper.write_text(
+            "from pathlib import Path\n"
+            f"Path({str(marker)!r}).write_text('ran', encoding='utf-8')\n",
+            encoding="utf-8",
+        )
+        run(self.root, "config", "diff.external", f'"{sys.executable}" "{helper}"')
+
+        # Demonstrate that the synthetic helper is actually active without the guard.
+        run(self.root, "diff", "--binary", "--full-index", self.base, self.head, "--")
+        self.assertTrue(marker.exists(), "test precondition: Git external diff is active")
+        marker.unlink()
+
+        expected = (
+            run(self.root, "rev-parse", self.base + "^{tree}"),
+            run(self.root, "rev-parse", self.head + "^{tree}"),
+        )
+        self.assertEqual(recovery.verify(self.base, self.head, self.root), expected)
+        self.assertFalse(marker.exists(), "recovery executed an external diff helper")
+
+    @unittest.skipIf(os.name == "nt", "textconv fixture requires POSIX-style helper")
+    def test_custom_textconv_helper_is_not_executed(self):
+        marker = Path(self.tmp.name) / "textconv-executed.txt"
+        helper = Path(self.tmp.name) / "textconv-fixture.py"
+        helper.write_text(
+            "from pathlib import Path\n"
+            f"Path({str(marker)!r}).write_text('ran', encoding='utf-8')\n"
+            "print('converted')\n",
+            encoding="utf-8",
+        )
+        (self.root / ".gitattributes").write_text("*.dat diff=fixture\n", encoding="utf-8")
+        (self.root / "sample.dat").write_bytes(b"\x00before\x00")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "textconv before")
+        before = run(self.root, "rev-parse", "HEAD")
+        (self.root / "sample.dat").write_bytes(b"\x00after\x00")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "textconv after")
+        after = run(self.root, "rev-parse", "HEAD")
+        run(self.root, "config", "diff.fixture.textconv", f'"{sys.executable}" "{helper}"')
+        # Demonstrate that --no-ext-diff alone still permits textconv execution.
+        run(self.root, "diff", "--no-ext-diff", "--binary", "--full-index", before, after, "--")
+        self.assertTrue(marker.exists(), "test precondition: textconv is active")
+        marker.unlink()
+        self.assertEqual(
+            recovery.verify(before, after, self.root),
+            (run(self.root, "rev-parse", before + "^{tree}"),
+             run(self.root, "rev-parse", after + "^{tree}")),
+        )
+        self.assertFalse(marker.exists(), "recovery executed a textconv helper")
+
+    @unittest.skipIf(os.name == "nt", "synthetic filter fixture requires POSIX shell")
+    def test_inherited_global_smudge_filter_does_not_run(self):
+        marker = Path(self.tmp.name) / "global-filter-executed.txt"
+        helper = Path(self.tmp.name) / "filter-fixture.sh"
+        helper.write_text(
+            "#!/bin/sh\n"
+            f'printf triggered >> "{marker}"\n'
+            "cat\n",
+            encoding="utf-8",
+        )
+        helper.chmod(0o755)
+        (self.root / ".gitattributes").write_text("*.txt filter=fixture\n", encoding="utf-8")
+        (self.root / "filtered.txt").write_text("before\n", encoding="utf-8")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "filter before")
+        before = run(self.root, "rev-parse", "HEAD")
+        (self.root / "filtered.txt").write_text("after\n", encoding="utf-8")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "filter after")
+        after = run(self.root, "rev-parse", "HEAD")
+        global_cfg = Path(self.tmp.name) / "synthetic-global.cfg"
+        run(self.root, "config", "--file", str(global_cfg), "filter.fixture.smudge", f'"{helper}"')
+        run(self.root, "config", "--file", str(global_cfg), "filter.fixture.clean", f'"{helper}"')
+
+        with patch.dict(os.environ, {"GIT_CONFIG_GLOBAL": str(global_cfg)}):
+            # The unisolated checkout demonstrates the synthetic filter is active.
+            scratch = Path(self.tmp.name) / "unsafe-control"
+            subprocess.run(
+                ["git", "clone", "--quiet", "--no-checkout", str(self.root), str(scratch)],
+                check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            )
+            run(scratch, "checkout", "--detach", before)
+            self.assertTrue(marker.exists(), "test precondition: smudge filter is active")
+            marker.unlink()
+            (scratch / "filtered.txt").write_text("dirty control\n", encoding="utf-8")
+            run(scratch, "add", "filtered.txt")
+            self.assertTrue(marker.exists(), "test precondition: clean filter is active")
+            marker.unlink()
+            self.assertEqual(
+                recovery.verify(before, after, self.root),
+                (run(self.root, "rev-parse", before + "^{tree}"),
+                 run(self.root, "rev-parse", after + "^{tree}")),
+            )
+            self.assertFalse(marker.exists(), "recovery executed an inherited filter")
+
+    def test_git_subprocess_environment_discards_git_overrides(self):
+        with patch.dict(os.environ, {
+            "GIT_CONFIG_COUNT": "1",
+            "GIT_CONFIG_KEY_0": "diff.external",
+            "GIT_CONFIG_VALUE_0": "fixture",
+            "GIT_EXTERNAL_DIFF": "fixture",
+            "GIT_INDEX_FILE": "synthetic-index",
+        }):
+            safe = recovery.isolated_git_env()
+            self.assertEqual(safe["GIT_CONFIG_NOSYSTEM"], "1")
+            self.assertEqual(safe["GIT_CONFIG_GLOBAL"], os.devnull)
+            self.assertEqual(safe["GIT_NO_LAZY_FETCH"], "1")
+            self.assertEqual(safe["GIT_NO_REPLACE_OBJECTS"], "1")
+            self.assertEqual(safe["GIT_ALLOW_PROTOCOL"], "file")
+            self.assertEqual(safe["GIT_TERMINAL_PROMPT"], "0")
+            self.assertEqual(safe["GIT_PROTOCOL_FROM_USER"], "0")
+            self.assertEqual(safe["GIT_ATTR_NOSYSTEM"], "1")
+            allowlist = {"GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_GLOBAL",
+                         "GIT_ATTR_NOSYSTEM", "GIT_NO_LAZY_FETCH", "GIT_NO_REPLACE_OBJECTS",
+                         "GIT_ALLOW_PROTOCOL", "GIT_TERMINAL_PROMPT", "GIT_PROTOCOL_FROM_USER"}
+            self.assertFalse(any(k.upper().startswith("GIT_") for k in safe
+                                 if k not in allowlist))
+
+    def test_git_without_no_lazy_fetch_fails_before_repository_access(self):
+        """Unknown offline option must reject Git, not run against a repository."""
+        with patch.object(
+            recovery.subprocess, "run",
+            return_value=subprocess.CompletedProcess(
+                ["git", "--no-lazy-fetch", "--version"], 129,
+                stdout=b"", stderr=b"unknown option",
+            ),
+        ) as mocked:
+            with self.assertRaises(recovery.RecoveryError) as error:
+                recovery.verify(self.base, self.head, self.root)
+        self.assertEqual(error.exception.phase, "git-version")
+        self.assertEqual(mocked.call_count, 1)
+        self.assertEqual(
+            mocked.call_args.args[0],
+            ["git", "--no-lazy-fetch", "--version"],
+        )
+
+    def test_git_offline_option_is_supported_on_this_runner(self):
+        """Positive control for the actual installed Git version."""
+        recovery.require_offline_git()
+
+    @unittest.skipIf(os.name == "nt", "upload-pack marker fixture requires a POSIX shell")
+    def test_missing_promisor_blob_fails_in_source_diff_without_fetching(self):
+        """The missing object is introduced at source diff, after a local clone."""
+        remote = Path(self.tmp.name) / "complete-local-remote.git"
+        run(self.root, "clone", "--bare", str(self.root), str(remote))
+        run(self.root, "remote", "add", "origin", str(remote))
+        run(self.root, "config", "extensions.partialClone", "origin")
+        run(self.root, "config", "remote.origin.promisor", "true")
+        run(self.root, "config", "remote.origin.partialclonefilter", "blob:none")
+
+        marker = Path(self.tmp.name) / "upload-pack-invoked.txt"
+        upload_pack = Path(self.tmp.name) / "instrumented-upload-pack.sh"
+        upload_pack.write_text(
+            "#!/bin/sh\n"
+            f'printf invoked >> "{marker}"\n'
+            'exec git-upload-pack "$@"\n',
+            encoding="utf-8",
+        )
+        upload_pack.chmod(0o755)
+        run(self.root, "config", "remote.origin.uploadpack", str(upload_pack))
+
+        missing_blob = run(self.root, "rev-parse", f"{self.base}:README.md")
+        object_path = self.root / ".git" / "objects" / missing_blob[:2] / missing_blob[2:]
+        self.assertTrue(object_path.exists(), "test precondition: loose source blob")
+
+        actual_git = recovery.git
+        observed = []
+
+        def missing_at_diff(root, *args, **kwargs):
+            if Path(root) == self.root and args and args[0] == "diff":
+                observed.append("source-diff")
+                # Local clone completed with objects intact; no checkout is needed.
+                self.assertTrue(object_path.exists())
+                self.assertFalse(marker.exists(), "remote used before source diff")
+                object_path.unlink()  # Only this disposable synthetic repository.
+            return actual_git(root, *args, **kwargs)
+
+        with patch.object(recovery, "git", side_effect=missing_at_diff):
+            with self.assertRaises(recovery.RecoveryError) as error:
+                recovery.verify(self.base, self.head, self.root)
+
+        self.assertEqual(observed, ["source-diff"], "must reach source diff")
+        self.assertEqual(error.exception.phase, "diff")
+        self.assertFalse(marker.exists(), "offline source diff contacted remote")
+
+        local_probe = [
+            "git", "--no-lazy-fetch", "-C", str(self.root),
+            "cat-file", "-e", missing_blob,
+        ]
+        # Pack-aware object availability check, explicitly with fetching off.
+        missing = subprocess.run(
+            local_probe, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            check=False, env=recovery.isolated_git_env(),
+        )
+        self.assertNotEqual(missing.returncode, 0, "object fetched into a pack")
+        self.assertFalse(marker.exists(), "object check contacted remote")
+
+        # Positive control: ordinary Git can lazily fetch from a LOCAL fixture.
+        self.assertEqual(run(self.root, "cat-file", "-p", missing_blob), "original")
+        self.assertTrue(marker.exists(), "control must contact local upload-pack")
+        present = subprocess.run(
+            local_probe, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            check=False, env=recovery.isolated_git_env(),
+        )
+        self.assertEqual(present.returncode, 0, "fetched object should be available")
+
+    @unittest.skipIf(os.name == "nt", "POSIX executable-hook fixture")
+    def test_inherited_template_hook_is_not_executed(self):
+        template = Path(self.tmp.name) / "inherited-template"
+        hooks = template / "hooks"
+        hooks.mkdir(parents=True)
+        marker = Path(self.tmp.name) / "template-hook-executed"
+        hook = hooks / "post-checkout"
+        hook.write_text(
+            "#!/bin/sh\n"
+            f'printf ran > "{marker}"\n',
+            encoding="utf-8",
+        )
+        hook.chmod(0o755)
+        with patch.dict(os.environ, {"GIT_TEMPLATE_DIR": str(template)}):
+            control = Path(self.tmp.name) / "unsafe-template-control"
+            subprocess.run(
+                ["git", "clone", "--quiet", "--no-checkout",
+                 str(self.root), str(control)],
+                check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            )
+            run(control, "checkout", "--detach", self.base)
+            self.assertTrue(marker.exists(), "test precondition: template hook executes")
+            marker.unlink()
+            recovery.verify(self.base, self.head, self.root)
+            self.assertFalse(marker.exists(), "recovery executed an inherited template hook")
+
+    def test_failure_message_has_allowlisted_stage_not_local_path(self):
+        from contextlib import redirect_stderr
+        from io import StringIO
+
+        stream = StringIO()
+        with patch.object(sys, "argv", [
+            "rehearse_pr_recovery.py", "--repository", str(self.root),
+            "--base", "f" * 40, "--head", self.head,
+        ]), redirect_stderr(stream):
+            self.assertEqual(recovery.main(), 1)
+        self.assertIn("FAILED in commit-type", stream.getvalue())
+        self.assertNotIn(str(self.root), stream.getvalue())
+        self.assertNotIn("f" * 40, stream.getvalue())
 
     def test_rejects_invalid_sha(self):
         for value in ("short", "a" * 39, "f" * 40 + "; echo bad", "A" * 40):
