@@ -167,6 +167,7 @@ def verify(base: str, head: str, repository: Path) -> tuple[str, str]:
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
             env=isolated_git_env(),
         )
+        # This checks local presence/type, not complete blob payload integrity.
         # cat-file --batch-check can exit ZERO while printing "<oid> missing".
         # Require one exact "oid blob" record for every requested object.
         if checked.returncode or checked.stdout.splitlines() != [
@@ -204,9 +205,10 @@ def verify(base: str, head: str, repository: Path) -> tuple[str, str]:
             raise RecoveryError("Initial synthetic base index mismatch")
         patch = tmp / "change.patch"
         with patch.open("wb") as out:
-            # Never run executable diff or textconv drivers during the rehearsal.
+            # Suppress helpers and force standard a/ and b/ patch prefixes even
+            # when trusted local diff.* configuration requests other prefixes.
             git(source, "diff", "--no-ext-diff", "--no-textconv", "--binary",
-                "--full-index", base, head, "--", stdout=out)
+                "--full-index", "--default-prefix", base, head, "--", stdout=out)
         git(scratch, "apply", "--cached", "--check", str(patch), index=index)
         git(scratch, "apply", "--cached", str(patch), index=index)
         if git(scratch, "write-tree", index=index) != head_tree:

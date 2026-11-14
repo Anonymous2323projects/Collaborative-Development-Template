@@ -41,6 +41,63 @@ class RecoveryRehearsalTests(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
+    def test_configured_diff_prefixes_cannot_change_recovery_patch_paths(self):
+        """Exercise all four documented prefix settings with real Git commands."""
+        cases = (
+            {"diff.noprefix": "true"},
+            {"diff.srcPrefix": "custom-source/"},
+            {"diff.dstPrefix": "custom-destination/"},
+            {"diff.mnemonicPrefix": "true",
+             "diff.srcPrefix": "mnemonic-source/",
+             "diff.dstPrefix": "mnemonic-destination/"},
+        )
+        expected = (
+            run(self.root, "rev-parse", self.base + "^{tree}"),
+            run(self.root, "rev-parse", self.head + "^{tree}"),
+        )
+        for overrides in cases:
+            with self.subTest(overrides=overrides):
+                for name, value in overrides.items():
+                    run(self.root, "config", "--local", name, value)
+                try:
+                    unsafe = run(self.root, "diff", "--binary", "--full-index",
+                                 self.base, self.head, "--")
+                    self.assertNotIn("diff --git a/README.md b/README.md", unsafe,
+                                     "control must actually activate nonstandard paths")
+                    normal = run(self.root, "diff", "--binary", "--full-index",
+                                 "--default-prefix", self.base, self.head, "--")
+                    self.assertIn("diff --git a/README.md b/README.md", normal)
+                    self.assertEqual(recovery.verify(self.base, self.head, self.root),
+                                     expected)
+                    self.assertEqual(recovery.verify(self.head, self.base, self.root),
+                                     (expected[1], expected[0]))
+                finally:
+                    for name in overrides:
+                        run(self.root, "config", "--local", "--unset", name)
+
+    @unittest.skipIf(os.name == "nt", "POSIX symbolic-link fixture")
+    def test_changed_symlink_target_round_trips_without_checkout(self):
+        link = self.root / "synthetic-link"
+        try:
+            link.symlink_to("README.md")
+        except (OSError, NotImplementedError) as exc:
+            self.skipTest(f"symbolic links unavailable: {type(exc).__name__}")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "add fictional symlink")
+        before = run(self.root, "rev-parse", "HEAD")
+        link.unlink()
+        link.symlink_to("binary.bin")
+        run(self.root, "add", "--all")
+        run(self.root, "commit", "--quiet", "-m", "change fictional symlink")
+        after = run(self.root, "rev-parse", "HEAD")
+        before_tree = run(self.root, "rev-parse", before + "^{tree}")
+        after_tree = run(self.root, "rev-parse", after + "^{tree}")
+        self.assertNotEqual(before_tree, after_tree)
+        self.assertEqual(recovery.verify(before, after, self.root),
+                         (before_tree, after_tree))
+        self.assertEqual(recovery.verify(after, before, self.root),
+                         (after_tree, before_tree))
+
     def test_binary_add_delete_edit_round_trip(self):
         before, after = recovery.verify(self.base, self.head, self.root)
         self.assertEqual(before, run(self.root, "rev-parse", self.base + "^{tree}"))
@@ -207,11 +264,24 @@ class RecoveryRehearsalTests(unittest.TestCase):
                          (expected_tree, expected_tree))
 
     def test_does_not_modify_source_branch_or_local_work(self):
+        """An isolated rehearsal must preserve refs, staged, unstaged and new files."""
         (self.root / "local-untracked.txt").write_text("keep my work")
+        (self.root / "staged-only.txt").write_text("staged content\n")
+        run(self.root, "add", "staged-only.txt")
+        (self.root / "README.md").write_text("unstaged local change\n")
         revision = run(self.root, "rev-parse", "HEAD")
+        ref_name = run(self.root, "symbolic-ref", "HEAD")
+        index_before = run(self.root, "ls-files", "--stage")
+        status_before = run(self.root, "status", "--porcelain=v1")
+        work_before = (self.root / "README.md").read_bytes()
         recovery.verify(self.base, self.head, self.root)
         self.assertEqual(revision, run(self.root, "rev-parse", "HEAD"))
+        self.assertEqual(ref_name, run(self.root, "symbolic-ref", "HEAD"))
+        self.assertEqual(index_before, run(self.root, "ls-files", "--stage"))
+        self.assertEqual(status_before, run(self.root, "status", "--porcelain=v1"))
+        self.assertEqual(work_before, (self.root / "README.md").read_bytes())
         self.assertEqual((self.root / "local-untracked.txt").read_text(), "keep my work")
+        self.assertEqual((self.root / "staged-only.txt").read_text(), "staged content\n")
 
     @unittest.skipIf(os.name == "nt", "external diff fixture requires a POSIX shell")
     def test_custom_external_diff_helper_is_not_executed(self):
