@@ -58,6 +58,30 @@ jobs:
           GITLEAKS_ENABLE_COMMENTS: "false"
           GITLEAKS_ENABLE_UPLOAD_ARTIFACT: "false"
 
+      - name: Scan every PR commit and explicit merge-parent diffs
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v gitleaks
+          git cat-file -e "${BASE_SHA}^{commit}"
+          git cat-file -e "${HEAD_SHA}^{commit}"
+          expected="$(git rev-list --count "${BASE_SHA}..${HEAD_SHA}")"
+          traversed="$(git log --full-history -m --format=%H "${BASE_SHA}..${HEAD_SHA}" | sort -u | wc -l)"
+          test "$expected" -gt 0
+          test "$traversed" -eq "$expected"
+          echo "Full PR history: $traversed/$expected commits, with explicit merge-parent diffs"
+          gitleaks git --redact --log-level error \
+            --log-opts="--full-history -m --no-ext-diff --no-textconv ${BASE_SHA}..${HEAD_SHA}" .
+      - name: Regression-test second-parent and merge-only synthetic secrets
+        if: github.event_name == 'pull_request'
+        run: |
+          command -v gitleaks
+          python3 -m unittest discover -s tests -p test_secret_scan_history.py -v
+
   recovery-windows:
     name: Windows recovery regression
     if: github.event_name == 'pull_request'
