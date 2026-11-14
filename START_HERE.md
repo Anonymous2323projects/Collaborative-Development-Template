@@ -4,7 +4,7 @@ This template helps you turn an idea into a secure, maintainable project with Ch
 
 If you only need the first actions, follow the [five-step README quick start](README.md#start-in-five-steps). This longer guide provides optional detail and troubleshooting; ChatGPT should still consult it when applying the template.
 
-**Standard setup needs no Python, command-line scripts, or locally installed Git.** A browser and access to ChatGPT are enough to explore an idea; GitHub is optional until you decide to save work there. Advanced maintainers may choose to run the template's Python-based checks or Git recovery rehearsal, which are separate from onboarding. Running the recovery script on your own computer requires Python and Git 2.46 or newer; GitHub Actions runs configured checks in a hosted environment instead. These checks do not constitute a backup or permission to merge. See [merge and recovery assurance](MERGE_AND_CHANGE_ASSURANCE.md) for technical details.
+**Standard setup needs no Python, command-line scripts, or locally installed Git.** A browser and access to ChatGPT are enough to explore an idea; GitHub is optional until you decide to save work there. Advanced maintainers may choose to run the template's Python-based checks or Git recovery rehearsal, which are separate from onboarding. Running the recovery script on your own computer requires Python and a compatible Git installation; GitHub Actions runs configured checks in a hosted environment instead. These checks do not constitute a backup or permission to merge. See [merge and recovery assurance](MERGE_AND_CHANGE_ASSURANCE.md) for technical details.
 
 Before using it, read the short [Important Notice and Disclaimer](DISCLAIMER.md).
 
