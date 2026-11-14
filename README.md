@@ -14,6 +14,8 @@ Turn an idea into a project with ChatGPT, one manageable step at a time. This pu
 
 **First success:** you and ChatGPT have agreed on a short project goal, a privacy-conscious place for any records, and the next verifiable action. No code or GitHub repository is required just to reach that point.
 
+**No Python, scripts, or local Git installation is required for the standard ChatGPT-first workflow.** The template also includes optional developer/maintainer tooling for automated checks and Git recovery rehearsals. Those tools are **not** onboarding prerequisites: running the Python recovery script locally requires Python and Git 2.46 or newer; GitHub Actions can run configured checks on its own hosted runner without a local Python installation. A successful Git-tree rehearsal does not replace an independent backup or authorize a merge. See [merge and recovery assurance](MERGE_AND_CHANGE_ASSURANCE.md) only if you choose those advanced checks.
+
 ![Collaborative Development Template — manifesto banner](assets/manifesto-banner.png)
 
 For a guided explanation and troubleshooting, continue with [Start Here](START_HERE.md). The references below are for the stages when you actually need them; you do not need to read every policy before discussing an idea.
